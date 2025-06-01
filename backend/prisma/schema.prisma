@@ -29,13 +29,25 @@ model Session {
 }
 
 model Form {
-  id          String     @id @default(uuid())
+  id          String   @id @default(uuid())
   title       String
   description String
   owner_id    String
-  owner       User       @relation(fields: [owner_id], references: [id], onDelete: Cascade)
-  created_at  DateTime   @default(now())
-  updated_at  DateTime   @updatedAt
-
+  owner       User     @relation(fields: [owner_id], references: [id], onDelete: Cascade)
+  created_at  DateTime @default(now())
+  updated_at  DateTime @updatedAt
+  questions   Question[]
   @@unique([title, owner_id])
+}
+
+enum QuestionType {
+  text
+}
+
+model Question {
+  id      String       @id @default(uuid())
+  type    QuestionType @default(text)
+  form_id String
+  text    String
+  form    Form     @relation(fields: [form_id], references: [id], onDelete: Cascade)
 }

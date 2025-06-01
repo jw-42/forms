@@ -1,5 +1,5 @@
 import { Hono } from 'hono'
-import { authRouter, formsRouter } from '@features/index'
+import { authRouter, formsRouter, questionsRouter } from '@features/index'
 import AuthorizationMiddleware from '@shared/middleware/authorization'
 
 const app = new Hono()
@@ -10,5 +10,6 @@ app.route('/auth', authRouter)
 app.use(AuthorizationMiddleware)
 
 app.route('/forms', formsRouter)
+app.route('/forms/:form_id/questions', questionsRouter)
 
 export default app
