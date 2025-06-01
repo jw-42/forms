@@ -1,0 +1,24 @@
+{
+  "name": "forms-api",
+  "module": "index.ts",
+  "type": "module",
+  "private": true,
+  "scripts": {
+    "dev": "bun run --watch src/app.ts",
+    "start": "bun run src/app.ts",
+    "db:deploy": "bunx prisma migrate deploy && bunx prisma generate"
+  },
+  "devDependencies": {
+    "@types/bun": "latest"
+  },
+  "peerDependencies": {
+    "typescript": "^5"
+  },
+  "dependencies": {
+    "@hono/zod-validator": "^0.6.0",
+    "@prisma/client": "^6.8.2",
+    "hono": "^4.7.10",
+    "prisma": "^6.8.2",
+    "zod": "^3.25.36"
+  }
+}

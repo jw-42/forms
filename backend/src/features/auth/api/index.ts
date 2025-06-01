@@ -1,0 +1,1 @@
+export { default as checkVkLaunchParams } from './check-launch-params'
