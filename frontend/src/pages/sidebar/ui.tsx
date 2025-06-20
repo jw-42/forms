@@ -16,7 +16,7 @@ export const Sidebar = () => {
           <Button
             stretched
             size='l'
-            onClick={() => router.push(routes.forms.blank.path, { id: 'new' })}
+            onClick={() => router.push(routes.forms.builder.path)}
           >
             Создать анкету
           </Button>

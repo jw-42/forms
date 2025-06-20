@@ -15,7 +15,8 @@ export async function createQuestion(data: CreateQuestionProps) {
 export async function getAllQuestions(formId: string) {
   const prisma = getPrisma()
   return prisma.question.findMany({
-    where: { form_id: formId }
+    where: { form_id: formId },
+    orderBy: { created_at: 'asc' }
   })
 }
 

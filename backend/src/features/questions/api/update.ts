@@ -15,7 +15,14 @@ const updateQuestionHandler = factory.createHandlers(async (ctx: Context) => {
     const updateResult = updateQuestionSchema.safeParse(body)
     
     if (!form_id || !question_id || !updateResult.success) {
-      throw ApiError.BadRequest()
+      console.log(updateResult.error?.errors)
+      throw ApiError.BadRequest(
+        `One of the parameters is invalid or not provided: ${
+          updateResult.error?.errors.map(error => 
+            `[${error.path[0]}]: ${error.message}`
+          ).join('; ')
+        }.`
+      )
     }
 
     const question = await updateQuestion(

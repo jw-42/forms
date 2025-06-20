@@ -27,7 +27,7 @@ export function formatDate(date: string | Date): string {
     return `вчера в ${dateObj.getHours()}:${String(dateObj.getMinutes()).padStart(2, '0')}`;
   }
 
-  const months = ['янв', 'фев', 'мар', 'апр', 'май', 'июн', 'июл', 'авг', 'сен', 'окт', 'ноя', 'дек'];
+  const months = ['янв', 'фев', 'мар', 'апр', 'мая', 'июня', 'июля', 'авг', 'сен', 'окт', 'нояб', 'дек'];
   const month = months[dateObj.getMonth()];
   const time = `${dateObj.getHours()}:${String(dateObj.getMinutes()).padStart(2, '0')}`;
 

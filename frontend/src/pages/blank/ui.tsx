@@ -1,10 +1,8 @@
+import { Group, NavIdProps, PanelHeaderBack } from "@vkontakte/vkui"
+import { useActiveVkuiLocation, useParams, useRouteNavigator } from "@vkontakte/vk-mini-apps-router"
+import { BlankTabs, BlankCover, BlankQuestions } from "@widgets/index"
 import { BLANK_TABS, routes } from "@shared/model"
 import { ResizePanel } from "@shared/ui"
-import { useActiveVkuiLocation, useParams, useRouteNavigator } from "@vkontakte/vk-mini-apps-router"
-import { Group, NavIdProps, PanelHeaderBack } from "@vkontakte/vkui"
-import { BlankCover } from "@widgets/blank-cover/ui/cover"
-import { BlankQuestions } from "@widgets/blank-questions/ui"
-import { BlankTabs } from "@widgets/blank-tabs"
 import React from "react"
 
 export const Blank = (props: NavIdProps) => {

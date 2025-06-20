@@ -1,13 +1,14 @@
 import { useForm } from "@entities/form"
-import { formatDate } from "@shared/lib"
-import { Icon20ArticleOutline, Icon20ClockOutline } from "@vkontakte/icons"
+import { useAutoUpdateTime } from "@shared/lib"
+import { Icon24Incognito } from "@vkontakte/icons"
 import { useParams } from "@vkontakte/vk-mini-apps-router"
-import { Div, MiniInfoCell, ModalPage, ModalPageHeader, NavIdProps, Spacing } from "@vkontakte/vkui"
+import { Avatar, Cell, Group, Header, MiniInfoCell, ModalPage, ModalPageHeader, NavIdProps } from "@vkontakte/vkui"
 
 export const FormDetails = (props: NavIdProps) => {
 
   const params = useParams<'id'>()
   const { data: form } = useForm(params?.id)
+  const createdAt = useAutoUpdateTime(form?.created_at || new Date(0))
 
   return (
     <ModalPage
@@ -16,19 +17,26 @@ export const FormDetails = (props: NavIdProps) => {
       }
       {...props}
     >
-      <Div>
-        <MiniInfoCell textWrap='full' before={<Icon20ArticleOutline/>}>
+      <Group header={
+        <Header size='s'>Об авторе</Header>
+      }>
+        <Cell
+            before={
+              <Avatar size={48} fallbackIcon={<Icon24Incognito/>} />
+            }
+            extraSubtitle={form?.created_at && `Анкета создана ${createdAt}`}
+          >
+            Анонимный автор
+          </Cell>
+      </Group>
+
+      <Group header={
+        <Header size='s'>Описание</Header>
+      }>
+        <MiniInfoCell textWrap='full'>
           {form?.description}
         </MiniInfoCell>
-
-        <Spacing size={2} />
-
-        {form?.created_at && (
-          <MiniInfoCell before={<Icon20ClockOutline/>}>
-            Создана {formatDate(form.created_at)}
-          </MiniInfoCell>
-        )}
-      </Div>
+      </Group>
     </ModalPage>
   )
 }

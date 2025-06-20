@@ -5,7 +5,7 @@ import { setInit } from './store/config-slice'
 import { useAuth } from '@shared/api/auth'
 import { RootState } from './store'
 
-import { VIEW, FORMS_PAGES, EpicTabbar, MODALS, FormDetails, BlankBuilderModal } from '@shared/index'
+import { VIEW, FORMS_PAGES, EpicTabbar, MODALS, FormDetails, BlankBuilderModal, QuestionBuilder } from '@shared/index'
 import { Blank, BlankBuilder, Forms, Sidebar } from '@pages/index'
 import React from 'react'
 import bridge from '@vkontakte/vk-bridge'
@@ -28,6 +28,7 @@ export const App = () => {
     <ModalRoot activeModal={activeModal} onClose={() => router.hideModal()}>
       <FormDetails id={MODALS.BLANK_DETAILS} />
       <BlankBuilderModal id={MODALS.BLANK_BUILDER} />
+      <QuestionBuilder id={MODALS.QUESTION_BUILDER} />
     </ModalRoot>
   )
 
