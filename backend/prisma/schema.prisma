@@ -9,13 +9,14 @@ datasource db {
 }
 
 model User {
-  id         String    @id @default(uuid())
-  vk_user_id Int       @unique
-  is_banned  Boolean   @default(false)
-  created_at DateTime  @default(now())
-  updated_at DateTime  @updatedAt
-  sessions   Session[]
-  forms      Form[]
+  id           String         @id @default(uuid())
+  vk_user_id   Int            @unique
+  is_banned    Boolean        @default(false)
+  created_at   DateTime       @default(now())
+  updated_at   DateTime       @updatedAt
+  sessions     Session[]
+  forms        Form[]
+  AnswersGroup AnswersGroup[]
 }
 
 model Session {
@@ -29,14 +30,15 @@ model Session {
 }
 
 model Form {
-  id          String     @id @default(uuid())
-  title       String
-  description String
-  owner_id    String
-  owner       User       @relation(fields: [owner_id], references: [id], onDelete: Cascade)
-  created_at  DateTime   @default(now())
-  updated_at  DateTime   @updatedAt
-  questions   Question[]
+  id             String         @id @default(uuid())
+  title          String
+  description    String
+  owner_id       String
+  owner          User           @relation(fields: [owner_id], references: [id], onDelete: Cascade)
+  created_at     DateTime       @default(now())
+  updated_at     DateTime       @updatedAt
+  questions      Question[]
+  answers_groups AnswersGroup[]
 
   @@unique([title, owner_id])
 }
@@ -52,4 +54,25 @@ model Question {
   text       String
   created_at DateTime     @default(now())
   form       Form         @relation(fields: [form_id], references: [id], onDelete: Cascade)
+  Answer     Answer[]
+}
+
+model AnswersGroup {
+  id         String   @id @default(uuid())
+  form_id    String
+  user_id    String
+  created_at DateTime @default(now())
+  form       Form     @relation(fields: [form_id], references: [id], onDelete: Cascade)
+  user       User     @relation(fields: [user_id], references: [id], onDelete: Cascade)
+  Answer     Answer[]
+}
+
+model Answer {
+  id               String       @id @default(uuid())
+  answers_group_id String
+  question_id      String
+  value            String
+  created_at       DateTime     @default(now())
+  answers_group    AnswersGroup @relation(fields: [answers_group_id], references: [id], onDelete: Cascade)
+  question         Question     @relation(fields: [question_id], references: [id], onDelete: Cascade)
 }
