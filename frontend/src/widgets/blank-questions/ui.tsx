@@ -1,10 +1,11 @@
 import { Question } from "@entities/question"
 import { useQuestions } from "@entities/question/hooks"
+import { useSubmitAnswers } from "@entities/answer/hooks"
 import { useParams, useRouteNavigator } from "@vkontakte/vk-mini-apps-router"
 import { Button, ButtonGroup, Placeholder, Separator } from "@vkontakte/vkui"
 import { Footnote, Link, Spacing } from "@vkontakte/vkui"
 import { Div } from "@vkontakte/vkui"
-import React from "react"
+import React, { useState } from "react"
 import { Icon20ArticlesOutline } from "@vkontakte/icons"
 import { MODALS } from "@shared/model/routes/routes"
 
@@ -38,6 +39,41 @@ export const BlankQuestions = () => {
   const formId = params?.id
 
   const { data: questions } = useQuestions(formId)
+  const { mutate: submitAnswers, isPending } = useSubmitAnswers()
+  
+  const [answers, setAnswers] = useState<Record<string, string>>({})
+
+  const handleAnswerChange = (questionId: string, value: string) => {
+    setAnswers(prev => ({
+      ...prev,
+      [questionId]: value
+    }))
+  }
+
+  const handleSubmitForm = () => {
+    if (!formId || !questions) return
+
+    const answersData = questions
+      .filter(question => answers[question.id]?.trim())
+      .map(question => ({
+        question_id: question.id,
+        value: answers[question.id]
+      }))
+
+    if (answersData.length === 0) {
+      console.log('No answers to submit')
+      return
+    }
+
+    submitAnswers({
+      formId,
+      data: { answers: answersData }
+    }, {
+      onSuccess: () => {
+        setAnswers({})
+      }
+    })
+  }
 
   return (
     <React.Fragment>
@@ -45,7 +81,11 @@ export const BlankQuestions = () => {
         <>
           {questions.map((question, index) => (
             <React.Fragment key={index}>
-              <Question {...question} />
+              <Question 
+                {...question} 
+                value={answers[question.id] || ''}
+                onChange={(value) => handleAnswerChange(question.id, value)}
+              />
     
               {(index !== questions.length - 1) && (
                 <Spacing>
@@ -72,8 +112,15 @@ export const BlankQuestions = () => {
       </Spacing>
 
       <Div>
-        <Button size='l' mode='primary' stretched>
-          Отправить анкету
+        <Button 
+          size='l' 
+          mode='primary' 
+          stretched 
+          onClick={handleSubmitForm}
+          disabled={isPending}
+          loading={isPending}
+        >
+          {isPending ? 'Отправка...' : 'Отправить анкету'}
         </Button>
 
         <Spacing size={4} />

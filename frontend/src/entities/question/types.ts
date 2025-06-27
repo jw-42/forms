@@ -3,4 +3,7 @@ export interface QuestionProps {
   type: 'text'
   form_id: string
   text: string
+  disabled?: boolean
+  value?: string
+  onChange?: (value: string) => void
 }

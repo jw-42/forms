@@ -10,7 +10,7 @@ const TYPE = {
   text: 'Текстовый вопрос'
 } as const
 
-export const Question = ({ type, text, id, form_id }: QuestionProps) => {
+export const Question = ({ type, text, id, form_id, disabled, value, onChange }: QuestionProps) => {
 
   const toggleRef = useRef<HTMLDivElement>(null)
   const router = useRouteNavigator()
@@ -50,7 +50,11 @@ export const Question = ({ type, text, id, form_id }: QuestionProps) => {
       <SimpleCell
         subtitle={TYPE[type] ?? 'Категория вопроса'}
         after={
-          <IconButton getRootRef={toggleRef} onClick={handleOpenOptions}>
+          <IconButton
+            disabled={disabled}
+            getRootRef={toggleRef}
+            onClick={handleOpenOptions}
+          >
             <Icon24MoreHorizontal color='var(--vkui--color_icon_secondary)' />
           </IconButton>
         }
@@ -59,7 +63,12 @@ export const Question = ({ type, text, id, form_id }: QuestionProps) => {
       </SimpleCell>
 
       <Div style={{ paddingTop: 0 }}>
-        <Input placeholder='Напишите что-нибудь...' />
+        <Input 
+          placeholder='Напишите что-нибудь...'
+          readOnly={disabled}
+          value={value}
+          onChange={(e) => onChange?.(e.target.value)}
+        />
       </Div>
     </React.Fragment>
   )
