@@ -1,6 +1,6 @@
 import { Group, NavIdProps, PanelHeaderBack } from "@vkontakte/vkui"
 import { useActiveVkuiLocation, useParams, useRouteNavigator } from "@vkontakte/vk-mini-apps-router"
-import { BlankTabs, BlankCover, BlankQuestions } from "@widgets/index"
+import { BlankTabs, BlankCover, BlankQuestions, BlankAnswers } from "@widgets/index"
 import { BLANK_TABS, routes } from "@shared/model"
 import { ResizePanel } from "@shared/ui"
 import React from "react"
@@ -32,6 +32,7 @@ export const Blank = (props: NavIdProps) => {
       <Group>
         <BlankTabs />
         {activeTab === BLANK_TABS.QUESTIONS && <BlankQuestions />}
+        {activeTab === BLANK_TABS.ANSWERS && <BlankAnswers />}
       </Group>
     </ResizePanel>
   )
