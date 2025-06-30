@@ -7,7 +7,8 @@ import {
   getAnswersGroupByIdWithAnswers as getAnswersGroupByIdWithAnswersRepo,
   deleteAnswersGroup as deleteAnswersGroupRepo,
   getAnswersSummary as getAnswersSummaryRepo,
-  getQuestionSummary as getQuestionSummaryRepo
+  getQuestionSummary as getQuestionSummaryRepo,
+  hasUserAnsweredForm as hasUserAnsweredFormRepo
 } from './repository'
 import { ApiError } from '@shared/utils'
 import getPrisma from '@infra/database/prisma'
@@ -174,4 +175,8 @@ export async function getQuestionSummary(formId: string, questionId: string, use
   }
 
   return summary
+}
+
+export async function hasUserAnsweredForm(formId: string, userId: string) {
+  return hasUserAnsweredFormRepo(formId, userId)
 }
