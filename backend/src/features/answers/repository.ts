@@ -236,3 +236,16 @@ export async function getQuestionSummary(formId: string, questionId: string) {
     }))
   }
 }
+
+export async function hasUserAnsweredForm(formId: string, userId: string) {
+  const prisma = getPrisma()
+  const answersGroup = await prisma.answersGroup.findFirst({
+    where: {
+      form_id: formId,
+      user_id: userId
+    },
+    select: { id: true }
+  })
+  
+  return !!answersGroup
+}
