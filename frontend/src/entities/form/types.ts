@@ -1,7 +1,6 @@
 export interface FormBaseProps {
   id: string
   title: string
-  owner_id: string,
   updated_at: string
 }
 

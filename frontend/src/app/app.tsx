@@ -5,10 +5,11 @@ import { setInit } from './store/config-slice'
 import { useAuth } from '@shared/api/auth'
 import { RootState } from './store'
 
-import { VIEW, FORMS_PAGES, EpicTabbar, MODALS, FormDetails, BlankBuilderModal, QuestionBuilder } from '@shared/index'
+import { VIEW, FORMS_PAGES, EpicTabbar, MODALS, FormDetails, BlankBuilderModal, QuestionBuilder, ANSWERS_PAGES } from '@shared/index'
 import { Blank, BlankBuilder, Forms, Sidebar } from '@pages/index'
 import React from 'react'
 import bridge from '@vkontakte/vk-bridge'
+import { Answers } from '@pages/answers'
 
 export const App = () => {
   const popout = usePopout()
@@ -60,11 +61,15 @@ export const App = () => {
         <Epic
           activeStory={activeStory}
           tabbar={!isVKCOM ? <EpicTabbar /> : undefined}
-          >
+        >
           <View id={VIEW.FORMS} activePanel={activePanel}>
             <Forms id={FORMS_PAGES.OVERVIEW} />
             <BlankBuilder id={FORMS_PAGES.BUILDER} />
             <Blank id={FORMS_PAGES.BLANK} />
+          </View>
+
+          <View id={VIEW.ANSWERS} activePanel={activePanel}>
+            <Answers id={ANSWERS_PAGES.OVERVIEW} />
           </View>
         </Epic>
       </SplitCol>

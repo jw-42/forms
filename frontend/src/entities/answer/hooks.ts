@@ -6,7 +6,8 @@ import {
   getAnswersGroupById, 
   deleteAnswersGroup,
   getAnswersSummary,
-  getQuestionSummary
+  getQuestionSummary,
+  getMyAnswers
 } from './api'
 import { SubmitAnswersProps } from './types'
 
@@ -40,6 +41,25 @@ export const useQuestionSummary = (formId?: string, questionId?: string) => {
     queryFn: () => getQuestionSummary(formId as string, questionId as string),
     enabled: !!formId && !!questionId
   })
+}
+
+export const useMyAnswers = () => {
+  return useQuery({
+    queryKey: answerKeys.myAnswers(),
+    queryFn: getMyAnswers
+  })
+}
+
+export const useMyAnswersByForm = (formId?: string) => {
+  const { data: myAnswers } = useMyAnswers()
+  const formAnswers = myAnswers?.find(answer => answer.form.id === formId)
+  const { data: answersGroup } = useAnswersGroup(formId, formAnswers?.id)
+  
+  return {
+    data: answersGroup,
+    isAnswered: !!answersGroup,
+    answersGroupId: answersGroup?.id
+  }
 }
 
 export const useSubmitAnswers = () => {
