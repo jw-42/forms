@@ -36,8 +36,8 @@ export const Sidebar = () => {
         <Spacing size={2} />
 
         <Cell
-          activated={false}
-          onClick={() => router.push(routes.forms.overview.path)}
+          activated={activeStory === VIEW.ANSWERS}
+          onClick={() => router.push(routes.answers.overview.path)}
         >
           История ответов
         </Cell>

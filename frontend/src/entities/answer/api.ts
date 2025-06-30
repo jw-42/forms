@@ -3,7 +3,8 @@ import {
   SubmitAnswersProps, 
   AnswersGroupProps, 
   AnswersSummaryProps, 
-  QuestionSummaryProps 
+  QuestionSummaryProps,
+  MyAnswerProps
 } from './types'
 
 export const answerKeys = {
@@ -14,6 +15,7 @@ export const answerKeys = {
   detail: (formId: string, answersGroupId: string) => [...answerKeys.details(), formId, answersGroupId] as const,
   summary: (formId: string) => [...answerKeys.all, 'summary', formId] as const,
   questionSummary: (formId: string, questionId: string) => [...answerKeys.all, 'questionSummary', formId, questionId] as const,
+  myAnswers: () => [...answerKeys.all, 'my'] as const,
 }
 
 export const submitAnswers = async (formId: string, data: SubmitAnswersProps): Promise<{ id: string }> => {
@@ -38,4 +40,8 @@ export const getAnswersSummary = async (formId: string): Promise<AnswersSummaryP
 
 export const getQuestionSummary = async (formId: string, questionId: string): Promise<QuestionSummaryProps> => {
   return await apiClient.get(`/forms/${formId}/answers/summary/${questionId}`)
+}
+
+export const getMyAnswers = async (): Promise<MyAnswerProps[]> => {
+  return await apiClient.get('/answers')
 } 

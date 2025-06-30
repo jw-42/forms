@@ -46,4 +46,13 @@ export interface QuestionSummaryProps {
     value: string
     count: number
   }>
+}
+
+export interface MyAnswerProps {
+  id: string
+  created_at: string
+  form: {
+    id: string
+    title: string
+  }
 } 

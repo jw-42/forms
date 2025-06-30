@@ -1,4 +1,4 @@
-import { Question } from "@entities/question"
+import { QuestionItem } from "@entities/question"
 import { AnswersGroupItemProps } from "./types"
 
 export interface AnswerItemProps {
@@ -9,12 +9,12 @@ export interface AnswerItemProps {
 
 export const AnswerItem = (props: AnswersGroupItemProps & { form_id: string }) => {
   return (
-    <Question
+    <QuestionItem
       id={props.question.id}
       type={props.question.type as 'text'}
       form_id={props.form_id}
       text={props.question.text}
-      disabled={true}
+      readOnly={true}
       value={props.value}
     />
   )
