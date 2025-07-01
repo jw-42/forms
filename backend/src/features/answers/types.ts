@@ -30,12 +30,28 @@ export const getQuestionSummarySchema = z.object({
   question_id: z.string().uuid()
 })
 
+export const getAnswersByUserAndFormSchema = z.object({
+  form_id: z.string().uuid(),
+  user_id: z.number()
+})
+
+export const getAllAnswersByFormSchema = z.object({
+  form_id: z.string().uuid()
+})
+
+export const deleteAnswersByUserOnFormSchema = z.object({
+  form_id: z.string().uuid(),
+  user_id: z.number()
+})
+
 export type SubmitAnswersProps = z.infer<typeof submitAnswersSchema> & { 
   form_id: string
-  user_id: string 
+  user_id: number 
 }
 export type GetAnswersByFormProps = z.infer<typeof getAnswersByFormSchema>
 export type GetAnswersGroupByIdProps = z.infer<typeof getAnswersGroupByIdSchema>
 export type DeleteAnswersGroupProps = z.infer<typeof deleteAnswersGroupSchema>
 export type GetAnswersSummaryProps = z.infer<typeof getAnswersSummarySchema>
 export type GetQuestionSummaryProps = z.infer<typeof getQuestionSummarySchema>
+export type GetAnswersByUserAndFormProps = z.infer<typeof getAnswersByUserAndFormSchema>
+export type GetAllAnswersByFormProps = z.infer<typeof getAllAnswersByFormSchema>

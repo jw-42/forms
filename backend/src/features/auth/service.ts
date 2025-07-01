@@ -54,7 +54,7 @@ class AuthService {
     let user = await this.authRepository.findUserByVkId(vk_user_id)
 
     if (!user) {
-      user = await this.authRepository.createUser(vk_user_id)
+      user = await this.authRepository.createUser(vk_user_id) 
     }
 
     if (user.is_banned) {

@@ -1,38 +1,26 @@
 import type { SubmitAnswersProps } from './types'
 import { 
   submitAnswers as submitAnswersRepo,
-  getAnswersGroupsByForm as getAnswersGroupsByFormRepo,
-  getAnswersGroupsByUser as getAnswersGroupsByUserRepo,
   getAnswersGroupById as getAnswersGroupByIdRepo,
-  getAnswersGroupByIdWithAnswers as getAnswersGroupByIdWithAnswersRepo,
   deleteAnswersGroup as deleteAnswersGroupRepo,
-  getAnswersSummary as getAnswersSummaryRepo,
-  getQuestionSummary as getQuestionSummaryRepo,
-  hasUserAnsweredForm as hasUserAnsweredFormRepo
+  getAnswersGroupsByUserAndForm as getAnswersGroupsByUserAndFormRepo,
+  getAnswersGroupsByForm as getAnswersGroupsByFormRepo,
+  getFormWithQuestions,
+  getFormById,
+  findExistingAnswer
 } from './repository'
 import { ApiError } from '@shared/utils'
-import getPrisma from '@infra/database/prisma'
 
 export async function submitAnswers(data: SubmitAnswersProps) {
-  const prisma = getPrisma()
-  
   // Check if form exists
-  const form = await prisma.form.findUnique({
-    where: { id: data.form_id },
-    include: { questions: true }
-  })
+  const form = await getFormWithQuestions(data.form_id)
 
   if (!form) {
     throw ApiError.NotFound('Form not found')
   }
 
   // Check if user already answered this form
-  const existingAnswer = await prisma.answersGroup.findFirst({
-    where: {
-      form_id: data.form_id,
-      user_id: data.user_id
-    }
-  })
+  const existingAnswer = await findExistingAnswer(data.form_id, data.user_id)
 
   if (existingAnswer) {
     throw ApiError.BadRequest('User already answered this form')
@@ -55,63 +43,7 @@ export async function submitAnswers(data: SubmitAnswersProps) {
   return submitAnswersRepo(data)
 }
 
-export async function getAnswersGroupsByForm(formId: string, userId: string) {
-  const prisma = getPrisma()
-  
-  const form = await prisma.form.findUnique({
-    where: { id: formId }
-  })
-
-  if (!form) {
-    throw ApiError.NotFound('Form not found')
-  }
-
-  // Only form owner can see answers
-  if (form.owner_id !== userId) {
-    throw ApiError.Forbidden('Only form owner can view answers')
-  }
-
-  return getAnswersGroupsByFormRepo(formId)
-}
-
-export async function getAnswersGroupsByUser(userId: string) {
-  return getAnswersGroupsByUserRepo(userId)
-}
-
-export async function getAnswersGroupById(answersGroupId: string, userId: string, formId: string) {
-  const answersGroup = await getAnswersGroupByIdWithAnswersRepo(answersGroupId)
-  
-  if (!answersGroup) {
-    throw ApiError.NotFound('Answers group not found')
-  }
-
-  // Check that answers group belongs to the specified form
-  if (answersGroup.form_id !== formId) {
-    throw ApiError.NotFound('Answers group not found for this form')
-  }
-
-  // Get form info to check ownership
-  const prisma = getPrisma()
-  const form = await prisma.form.findUnique({
-    where: { id: answersGroup.form_id },
-    select: { owner_id: true }
-  })
-
-  if (!form) {
-    throw ApiError.NotFound('Form not found')
-  }
-
-  // Check permissions: user can view their own answers or form owner can view any answers
-  const canView = answersGroup.user_id === userId || form.owner_id === userId
-  
-  if (!canView) {
-    throw ApiError.Forbidden('Insufficient permissions to view this answers group')
-  }
-
-  return answersGroup
-}
-
-export async function deleteAnswersGroup(answersGroupId: string, userId: string, formId: string) {
+export async function deleteAnswersGroup(answersGroupId: string, userId: number, formId: string) {
   const answersGroup = await getAnswersGroupByIdRepo(answersGroupId)
   
   if (!answersGroup) {
@@ -133,50 +65,36 @@ export async function deleteAnswersGroup(answersGroupId: string, userId: string,
   return deleteAnswersGroupRepo(answersGroupId)
 }
 
-export async function getAnswersSummary(formId: string, userId: string) {
-  const prisma = getPrisma()
-  
-  const form = await prisma.form.findUnique({
-    where: { id: formId }
-  })
+export async function getAnswersByUserAndForm(formId: string, userId: number, currentUserId: number) {
+  // Check if form exists
+  const form = await getFormById(formId)
 
   if (!form) {
     throw ApiError.NotFound('Form not found')
   }
 
-  // Only form owner can see answers summary
-  if (form.owner_id !== userId) {
-    throw ApiError.Forbidden('Only form owner can view answers summary')
+  // Check permissions: user can view their own answers or form owner can view any answers
+  const canView = userId === currentUserId || form.owner_id === currentUserId
+  
+  if (!canView) {
+    throw ApiError.Forbidden('Insufficient permissions to view these answers')
   }
 
-  return getAnswersSummaryRepo(formId)
+  return getAnswersGroupsByUserAndFormRepo(userId, formId)
 }
 
-export async function getQuestionSummary(formId: string, questionId: string, userId: string) {
-  const prisma = getPrisma()
-  
-  const form = await prisma.form.findUnique({
-    where: { id: formId }
-  })
+export async function getAllAnswersByForm(formId: string, currentUserId: number) {
+  // Check if form exists
+  const form = await getFormById(formId)
 
   if (!form) {
     throw ApiError.NotFound('Form not found')
   }
 
-  // Only form owner can see question summary
-  if (form.owner_id !== userId) {
-    throw ApiError.Forbidden('Only form owner can view question summary')
+  // Check permissions: only form owner can view all answers
+  if (form.owner_id !== currentUserId) {
+    throw ApiError.Forbidden('Insufficient permissions to view all answers')
   }
 
-  const summary = await getQuestionSummaryRepo(formId, questionId)
-  
-  if (!summary) {
-    throw ApiError.NotFound('Question not found')
-  }
-
-  return summary
-}
-
-export async function hasUserAnsweredForm(formId: string, userId: string) {
-  return hasUserAnsweredFormRepo(formId, userId)
+  return getAnswersGroupsByFormRepo(formId)
 }
