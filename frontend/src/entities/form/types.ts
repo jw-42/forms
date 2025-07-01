@@ -7,6 +7,8 @@ export interface FormBaseProps {
 export interface FormDetailProps extends FormBaseProps {
   description: string
   created_at: string
+  is_answered: boolean
+  can_edit: boolean
 }
 
 export interface CreateFormProps {

@@ -3,6 +3,7 @@ import React from "react"
 import { useSubmitAnswers } from "@entities/answer/hooks"
 import { QuestionProps } from "@entities/question/types"
 import { AnswerProps } from "@entities/answer/types"
+import { useForm } from "@entities/form/hooks"
 
 interface QuestionFooterProps {
   formId?: string
@@ -11,6 +12,8 @@ interface QuestionFooterProps {
 }
 
 export const QuestionFooter = ({ formId, answers, questions }: QuestionFooterProps) => {
+
+  const { data: form } = useForm(formId)
   const submitAnswers = useSubmitAnswers()
 
   const handleSubmit = () => {
@@ -31,26 +34,42 @@ export const QuestionFooter = ({ formId, answers, questions }: QuestionFooterPro
     })
   }
 
+  const handleDeleteAnswers = () => {}
+
   return (
     <React.Fragment>
-      <Div>
-        <Button 
+      {form?.is_answered ? (
+        <Button
           size='l'
           stretched
-          mode='primary'
-          onClick={handleSubmit}
-          loading={submitAnswers.isPending}
-          disabled={!formId || !questions || questions.length === 0}
+          mode='tertiary'
+          appearance='negative'
+          onClick={handleDeleteAnswers}
         >
-          Отправить анкету
+          Удалить ответы
         </Button>
-
-        <Spacing size={4} />
-
-        <Footnote style={{ textAlign: 'center', color: 'var(--vkui--color_text_secondary)' }}>
-          Нажимая на кнопку, вы принимаете условия <Link href='https://dev.vk.com/ru/user-agreement'>пользовательского соглашения</Link> и <Link href='https://dev.vk.com/ru/privacy-policy'>политики конфиденциальности</Link>.
-        </Footnote>
-      </Div>
+      ) : (
+        (
+          <Div>
+            <Button 
+              size='l'
+              stretched
+              mode='primary'
+              onClick={handleSubmit}
+              loading={submitAnswers.isPending}
+              disabled={!formId || !questions || questions.length === 0}
+            >
+              Отправить анкету
+            </Button>
+  
+            <Spacing size={4} />
+  
+            <Footnote style={{ textAlign: 'center', color: 'var(--vkui--color_text_secondary)' }}>
+              Нажимая на кнопку, вы принимаете условия <Link href='https://dev.vk.com/ru/user-agreement'>пользовательского соглашения</Link> и <Link href='https://dev.vk.com/ru/privacy-policy'>политики конфиденциальности</Link>.
+            </Footnote>
+          </Div>
+        )
+      )}
     </React.Fragment>
   )
 }
