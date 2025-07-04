@@ -42,7 +42,7 @@ export async function getAnswersGroupsByForm(formId: string) {
   })
 }
 
-export async function getAnswersGroupsByUser(userId: string) {
+export async function getAnswersGroupsByUser(userId: number) {
   const prisma = getPrisma()
   return prisma.answersGroup.findMany({
     where: { user_id: userId },
@@ -57,6 +57,23 @@ export async function getAnswersGroupsByUser(userId: string) {
       }
     },
     orderBy: { created_at: 'desc' }
+  })
+}
+
+export async function getAnswersGroupsByUserAndForm(userId: number, formId: string) {
+  const prisma = getPrisma()
+  return prisma.answersGroup.findUnique({
+    where: { unique_key: { form_id: formId, user_id: userId } },
+    select: {
+      id: true,
+      created_at: true,
+      items: {
+        select: {
+          question_id: true,
+          value: true,
+        }
+      }
+    }
   })
 }
 
@@ -82,14 +99,14 @@ export async function getAnswersGroupById(answersGroupId: string) {
 
 export async function getAnswersGroupByIdWithAnswers(answersGroupId: string) {
   const prisma = getPrisma()
-  const result = await prisma.answersGroup.findUnique({
+  return prisma.answersGroup.findUnique({
     where: { id: answersGroupId },
     select: {
       id: true,
       user_id: true,
       form_id: true,
       created_at: true,
-      Answer: {
+      items: {
         select: {
           id: true,
           value: true,
@@ -104,15 +121,6 @@ export async function getAnswersGroupByIdWithAnswers(answersGroupId: string) {
       }
     }
   })
-
-  if (!result) return null
-
-  // Transform the response to rename Answer to items
-  return {
-    ...result,
-    items: result.Answer,
-    Answer: undefined
-  }
 }
 
 export async function deleteAnswersGroup(answersGroupId: string) {
@@ -123,121 +131,7 @@ export async function deleteAnswersGroup(answersGroupId: string) {
   })
 }
 
-export async function getAnswersSummary(formId: string) {
-  const prisma = getPrisma()
-  
-  // Get total responses count
-  const total_responses = await prisma.answersGroup.count({
-    where: { form_id: formId }
-  })
-
-  // Get questions with their response counts
-  const questions_summary = await prisma.question.findMany({
-    where: { form_id: formId },
-    select: {
-      id: true,
-      text: true,
-      type: true,
-      _count: {
-        select: {
-          Answer: true
-        }
-      }
-    },
-    orderBy: { created_at: 'asc' }
-  })
-
-  // Get recent responses (last 5)
-  const recent_responses = await prisma.answersGroup.findMany({
-    where: { form_id: formId },
-    select: {
-      id: true,
-      created_at: true,
-      user_id: true
-    },
-    orderBy: { created_at: 'desc' },
-    take: 5
-  })
-
-  return {
-    total_responses,
-    questions_summary: questions_summary.map(q => ({
-      id: q.id,
-      text: q.text,
-      type: q.type,
-      response_count: q._count.Answer
-    })),
-    recent_responses
-  }
-}
-
-export async function getQuestionSummary(formId: string, questionId: string) {
-  const prisma = getPrisma()
-  
-  // Get question details
-  const question = await prisma.question.findFirst({
-    where: { 
-      id: questionId,
-      form_id: formId
-    },
-    select: {
-      id: true,
-      text: true,
-      type: true
-    }
-  })
-
-  if (!question) return null
-
-  // Get all answers for this question
-  const answers = await prisma.answer.findMany({
-    where: {
-      question_id: questionId,
-      answers_group: {
-        form_id: formId
-      }
-    },
-    select: {
-      value: true,
-      created_at: true,
-      answers_group: {
-        select: {
-          user_id: true
-        }
-      }
-    },
-    orderBy: { created_at: 'desc' }
-  })
-
-  // For text questions, we can provide some basic analytics
-  const total_answers = answers.length
-  const unique_answers = new Set(answers.map(a => a.value)).size
-
-  // Get most common answers (top 5)
-  const answer_counts = answers.reduce((acc, answer) => {
-    acc[answer.value] = (acc[answer.value] || 0) + 1
-    return acc
-  }, {} as Record<string, number>)
-
-  const most_common_answers = Object.entries(answer_counts)
-    .sort(([,a], [,b]) => b - a)
-    .slice(0, 5)
-    .map(([value, count]) => ({ value, count }))
-
-  return {
-    question,
-    total_answers,
-    unique_answers,
-    most_common_answers,
-    recent_answers: answers.slice(0, 10).map(a => ({
-      value: a.value,
-      created_at: a.created_at,
-      user_id: a.answers_group.user_id
-    }))
-  }
-}
-
-export async function hasUserAnsweredForm(formId: string, userId: string) {
+export async function hasUserAnsweredForm(formId: string, userId: number) {
   const prisma = getPrisma()
   const answersGroup = await prisma.answersGroup.findFirst({
     where: {
@@ -248,4 +142,29 @@ export async function hasUserAnsweredForm(formId: string, userId: string) {
   })
   
   return !!answersGroup
+}
+
+export async function getFormWithQuestions(formId: string) {
+  const prisma = getPrisma()
+  return prisma.form.findUnique({
+    where: { id: formId },
+    include: { questions: true }
+  })
+}
+
+export async function getFormById(formId: string) {
+  const prisma = getPrisma()
+  return prisma.form.findUnique({
+    where: { id: formId }
+  })
+}
+
+export async function findExistingAnswer(formId: string, userId: number) {
+  const prisma = getPrisma()
+  return prisma.answersGroup.findFirst({
+    where: {
+      form_id: formId,
+      user_id: userId
+    }
+  })
 }

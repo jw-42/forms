@@ -1,21 +1,21 @@
 import { getPrisma } from '@infra/database'
 
 export class AuthRepository {
-  async findUserByVkId(vk_user_id: number) {
+  async findUserByVkId(id: number) {
     const prisma = getPrisma()
     return prisma.user.findUnique({
-      where: { vk_user_id }
+      where: { id }
     })
   }
 
-  async createUser(vk_user_id: number) {
+  async createUser(id: number) {
     const prisma = getPrisma()
     return prisma.user.create({
-      data: { vk_user_id }
+      data: { id }
     })
   }
 
-  async createSession(user_id: string, access_token: string, expires_at: Date) {
+  async createSession(user_id: number, access_token: string, expires_at: Date) {
     const prisma = getPrisma()
     return prisma.session.create({
       data: {

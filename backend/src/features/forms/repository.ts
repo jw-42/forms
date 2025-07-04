@@ -1,7 +1,7 @@
 import { getPrisma } from '@infra/database'
 import type { CreateFormInput, UpdateFormInput } from './types'
 
-export const getForms = async (owner_id: string, count: number = 10, offset: number = 0) => {
+export const getForms = async (owner_id: number, count: number = 10, offset: number = 0) => {
   const prisma = getPrisma()
   
   return prisma.form.findMany({
@@ -34,7 +34,7 @@ export const getForm = async (form_id: string) => {
   })
 }
 
-export const createForm = async (owner_id: string, data: CreateFormInput) => {
+export const createForm = async (owner_id: number, data: CreateFormInput) => {
   const prisma = getPrisma()
   
   return prisma.form.create({
@@ -48,7 +48,7 @@ export const createForm = async (owner_id: string, data: CreateFormInput) => {
   })
 }
 
-export const updateForm = async (form_id: string, owner_id: string, data: UpdateFormInput) => {
+export const updateForm = async (form_id: string, owner_id: number, data: UpdateFormInput) => {
   const prisma = getPrisma()
 
   return prisma.form.update({
@@ -65,7 +65,7 @@ export const updateForm = async (form_id: string, owner_id: string, data: Update
   })
 }
 
-export const deleteForm = async (form_id: string, owner_id: string) => {
+export const deleteForm = async (form_id: string, owner_id: number) => {
   const prisma = getPrisma()
 
   return prisma.form.delete({
