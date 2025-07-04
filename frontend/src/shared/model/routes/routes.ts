@@ -14,6 +14,7 @@ export const DEFAULT_VIEW_PANELS = {
 
 export enum VIEW {
   FORMS = 'forms',
+  ANSWERS = 'answers',
   SETTINGS = 'settings',
   HELP = 'help',
 }
@@ -33,6 +34,10 @@ export enum BLANK_TABS {
   QUESTIONS = 'questions',
   ANSWERS = 'answers',
   OPTIONS = 'options',
+}
+
+export enum ANSWERS_PAGES {
+  OVERVIEW = 'overview',
 }
 
 export enum SETTINGS_PAGES {
@@ -63,6 +68,10 @@ export const routes = RoutesConfig.create([
       createTab(BLANK_TABS.ANSWERS, '/form/:id/answers', [], [ 'id' ] as const),
       createTab(BLANK_TABS.OPTIONS, '/form/:id/options', [], [ 'id' ] as const),
     ], [ 'id' ] as const),
+  ]),
+
+  createView(VIEW.ANSWERS, [
+    createPanel(ANSWERS_PAGES.OVERVIEW, '/answers', []),
   ]),
 
   createView(VIEW.SETTINGS, [

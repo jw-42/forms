@@ -1,3 +1,4 @@
+import { useForm } from "@entities/form/hooks"
 import { BLANK_TABS, routes } from "@shared/model"
 import { useActiveVkuiLocation, useParams, useRouteNavigator } from "@vkontakte/vk-mini-apps-router"
 import { TabsItem } from "@vkontakte/vkui"
@@ -11,6 +12,8 @@ export const BlankTabs = () => {
   const params = useParams()
   const router = useRouteNavigator()
 
+  const { data: form } = useForm(params?.id)
+
   const { tab: activeTab } = useActiveVkuiLocation()
 
   return (
@@ -20,14 +23,20 @@ export const BlankTabs = () => {
           selected={activeTab === BLANK_TABS.QUESTIONS}
           onClick={() => router.push(routes.forms.blank.questions.path, { id: params?.id })}
         >Вопросы</TabsItem>
-        <TabsItem
-          selected={activeTab === BLANK_TABS.ANSWERS}
-          onClick={() => router.push(routes.forms.blank.answers.path, { id: params?.id })}
-        >Ответы</TabsItem>
-        <TabsItem
-          selected={activeTab === BLANK_TABS.OPTIONS}
-          onClick={() => router.push(routes.forms.blank.options.path, { id: params?.id })}
-        >Настройки</TabsItem>
+
+        {form?.can_edit && (
+          <TabsItem
+            selected={activeTab === BLANK_TABS.ANSWERS}
+            onClick={() => router.push(routes.forms.blank.answers.path, { id: params?.id })}
+          >Ответы</TabsItem>
+        )}
+
+        {form?.can_edit && (
+          <TabsItem
+            selected={activeTab === BLANK_TABS.OPTIONS}
+            onClick={() => router.push(routes.forms.blank.options.path, { id: params?.id })}
+          >Настройки</TabsItem>
+        )}
       </HorizontalScroll>
     </Tabs>
   )
