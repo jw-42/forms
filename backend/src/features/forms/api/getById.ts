@@ -14,7 +14,7 @@ const getById = factory.createHandlers(async (ctx: Context, next: Next) => {
       throw ApiError.BadRequest()
     }
     
-    const form = await formsService.getFormWithAnswerStatus(form_id, user_id)
+    const form = await formsService.getFormWithDetails(form_id, user_id)
 
     if (!form) {
       throw ApiError.NotFound()

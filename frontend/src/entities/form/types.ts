@@ -5,10 +5,11 @@ export interface FormBaseProps {
 }
 
 export interface FormDetailProps extends FormBaseProps {
+  owner_id: number
   description: string
   created_at: string
-  is_answered: boolean
   can_edit: boolean
+  has_answer: boolean
 }
 
 export interface CreateFormProps {

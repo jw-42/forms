@@ -1,89 +1,59 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { 
   answerKeys, 
-  submitAnswers, 
-  getAnswersByForm, 
-  getAnswersGroupById, 
-  deleteAnswersGroup,
-  getAnswersSummary,
-  getQuestionSummary,
-  getMyAnswers
+  submit,
+  getAll,
+  getByUserId,
+  reset,
 } from './api'
-import { SubmitAnswersProps } from './types'
+import { formKeys } from '@entities/form/api'
+import { questionKeys } from '@entities/question'
 
-export const useAnswersByForm = (formId?: string) => {
-  return useQuery({
-    queryKey: answerKeys.list(formId as string),
-    queryFn: () => getAnswersByForm(formId as string),
-    enabled: !!formId
-  })
-}
-
-export const useAnswersGroup = (formId?: string, answersGroupId?: string) => {
-  return useQuery({
-    queryKey: answerKeys.detail(formId as string, answersGroupId as string),
-    queryFn: () => getAnswersGroupById(formId as string, answersGroupId as string),
-    enabled: !!formId && !!answersGroupId
-  })
-}
-
-export const useAnswersSummary = (formId?: string) => {
-  return useQuery({
-    queryKey: answerKeys.summary(formId as string),
-    queryFn: () => getAnswersSummary(formId as string),
-    enabled: !!formId
-  })
-}
-
-export const useQuestionSummary = (formId?: string, questionId?: string) => {
-  return useQuery({
-    queryKey: answerKeys.questionSummary(formId as string, questionId as string),
-    queryFn: () => getQuestionSummary(formId as string, questionId as string),
-    enabled: !!formId && !!questionId
-  })
-}
-
-export const useMyAnswers = () => {
-  return useQuery({
-    queryKey: answerKeys.myAnswers(),
-    queryFn: getMyAnswers
-  })
-}
-
-export const useMyAnswersByForm = (formId?: string) => {
-  const { data: myAnswers } = useMyAnswers()
-  const formAnswers = myAnswers?.find(answer => answer.form.id === formId)
-  const { data: answersGroup } = useAnswersGroup(formId, formAnswers?.id)
-  
-  return {
-    data: answersGroup,
-    isAnswered: !!answersGroup,
-    answersGroupId: answersGroup?.id
-  }
-}
-
+// Hook for submitting answers
 export const useSubmitAnswers = () => {
   const queryClient = useQueryClient()
   
   return useMutation({
-    mutationFn: (data: { formId: string; data: SubmitAnswersProps }) => 
-      submitAnswers(data.formId, data.data),
-    onSuccess: (_, { formId }) => {
-      queryClient.invalidateQueries({ queryKey: answerKeys.list(formId) })
-      queryClient.invalidateQueries({ queryKey: answerKeys.summary(formId) })
-    }
+    mutationFn: submit,
+    onSuccess: (_data, variables) => {
+      // Invalidate and refetch answers for the form
+      queryClient.invalidateQueries({ queryKey: formKeys.detail(variables.formId) })
+      queryClient.invalidateQueries({ queryKey: questionKeys.lists(variables.formId) })
+      queryClient.invalidateQueries({ queryKey: answerKeys.list(variables.formId) })
+    },
   })
 }
 
-export const useDeleteAnswersGroup = () => {
+// Hook for getting all answers for a form
+export const useGetAllAnswers = (formId: string) => {
+  return useQuery({
+    queryKey: answerKeys.list(formId),
+    queryFn: () => getAll({ formId }),
+    enabled: !!formId,
+  })
+}
+
+// Hook for getting answers by user ID
+export const useGetAnswersByUserId = (formId: string, userId: number | undefined) => {
+  return useQuery({
+    queryKey: answerKeys.detail(formId, userId?.toString() || ''),
+    queryFn: () => getByUserId({ formId, userId: userId! }),
+    enabled: !!formId && !!userId,
+  })
+}
+
+// Hook for resetting answers
+export const useResetAnswers = () => {
   const queryClient = useQueryClient()
   
   return useMutation({
-    mutationFn: (data: { formId: string; answersGroupId: string }) => 
-      deleteAnswersGroup(data.formId, data.answersGroupId),
-    onSuccess: (_, { formId }) => {
-      queryClient.invalidateQueries({ queryKey: answerKeys.list(formId) })
-      queryClient.invalidateQueries({ queryKey: answerKeys.summary(formId) })
-    }
+    mutationFn: reset,
+    onSuccess: (_data, variables) => {
+      // Invalidate and refetch answers for the form
+      queryClient.invalidateQueries({ queryKey: answerKeys.list(variables.formId) })
+      queryClient.invalidateQueries({ queryKey: answerKeys.details() })
+      queryClient.invalidateQueries({ queryKey: formKeys.detail(variables.formId) })
+    },
   })
-} 
+}
+

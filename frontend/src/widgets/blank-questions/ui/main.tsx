@@ -7,6 +7,9 @@ import { QuestionBuilder } from "./builder"
 import { QuestionFooter } from "./footer"
 import { List } from "@shared/ui"
 import { useForm } from "@entities/form/hooks"
+import { useGetAnswersByUserId } from "@entities/answer"
+import { RootState } from "@app/store"
+import { useSelector } from "react-redux"
 
 export const BlankQuestions = () => {
 
@@ -15,13 +18,18 @@ export const BlankQuestions = () => {
   const { data: form } = useForm(params?.id)
   const { data: questions } = useQuestions(params?.id)
 
+  const { userId } = useSelector((state: RootState) => state.config)
+  const { data: userAnswers } = useGetAnswersByUserId(params?.id as string, userId as number)
+
   const [answers, setAnswers] = useState<Record<string, string>>({})
 
   const handleAnswerChange = (questionId: string, value: string) => {
-    setAnswers(prev => ({
-      ...prev,
-      [questionId]: value
-    }))
+    if (!form?.has_answer) {
+      setAnswers(prev => ({
+        ...prev,
+        [questionId]: value
+      }))
+    }
   }
 
   return (
@@ -33,9 +41,13 @@ export const BlankQuestions = () => {
         {questions?.map((question) => (
           <QuestionItem
             {...question}
-            readOnly={form?.is_answered}
-            value={answers[question.id] || ''}
+            value={
+              userAnswers?.items.find(answer => answer.question_id === question.id)?.value || 
+              answers[question.id] || 
+              ''
+            }
             onChange={(value) => handleAnswerChange(question.id, value)}
+            readOnly={form?.has_answer}
           />
         ))}
       </List>
@@ -44,7 +56,7 @@ export const BlankQuestions = () => {
         <Separator/>
       </Spacing>
 
-      <QuestionFooter formId={params?.id} answers={answers} questions={questions} />
+      <QuestionFooter currentAnswers={answers} />
     </React.Fragment>
   )
 }

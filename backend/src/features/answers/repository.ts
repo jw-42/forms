@@ -66,11 +66,19 @@ export async function getAnswersGroupsByUserAndForm(userId: number, formId: stri
     where: { unique_key: { form_id: formId, user_id: userId } },
     select: {
       id: true,
+      user_id: true,
       created_at: true,
       items: {
         select: {
           question_id: true,
           value: true,
+          question: {
+            select: {
+              id: true,
+              text: true,
+              type: true
+            }
+          }
         }
       }
     }
