@@ -1,58 +1,54 @@
-export interface AnswerProps {
-  question_id: string
-  value: string
+import { FormIdType, AnswersGroupIdType, UserIdType, QuestionIdType, AnswerValueType } from '@shared/model'
+import { QuestionType } from '@entities/question'
+
+export interface AnswerItemProps {
+  question_id: QuestionIdType
+  value: AnswerValueType
 }
 
-export interface AnswersGroupProps {
-  id: string
-  form_id: string
-  user_id: string
-  created_at: string
-  items: AnswersGroupItemProps[]
-}
-
-export interface AnswersGroupItemProps {
-  id: string
-  value: string
+export interface AnswerItemResponse extends AnswerItemProps {
   question: {
     id: string
     text: string
-    type: string
+    type: QuestionType
   }
 }
 
 export interface SubmitAnswersProps {
-  answers: AnswerProps[]
-}
-
-export interface AnswersSummaryProps {
-  total_answers: number
-  question_summaries: Array<{
-    question_id: string
-    question_text: string
-    answer_count: number
-    unique_answers: Array<{
-      value: string
-      count: number
-    }>
-  }>
-}
-
-export interface QuestionSummaryProps {
-  question_id: string
-  question_text: string
-  answer_count: number
-  unique_answers: Array<{
-    value: string
-    count: number
-  }>
-}
-
-export interface MyAnswerProps {
-  id: string
-  created_at: string
-  form: {
-    id: string
-    title: string
+  formId: FormIdType
+  data: {
+    answers: AnswerItemProps[]
   }
-} 
+}
+
+export interface SubmitAnswersResponse {
+  id: string
+}
+
+export interface GetAllAnswersProps {
+  formId: FormIdType
+}
+
+export interface GetAllAnswersResponse {
+  id: AnswersGroupIdType
+  user_id: UserIdType
+  created_at: string
+}
+
+export interface GetAnswersByUserIdProps {
+  formId: FormIdType
+  userId: UserIdType
+}
+
+export interface GetAnswersByUserIdResponse extends GetAllAnswersResponse {
+  items: AnswerItemResponse[]
+}
+
+export interface ResetAnswersProps {
+  formId: FormIdType
+  answerGroupId: AnswersGroupIdType
+}
+
+export interface ResetAnswersResponse {
+  id: AnswersGroupIdType
+}

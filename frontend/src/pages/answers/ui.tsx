@@ -1,6 +1,5 @@
 import { ResizePanel } from "@shared/ui"
-import { NavIdProps } from "@vkontakte/vkui"
-import { MyAnswers } from "@widgets/my-answers"
+import { Group, Header, NavIdProps, Placeholder } from "@vkontakte/vkui"
 
 export const Answers = (props: NavIdProps) => {
   return (
@@ -8,7 +7,13 @@ export const Answers = (props: NavIdProps) => {
       title={'Мои ответы'}
       {...props}
     >
-      <MyAnswers />
+      <Group header={
+        <Header size='s'>Мои ответы</Header>
+      }>
+        <Placeholder>
+          Здесь пока ничего нет.
+        </Placeholder>
+      </Group>
     </ResizePanel>
   )
 }

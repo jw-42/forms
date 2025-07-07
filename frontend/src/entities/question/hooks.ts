@@ -2,7 +2,7 @@ import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { questionApi } from './api'
 import { QuestionProps } from './types'
 
-const questionKeys = {
+export const questionKeys = {
   lists: (form_id: string) => ['questions', form_id] as const,
   detail: (questionId: string) => ['questions', questionId] as const
 }

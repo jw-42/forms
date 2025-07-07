@@ -2,7 +2,7 @@ import { useQuery } from '@tanstack/react-query'
 import { apiClient } from './config'
 import bridge from '@vkontakte/vk-bridge'
 import { useDispatch } from 'react-redux'
-import { setAccessToken } from '@app/store/config-slice'
+import { setAccessToken, setUserId } from '@app/store/config-slice'
 
 export const useAuth = () => {
   const dispatch = useDispatch()
@@ -13,6 +13,7 @@ export const useAuth = () => {
       const params = await bridge.send('VKWebAppGetLaunchParams')
       const response = await apiClient.post<{ access_token: string }>('/auth/login', params)
       dispatch(setAccessToken(response.access_token))
+      dispatch(setUserId(params.vk_user_id as number))
       return response.access_token
     },
     staleTime: 1000 * 60 * 60, // 1 hour

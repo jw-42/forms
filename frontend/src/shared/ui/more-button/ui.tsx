@@ -15,15 +15,19 @@ export const MoreButton = ({ items, disabled, ...props }: MoreButtonProps) => {
     <IconButton
       disabled={disabled}
       getRootRef={toggleRef}
-      onClick={() => router.showPopout(
-        <ActionSheet
-          {...props}
-          onClose={handleClosePopout}
-          toggleRef={toggleRef}
-        >
-          {items}
-        </ActionSheet>
-      )}
+      onClick={(e: React.MouseEvent<HTMLElement, MouseEvent>) => {
+        e.stopPropagation()
+        
+        router.showPopout(
+          <ActionSheet
+            {...props}
+            onClose={handleClosePopout}
+            toggleRef={toggleRef}
+          >
+            {items}
+          </ActionSheet>
+        )
+      }}
     >
       <Icon24MoreHorizontal color='var(--vkui--color_icon_secondary)' />
     </IconButton>

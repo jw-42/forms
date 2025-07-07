@@ -1,104 +1,110 @@
-import { AnswerItem, useAnswersByForm, useAnswersGroup, useDeleteAnswersGroup } from "@entities/answer"
+import { useGetAllAnswers, useGetAnswersByUserId, useResetAnswers } from "@entities/answer"
+import { Div, Select, Avatar, CustomSelectOption, Spacing, Separator, Button } from "@vkontakte/vkui"
 import { useParams } from "@vkontakte/vk-mini-apps-router"
-import { Button, Div, Placeholder, Select, Separator, Spacing } from "@vkontakte/vkui"
-import React, { useEffect, useState } from "react"
+import React from "react"
+import bridge from "@vkontakte/vk-bridge"
+import { QuestionItem } from "@entities/question"
+import { List } from "@shared/ui"
 
 export const BlankAnswers = () => {
 
   const params = useParams<'id'>()
 
-  const [answersGroupId, setAnswersGroupId] = useState<string | undefined>(undefined)
+  const [selectedUser, setSelectedUser] = React.useState<number | undefined>(undefined)
 
-  const { data: list } = useAnswersByForm(params?.id)
-  const { data: answersGroup } = useAnswersGroup(params?.id, answersGroupId)
-  const deleteAnswersGroup = useDeleteAnswersGroup()
+  const { data: list } = useGetAllAnswers(params?.id as string)
+  const { data: answers } = useGetAnswersByUserId(params?.id as string, selectedUser)
+  const { mutate: resetAnswers } = useResetAnswers()
 
-  useEffect(() => {
-    if (list?.[0]) {
-      setAnswersGroupId(list[0].id)
-    }
-  }, [list])
+  const [users, setUsers] = React.useState<{ value: number, label: string, avatar?: string }[]>([])
 
-  const handleDeleteAnswers = () => {
-    if (answersGroupId && params?.id) {
-      deleteAnswersGroup.mutate({
-        formId: params.id,
-        answersGroupId: answersGroupId
-      }, {
-        onSuccess: () => {
-          // Reset to first available answer group or undefined if none left
-          if (list && list.length > 1) {
-            const currentIndex = list.findIndex(item => item.id === answersGroupId)
-            const nextIndex = currentIndex === 0 ? 1 : currentIndex - 1
-            setAnswersGroupId(list[nextIndex]?.id)
-          } else {
-            setAnswersGroupId(undefined)
+  const handleChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    setSelectedUser(Number(e.target.value))
+  }
+
+  React.useEffect(() => {
+    if (!list || list.length === 0) return
+
+    const user_ids = list.map((answer) => answer.user_id).join(',')
+    
+    bridge.send('VKWebAppGetUserInfo', { user_ids })
+      .then((data: any) => {
+        if (Array.isArray(data?.result)) {
+          const userList = data?.result?.map((user: any) => ({
+            value: user.id,
+            label: `${user.first_name} ${user.last_name}`,
+            avatar: user.photo_100
+          }))
+
+          setUsers(userList)
+          setSelectedUser(userList[0]?.value)
+        } else {
+          const user = {
+            value: data?.id,
+            label: `${data?.first_name} ${data?.last_name}`,
+            avatar: data?.photo_100
           }
+
+          setUsers([user])
+          setSelectedUser(user.value)
         }
       })
-    }
+  }, [ list ])
+
+  const renderOption = ({option, ...restProps}: any) => (
+    <CustomSelectOption
+      {...restProps}
+      key={option.value}
+      before={<Avatar size={24} src={option.avatar} />}
+    />
+  )
+
+  const handleResetAnswers = () => {
+    resetAnswers({
+      formId: params?.id as string,
+      answerGroupId: answers?.id as string
+    })
   }
 
   return (
-    <>
+    <React.Fragment>
       <Div>
         <Select 
-          options={
-            list?.map((answer) => ({
-              label: 'Анонимный пользователь',
-              value: answer.id
-            })) || []
-          }
-          value={answersGroupId || ''}
-          onChange={(e) => setAnswersGroupId(e.currentTarget.value)}
-          placeholder="Выберите пользователя"
+          options={users}
+          value={selectedUser}
+          placeholder='Выберите пользователя'
+          onChange={handleChange}
+          renderOption={renderOption}
         />
       </Div>
 
-      {(answersGroup && answersGroup?.items.length > 0) ? (
-        <React.Fragment>
-          <Spacing>
-            <Separator />
-          </Spacing>
+      <Spacing>
+        <Separator/>
+      </Spacing>
 
-          {answersGroup?.items.map((answer, index) => (
-            <React.Fragment key={index}>
-              <AnswerItem {...answer} form_id={params?.id as string} />
-
-              {(index !== answersGroup.items.length - 1) && (
-                <Spacing>
-                  <Separator />
-                </Spacing>
-              )}
-            </React.Fragment>
-          ))}
-
-          <Spacing>
-            <Separator/>
-          </Spacing>
-
-          <Button
-            size='l'
-            mode='tertiary'
-            appearance='negative'
-            stretched
-            onClick={handleDeleteAnswers}
-            loading={deleteAnswersGroup.isPending}
-          >
-            Удалить ответы пользователя
-          </Button>
-        </React.Fragment>
-      ) : (
-        <React.Fragment>
-          <Spacing>
-            <Separator/>
-          </Spacing>
-
-          <Placeholder>
-            Информация об ответах не найдена
-          </Placeholder>
-        </React.Fragment>
-      )}
-    </>
+      <List afterCondition after={
+        <Button
+          size="l"
+          stretched
+          mode='tertiary'
+          appearance='negative'
+          onClick={handleResetAnswers}
+        >
+          Удалить ответы
+        </Button>
+      }>
+        {answers?.items?.map((item, index) => (
+          <QuestionItem
+            key={index}
+            form_id={params?.id as string}
+            type={item.question.type}
+            text={item.question.text}
+            id={item.question.id}
+            value={item.value}
+            readOnly
+          />
+        ))}
+      </List>
+    </React.Fragment>
   )
 }

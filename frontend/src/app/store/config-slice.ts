@@ -2,12 +2,14 @@ import { createSlice, PayloadAction } from '@reduxjs/toolkit'
 
 interface ConfigSliceProps {
   isInit: boolean
-  accessToken: string | null
+  accessToken: string | null,
+  userId: number | null
 }
 
 const initialState: ConfigSliceProps = {
   isInit: false,
-  accessToken: null
+  accessToken: null,
+  userId: null
 }
 
 const configSlice = createSlice({
@@ -19,9 +21,12 @@ const configSlice = createSlice({
     },
     setAccessToken: (state, action: PayloadAction<string|null>) => {
       state.accessToken = action.payload
+    },
+    setUserId: (state, action: PayloadAction<number|null>) => {
+      state.userId = action.payload
     }
   }
 })
 
-export const { setAccessToken, setInit } = configSlice.actions
+export const { setAccessToken, setInit, setUserId } = configSlice.actions
 export default configSlice.reducer

@@ -4,7 +4,7 @@ import { ActionSheet, Cell, Group, IconButton, Link, Snackbar, Title } from "@vk
 import { useParams, useRouteNavigator } from "@vkontakte/vk-mini-apps-router"
 import { MODALS, routes } from "@shared/model"
 import React, { useRef } from "react"
-import { FormActionsSheet } from "@shared/ui"
+import { FormMoreButton } from "@shared/ui"
 
 export const BlankCover = () => {
 
@@ -23,7 +23,7 @@ export const BlankCover = () => {
       placement='bottom-end'
       toggleRef={ref}
     >
-      <FormActionsSheet formId={form?.id} canEdit={true} />
+      <FormMoreButton formId={form?.id} canEdit={form?.can_edit} />
     </ActionSheet>
   )
 

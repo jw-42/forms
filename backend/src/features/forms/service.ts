@@ -23,8 +23,22 @@ class FormsService {
     return deleteForm(form_id, owner_id)
   }
 
-  async getFormWithAnswerStatus(form_id: string, user_id: number) {
-    return getForm(form_id)
+  async getFormWithDetails(form_id: string, user_id: number) {
+    const prisma = getPrisma()
+    const form = await getForm(form_id)
+    
+    if (!form) return null
+    
+    const answer = await prisma.answersGroup.findFirst({
+      where: { form_id, user_id },
+      select: { id: true }
+    })
+    
+    return {
+      ...form,
+      can_edit: form.owner_id === user_id,
+      has_answer: !!answer
+    }
   }
 }
 

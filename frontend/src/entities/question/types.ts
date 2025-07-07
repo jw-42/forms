@@ -1,10 +1,12 @@
+import { AnswerValueType, FormIdType, QuestionIdType } from "@shared/model"
+
 export interface QuestionProps {
-  id: string
-  type: 'text'
-  form_id: string
+  id: QuestionIdType
+  type: QuestionType
+  form_id: FormIdType
   text: string
   disabled?: boolean
-  value?: string
+  value?: AnswerValueType
   onChange?: (value: string) => void
 }
 
