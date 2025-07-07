@@ -1,5 +1,5 @@
 import { useForm } from "@entities/form"
-import { useAutoUpdateTime } from "@shared/lib"
+import { formatDate } from "@shared/lib"
 import { Icon24Incognito } from "@vkontakte/icons"
 import bridge, { UserInfo } from "@vkontakte/vk-bridge"
 import { useParams } from "@vkontakte/vk-mini-apps-router"
@@ -10,14 +10,16 @@ export const FormDetails = (props: NavIdProps) => {
 
   const params = useParams<'id'>()
   const { data: form } = useForm(params?.id)
-  const createdAt = useAutoUpdateTime(form?.created_at || new Date(0))
 
   const [userInfo, setUserInfo] = React.useState<UserInfo|undefined>(undefined)
 
   React.useEffect(() => {
-    bridge.send('VKWebAppGetUserInfo', { user_id: form?.owner_id })
-      .then((data) => setUserInfo(data))
-  }, [])
+    if (form?.owner_id) {
+      bridge.send('VKWebAppGetUserInfo', { user_id: form?.owner_id })
+        .then((data) => setUserInfo(data))
+    }
+  }, [ form ])
+
   return (
     <ModalPage
       header={
@@ -29,6 +31,8 @@ export const FormDetails = (props: NavIdProps) => {
         <Header size='s'>Об авторе</Header>
       }>
         <Cell
+            href={userInfo?.id ? `https://vk.com/id${userInfo?.id}` : undefined}
+            target={userInfo?.id ? '_blank' : undefined}
             before={
               <Avatar
                 size={48}
@@ -36,9 +40,13 @@ export const FormDetails = (props: NavIdProps) => {
                 src={userInfo?.photo_100}
               />
             }
-            extraSubtitle={form?.created_at && `Анкета создана ${createdAt}`}
+            extraSubtitle={form?.created_at && `Анкета создана ${formatDate(form?.created_at)}`}
           >
-            {userInfo?.first_name} {userInfo?.last_name}
+            {
+              userInfo?.first_name && userInfo?.last_name
+                ? `${userInfo?.first_name} ${userInfo?.last_name}`
+                : 'Анонимный пользователь'
+            }
           </Cell>
       </Group>
 
