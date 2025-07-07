@@ -13,7 +13,7 @@ export const QuestionItem = ({ id, form_id, text, type, readOnly, value, onChang
     <React.Fragment>
       <SimpleCell
         subtitle={PARSE_TYPE[type]}
-        after={(!readOnly && form?.can_edit) && (
+        after={(form?.can_edit) && (
           <MoreButton items={
             <QuestionMoreButton formId={form_id} questionId={id} />
           } />
