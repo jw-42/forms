@@ -3,6 +3,7 @@ import {
   submitAnswers as submitAnswersRepo,
   getAnswersGroupById as getAnswersGroupByIdRepo,
   deleteAnswersGroup as deleteAnswersGroupRepo,
+  deleteAnswersByUserAndForm as deleteAnswersByUserAndFormRepo,
   getAnswersGroupsByUserAndForm as getAnswersGroupsByUserAndFormRepo,
   getAnswersGroupsByForm as getAnswersGroupsByFormRepo,
   getFormWithQuestions,
@@ -43,26 +44,22 @@ export async function submitAnswers(data: SubmitAnswersProps) {
   return submitAnswersRepo(data)
 }
 
-export async function deleteAnswersGroup(answersGroupId: string, userId: number, formId: string) {
-  const answersGroup = await getAnswersGroupByIdRepo(answersGroupId)
+export async function deleteAnswersGroup(userId: number, currentUserId: number, formId: string) {
+  // Check if form exists
+  const form = await getFormById(formId)
   
-  if (!answersGroup) {
-    throw ApiError.NotFound('Answers group not found')
-  }
-
-  // Check that answers group belongs to the specified form
-  if (answersGroup.form_id !== formId) {
-    throw ApiError.NotFound('Answers group not found for this form')
+  if (!form) {
+    throw ApiError.NotFound('Form not found')
   }
 
   // Check permissions: user can delete their own answers or form owner can delete any answers
-  const canDelete = answersGroup.user.id === userId || answersGroup.form.owner_id === userId
+  const canDelete = userId === currentUserId || form.owner_id === currentUserId
   
   if (!canDelete) {
-    throw ApiError.Forbidden('Insufficient permissions to delete this answers group')
+    throw ApiError.Forbidden('Insufficient permissions to delete these answers')
   }
 
-  return deleteAnswersGroupRepo(answersGroupId)
+  return deleteAnswersByUserAndFormRepo(userId, formId)
 }
 
 export async function getAnswersByUserAndForm(formId: string, userId: number, currentUserId: number) {

@@ -18,7 +18,7 @@ export const getAnswersGroupByIdSchema = z.object({
 
 export const deleteAnswersGroupSchema = z.object({
   form_id: z.string().uuid(),
-  answers_group_id: z.string().uuid()
+  user_id: z.number()
 })
 
 export const getAnswersSummarySchema = z.object({

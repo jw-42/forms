@@ -139,6 +139,18 @@ export async function deleteAnswersGroup(answersGroupId: string) {
   })
 }
 
+export async function deleteAnswersByUserAndForm(userId: number, formId: string) {
+  const prisma = getPrisma()
+  const { count } = await prisma.answersGroup.deleteMany({
+    where: {
+      user_id: userId,
+      form_id: formId
+    }
+  })
+  
+  return { deleted: count ? true : false }
+}
+
 export async function hasUserAnsweredForm(formId: string, userId: number) {
   const prisma = getPrisma()
   const answersGroup = await prisma.answersGroup.findFirst({

@@ -17,6 +17,6 @@ answersRouter.get('/', ...getAllByForm)
 answersRouter.get('/:user_id', ...getByUserAndForm)
 
 // Delete answers group
-answersRouter.delete('/:answers_group_id', ...deleteAnswersGroup)
+answersRouter.delete('/:user_id', ...deleteAnswersGroup)
 
 export default answersRouter
