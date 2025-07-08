@@ -13,24 +13,24 @@ const deleteAnswersGroupHandler = factory.createHandlers(async (ctx: Context, ne
       throw ApiError.BadRequest('form_id is required')
     }
 
-    const answers_group_id = ctx.req.param('answers_group_id')
-    if (!answers_group_id) {
-      throw ApiError.BadRequest('answers_group_id is required')
+    const user_id = ctx.req.param('user_id')
+    if (!user_id) {
+      throw ApiError.BadRequest('user_id is required')
     }
 
     // Get user from context (assuming middleware sets it)
-    const user_id = ctx.get('uid')
-    if (!user_id) {
+    const current_user_id = ctx.get('uid')
+    if (!current_user_id) {
       throw ApiError.Unauthorized('User not authenticated')
     }
 
-    const result = deleteAnswersGroupSchema.safeParse({ form_id, answers_group_id })
+    const result = deleteAnswersGroupSchema.safeParse({ form_id, user_id: parseInt(user_id) })
     
     if (!result.success) {
       throw ApiError.BadRequest()
     }
     
-    const response = await deleteAnswersGroup(answers_group_id, user_id, form_id)
+    const response = await deleteAnswersGroup(parseInt(user_id), current_user_id, form_id)
     return ctx.json(response)
   } catch (error) {
     if (error instanceof ApiError) {

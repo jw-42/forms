@@ -46,7 +46,7 @@ export interface GetAnswersByUserIdResponse extends GetAllAnswersResponse {
 
 export interface ResetAnswersProps {
   formId: FormIdType
-  answerGroupId: AnswersGroupIdType
+  userId: UserIdType
 }
 
 export interface ResetAnswersResponse {

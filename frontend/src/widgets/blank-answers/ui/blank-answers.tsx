@@ -62,7 +62,7 @@ export const BlankAnswers = () => {
   const handleResetAnswers = () => {
     resetAnswers({
       formId: params?.id as string,
-      answerGroupId: answers?.id as string
+      userId: selectedUser as number
     })
   }
 

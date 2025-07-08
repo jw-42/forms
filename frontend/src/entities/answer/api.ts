@@ -31,6 +31,6 @@ export const getByUserId = async ({ formId, userId }: GetAnswersByUserIdProps): 
   return await apiClient.get(`/forms/${formId}/answers/${userId}`)
 }
 
-export const reset = async ({ formId, answerGroupId }: ResetAnswersProps): Promise<ResetAnswersResponse> => {
-  return await apiClient.delete(`/forms/${formId}/answers/${answerGroupId}`)
+export const reset = async ({ formId, userId }: ResetAnswersProps): Promise<ResetAnswersResponse> => {
+  return await apiClient.delete(`/forms/${formId}/answers/${userId}`)
 }
