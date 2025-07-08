@@ -7,7 +7,6 @@ import {
   reset,
 } from './api'
 import { formKeys } from '@entities/form/api'
-import { questionKeys } from '@entities/question'
 
 // Hook for submitting answers
 export const useSubmitAnswers = () => {
@@ -18,8 +17,8 @@ export const useSubmitAnswers = () => {
     onSuccess: (_data, variables) => {
       // Invalidate and refetch answers for the form
       queryClient.invalidateQueries({ queryKey: formKeys.detail(variables.formId) })
-      queryClient.invalidateQueries({ queryKey: questionKeys.lists(variables.formId) })
       queryClient.invalidateQueries({ queryKey: answerKeys.list(variables.formId) })
+      queryClient.invalidateQueries({ queryKey: answerKeys.details() })
     },
   })
 }
@@ -51,7 +50,7 @@ export const useResetAnswers = () => {
     onSuccess: (_data, variables) => {
       // Invalidate and refetch answers for the form
       queryClient.invalidateQueries({ queryKey: answerKeys.list(variables.formId) })
-      queryClient.invalidateQueries({ queryKey: answerKeys.details() })
+      queryClient.invalidateQueries({ queryKey: answerKeys.detail(variables.formId, variables.userId.toString()) })
       queryClient.invalidateQueries({ queryKey: formKeys.detail(variables.formId) })
     },
   })
