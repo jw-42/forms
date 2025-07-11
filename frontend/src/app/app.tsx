@@ -5,7 +5,7 @@ import { setInit } from './store/config-slice'
 import { useAuth } from '@shared/api/auth'
 import { RootState } from './store'
 
-import { VIEW, FORMS_PAGES, EpicTabbar, MODALS, FormDetails, BlankBuilderModal, QuestionBuilder, ANSWERS_PAGES } from '@shared/index'
+import { VIEW, FORMS_PAGES, EpicTabbar, MODALS, FormDetails, BlankBuilderModal, QuestionBuilder, ANSWERS_PAGES, OptionsBuilder } from '@shared/index'
 import { Blank, BlankBuilder, Forms, Sidebar } from '@pages/index'
 import React from 'react'
 import bridge from '@vkontakte/vk-bridge'
@@ -29,18 +29,20 @@ export const App = () => {
     <ModalRoot activeModal={activeModal} onClose={() => router.hideModal()}>
       <FormDetails id={MODALS.BLANK_DETAILS} />
       <BlankBuilderModal id={MODALS.BLANK_BUILDER} />
+      <QuestionBuilder id={MODALS.QUESTION_CREATION} />
       <QuestionBuilder id={MODALS.QUESTION_BUILDER} />
+      <OptionsBuilder id={MODALS.OPTIONS_BUILDER} />
     </ModalRoot>
   )
 
-  React.useEffect(() => {
+  React.useEffect(() => {    
     bridge.send('VKWebAppInit')
       .then(() => {
         dispatch(setInit(true))
         return refreshToken()
       })
       .catch((error) => {
-        console.error('Initialization error:', error)
+        console.error('Initialization error:', error)      
       })
   }, [dispatch, refreshToken])
 

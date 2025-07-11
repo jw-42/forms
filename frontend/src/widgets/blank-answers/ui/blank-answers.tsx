@@ -89,6 +89,7 @@ export const BlankAnswers = () => {
           mode='tertiary'
           appearance='negative'
           onClick={handleResetAnswers}
+          disabled={!selectedUser}
         >
           Удалить ответы
         </Button>
@@ -102,6 +103,7 @@ export const BlankAnswers = () => {
             id={item.question.id}
             value={item.value}
             readOnly
+            options={item.question.options || []}
           />
         ))}
       </List>

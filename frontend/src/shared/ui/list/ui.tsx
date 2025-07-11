@@ -30,9 +30,15 @@ export const List = ({ children, after, afterCondition }: ListProps) => {
           )}
         </React.Fragment>
       ) : (
-        <Placeholder>
-          Здесь пока ничего нет
-        </Placeholder>
+        (afterCondition && after) ? (
+          <React.Fragment>
+            {after}
+          </React.Fragment>
+        ) : (
+          <Placeholder>
+            Здесь пока ничего нет
+          </Placeholder>
+        )
       )}
     </React.Fragment>
   )

@@ -1,30 +1,29 @@
 import { MoreButton, QuestionMoreButton } from "@shared/ui"
-import { QuestionItemProps, PARSE_TYPE } from "../types"
+import { QuestionItemProps, QuestionTypeDict } from "../types"
 import { SimpleCell } from "@vkontakte/vkui"
-import { TextQuestion } from "./types"
+import { TextQuestion, RadioQuestion } from "./types"
 import React from "react"
 import { useForm } from "@entities/form/hooks"
 
-export const QuestionItem = ({ id, form_id, text, type, readOnly, value, onChange }: QuestionItemProps) => {
+export const QuestionItem = (props: QuestionItemProps) => {
 
-  const { data: form } = useForm(form_id)
+  const { data: form } = useForm(props.form_id)
 
   return (
     <React.Fragment>
       <SimpleCell
-        subtitle={PARSE_TYPE[type]}
+        subtitle={QuestionTypeDict[props.type]}
         after={(form?.can_edit) && (
           <MoreButton items={
-            <QuestionMoreButton formId={form_id} questionId={id} />
+            <QuestionMoreButton formId={props.form_id} questionId={props.id} />
           } />
         )}
       >
-        {text}
+        {props.text}
       </SimpleCell>
 
-      {type === 'text' && (
-        <TextQuestion readOnly={readOnly} value={value} onChange={onChange} />
-      )}
+      {props.type === 'text' && <TextQuestion {...props} />}
+      {props.type === 'radio' && <RadioQuestion {...props} />}
     </React.Fragment>
   )
 }

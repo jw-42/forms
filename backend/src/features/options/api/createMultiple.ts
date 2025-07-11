@@ -1,22 +1,23 @@
 import type { Context, Next } from 'hono'
 import { createFactory } from 'hono/factory'
 import { ApiError } from '@shared/utils'
-import { createQuestionSchema } from '../types'
-import { createQuestion } from '../service'
+import { createMultipleOptionsSchema } from '../types'
+import { createMultipleOptions } from '../service'
 
 const factory = createFactory()
 
-const createQuestionHandler = factory.createHandlers(async (ctx: Context, next: Next) => {
+const createMultipleOptionsHandler = factory.createHandlers(async (ctx: Context, next: Next) => {
   try {
-    const form_id = ctx.req.param('form_id')
-    if (!form_id) {
-      throw ApiError.BadRequest('form_id is required')
+    const question_id = ctx.req.param('question_id')
+    if (!question_id) {
+      throw ApiError.BadRequest('question_id is required')
     }
 
     const body = await ctx.req.json()
-    const result = createQuestionSchema.safeParse(body)
+    const result = createMultipleOptionsSchema.safeParse(body)
     
     if (!result.success) {
+      console.error(result.error)
       throw ApiError.BadRequest(
         'One of the parameters is invalid or not provided',
         result.error.errors.map((error) => ({
@@ -26,11 +27,12 @@ const createQuestionHandler = factory.createHandlers(async (ctx: Context, next: 
       )
     }
     
-    const question = await createQuestion({
+    const userId = ctx.get('uid')
+    const options = await createMultipleOptions({
       ...result.data,
-      form_id
-    })
-    return ctx.json(question)
+      question_id
+    }, userId)
+    return ctx.json(options)
   } catch (error) {
     if (error instanceof ApiError) {
       throw error;
@@ -40,4 +42,4 @@ const createQuestionHandler = factory.createHandlers(async (ctx: Context, next: 
   }
 })
 
-export default createQuestionHandler
+export default createMultipleOptionsHandler 
