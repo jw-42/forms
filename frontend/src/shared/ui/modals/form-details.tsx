@@ -31,23 +31,21 @@ export const FormDetails = (props: NavIdProps) => {
         <Header size='s'>Об авторе</Header>
       }>
         <Cell
-            href={userInfo?.id ? `https://vk.com/id${userInfo?.id}` : undefined}
-            target={userInfo?.id ? '_blank' : undefined}
-            before={
-              <Avatar
-                size={48}
-                fallbackIcon={<Icon24Incognito/>}
-                src={userInfo?.photo_100}
-              />
-            }
-            extraSubtitle={form?.created_at && `Анкета создана ${formatDate(form?.created_at)}`}
-          >
-            {
-              userInfo?.first_name && userInfo?.last_name
-                ? `${userInfo?.first_name} ${userInfo?.last_name}`
-                : 'Анонимный пользователь'
-            }
-          </Cell>
+          before={
+            <Avatar
+              size={48}
+              fallbackIcon={<Icon24Incognito/>}
+              src={userInfo?.photo_100}
+            />
+          }
+          extraSubtitle={form?.created_at && `Анкета создана ${formatDate(form?.created_at)}`}
+        >
+          {
+            userInfo?.first_name && userInfo?.last_name
+              ? `${userInfo?.first_name} ${userInfo?.last_name}`
+              : 'Анонимный пользователь'
+          }
+        </Cell>
       </Group>
 
       <Group header={

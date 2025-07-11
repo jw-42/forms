@@ -44,6 +44,7 @@ model Form {
 
 enum QuestionType {
   text
+  radio
 }
 
 model Question {
@@ -51,9 +52,20 @@ model Question {
   type       QuestionType @default(text)
   form_id    String
   text       String
+  required   Boolean      @default(true)
   created_at DateTime     @default(now())
   form       Form         @relation(fields: [form_id], references: [id], onDelete: Cascade)
-  answer     Answer[]
+  answers    Answer[]
+  options    Option[]
+}
+
+model Option {
+  id          String   @id @default(uuid())
+  question_id String
+  text        String
+  order       Int      @default(0)
+  created_at  DateTime @default(now())
+  question    Question @relation(fields: [question_id], references: [id], onDelete: Cascade)
 }
 
 model AnswersGroup {

@@ -7,6 +7,9 @@ export const questionKeys = {
   detail: (questionId: string) => ['questions', questionId] as const
 }
 
+/**
+ * Хук для получения списка вопросов
+ */
 export const useQuestions = (formId?: string) => {
   return useQuery({
     queryKey: questionKeys.lists(formId as string),
@@ -15,6 +18,9 @@ export const useQuestions = (formId?: string) => {
   })
 }
 
+/**
+ * Хук для получения вопроса
+ */
 export const useQuestion = (formId?: string, questionId?: string) => {
   return useQuery({
     queryKey: questionKeys.detail(questionId as string),
@@ -23,6 +29,9 @@ export const useQuestion = (formId?: string, questionId?: string) => {
   })
 }
 
+/**
+ * Хук для создания вопроса
+ */
 export const useCreateQuestion = () => {
   const queryClient = useQueryClient()
   
@@ -35,6 +44,9 @@ export const useCreateQuestion = () => {
   })
 }
 
+/**
+ * Хук для обновления вопроса
+ */
 export const useUpdateQuestion = () => {
   const queryClient = useQueryClient()
   
@@ -48,6 +60,9 @@ export const useUpdateQuestion = () => {
   })
 }
 
+/**
+ * Хук для удаления вопроса
+ */
 export const useDeleteQuestion = () => {
   const queryClient = useQueryClient()
   

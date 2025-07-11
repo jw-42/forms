@@ -16,6 +16,15 @@ export async function getAllQuestions(formId: string) {
   const prisma = getPrisma()
   return prisma.question.findMany({
     where: { form_id: formId },
+    include: {
+      options: {
+        select: {
+          id: true,
+          text: true,
+          order: true
+        }
+      }
+    },
     orderBy: { created_at: 'asc' }
   })
 }
@@ -26,6 +35,15 @@ export async function getQuestionById(formId: string, questionId: string) {
     where: { 
       id: questionId,
       form_id: formId
+    },
+    include: {
+      options: {
+        select: {
+          id: true,
+          text: true,
+          order: true
+        }
+      }
     }
   })
 }
@@ -54,4 +72,35 @@ export async function deleteQuestion(formId: string, questionId: string) {
       id: true
     }
   })
+}
+
+// Универсальная функция для получения вопроса с настраиваемыми включениями
+export async function getQuestionWithInclude(questionId: string, include?: any) {
+  const prisma = getPrisma()
+  return prisma.question.findUnique({
+    where: { id: questionId },
+    include
+  })
+}
+
+// Функции для получения вопросов с различными включениями
+export async function getQuestionWithOptionsAndForm(questionId: string) {
+  return getQuestionWithInclude(questionId, { 
+    options: true,
+    form: {
+      select: { owner_id: true }
+    }
+  })
+}
+
+export async function getQuestionWithForm(questionId: string) {
+  return getQuestionWithInclude(questionId, {
+    form: {
+      select: { owner_id: true }
+    }
+  })
+}
+
+export async function getQuestion(questionId: string) {
+  return getQuestionWithInclude(questionId)
 }

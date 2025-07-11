@@ -76,8 +76,20 @@ export async function getAnswersGroupsByUserAndForm(userId: number, formId: stri
             select: {
               id: true,
               text: true,
-              type: true
+              type: true,
+              options: {
+                select: {
+                  id: true,
+                  text: true,
+                  order: true
+                }
+              }
             }
+          }
+        },
+        orderBy: {
+          question: {
+            created_at: 'asc'
           }
         }
       }

@@ -11,6 +11,11 @@ export interface AnswerItemResponse extends AnswerItemProps {
     id: string
     text: string
     type: QuestionType
+    options?: {
+      id: string
+      text: string
+      order: number
+    }[]
   }
 }
 

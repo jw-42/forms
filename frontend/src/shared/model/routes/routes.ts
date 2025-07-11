@@ -51,7 +51,9 @@ export enum HELP_PAGES {
 export enum MODALS {
   BLANK_DETAILS = 'blank-details',
   BLANK_BUILDER = 'blank-builder',
+  QUESTION_CREATION = 'question-creation',
   QUESTION_BUILDER = 'question-builder',
+  OPTIONS_BUILDER = 'options-builder',
 }
 
 export const routes = RoutesConfig.create([
@@ -63,7 +65,9 @@ export const routes = RoutesConfig.create([
     createPanel(FORMS_PAGES.BUILDER, '/form/create', []),
     createPanel(FORMS_PAGES.BLANK, '/form/:id', [
       createTab(BLANK_TABS.QUESTIONS, '/form/:id', [
+        createModal(MODALS.QUESTION_CREATION, '/form/:id/c/:type', [ 'id', 'type' ] as const),
         createModal(MODALS.QUESTION_BUILDER, '/form/:id/q/:qid', [ 'id', 'qid' ] as const),
+        createModal(MODALS.OPTIONS_BUILDER, '/form/:id/q/:qid/options', [ 'id', 'qid' ] as const),
       ], [ 'id' ] as const),
       createTab(BLANK_TABS.ANSWERS, '/form/:id/answers', [], [ 'id' ] as const),
       createTab(BLANK_TABS.OPTIONS, '/form/:id/options', [], [ 'id' ] as const),

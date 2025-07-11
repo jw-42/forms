@@ -1,9 +1,11 @@
-import { MODALS } from "@shared/model/routes/routes"
-import { Icon20ArticlesOutline } from "@vkontakte/icons"
+import { routes } from "@shared/model"
+import { Icon20ArticlesOutline, Icon20ListBulletOutline } from "@vkontakte/icons"
 import { Button, ButtonGroup, Placeholder } from "@vkontakte/vkui"
-import { useRouteNavigator } from "@vkontakte/vk-mini-apps-router"
+import { useParams, useRouteNavigator } from "@vkontakte/vk-mini-apps-router"
 
 export const QuestionBuilder = () => {
+
+  const params = useParams<'id'>()
 
   const router = useRouteNavigator()
 
@@ -15,9 +17,24 @@ export const QuestionBuilder = () => {
             size='m'
             mode='secondary'
             before={<Icon20ArticlesOutline />}
-            onClick={() => router.showModal(MODALS.QUESTION_BUILDER)}
+            onClick={() => router.push(routes.forms.blank.questions["question-creation"].path, {
+              id: params?.id,
+              type: 'text'
+            })}
           >
             Текстовый
+          </Button>
+
+          <Button
+            size='m'
+            mode='secondary'
+            before={<Icon20ListBulletOutline />}
+            onClick={() => router.push(routes.forms.blank.questions["question-creation"].path, {
+              id: params?.id,
+              type: 'radio'
+            })}
+          >
+            С вариантами
           </Button>
         </ButtonGroup>
       }

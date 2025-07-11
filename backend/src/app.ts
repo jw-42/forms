@@ -10,7 +10,7 @@ app.use(logger())
 
 app.route('/', router)
 
-app.notFound(() => { throw ApiError.NotFound })
+app.notFound(() => { throw ApiError.NotFound() })
 app.onError(ErrorHandlerMiddleware)
 
 export default {
