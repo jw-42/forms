@@ -1,4 +1,4 @@
-import { Div, ModalPage, ModalPageContent, ModalPageHeader, NavIdProps } from "@vkontakte/vkui"
+import { Div, ModalPage, ModalPageContent, ModalPageHeader, NavIdProps, Paragraph } from "@vkontakte/vkui"
 
 interface ErrorModalProps extends NavIdProps {
   title?: string
@@ -17,7 +17,9 @@ export const ErrorModal = ({ title, message, ...props }: ErrorModalProps) => {
     >
       <ModalPageContent>
         <Div>
-          {message}
+          <Paragraph>
+            {message}
+          </Paragraph>
         </Div>
       </ModalPageContent>
     </ModalPage>
