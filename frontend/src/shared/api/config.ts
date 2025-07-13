@@ -52,17 +52,24 @@ class Api {
       (response) => response,
       (error) => {
         const status = error.response?.status
-        const message = error.response?.data?.message || error.message || 'Произошла неизвестная ошибка'
+        let message = error.response?.data?.error_message || error.message || 'Произошла неизвестная ошибка'
         
         let title = 'Ошибка'
-        if (status === 401) {
+        if (status === 400) {
+          title = 'Некорректный запрос'
+          message = 'Один или несколько параметров запроса некорректны'
+        } else if (status === 401) {
           title = 'Ошибка авторизации'
+          message = 'Перезагрузите страницу и попробуйте снова'
         } else if (status === 403) {
-          title = 'Доступ запрещен'
+          title = 'Ошибка доступа'
+          message = 'У вас нет доступа к этой странице'
         } else if (status === 404) {
-          title = 'Не найдено'
+          title = 'Страница не найдена'
+          message = 'Возможно, она была удалена или ещё не создана'
         } else if (status === 500) {
           title = 'Ошибка сервера'
+          message = 'Произошла ошибка на сервере. Попробуйте позже'
         }
 
         errorService.showError(title, message)
