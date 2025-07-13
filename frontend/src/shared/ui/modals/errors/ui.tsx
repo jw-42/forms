@@ -1,11 +1,12 @@
-import { Div, ModalPage, ModalPageContent, ModalPageHeader, NavIdProps, Paragraph } from "@vkontakte/vkui"
+import { ModalPage, ModalPageContent, ModalPageHeader, NavIdProps, Placeholder } from "@vkontakte/vkui"
 
 interface ErrorModalProps extends NavIdProps {
   title?: string
   message?: string
+  icon?: React.ReactNode
 }
 
-export const ErrorModal = ({ title, message, ...props }: ErrorModalProps) => {
+export const ErrorModal = ({ title, message, icon, ...props }: ErrorModalProps) => {
   return(
     <ModalPage
       header={
@@ -16,11 +17,9 @@ export const ErrorModal = ({ title, message, ...props }: ErrorModalProps) => {
       {...props}
     >
       <ModalPageContent>
-        <Div>
-          <Paragraph>
-            {message}
-          </Paragraph>
-        </Div>
+        <Placeholder icon={icon}>
+          {message}
+        </Placeholder>
       </ModalPageContent>
     </ModalPage>
   )
