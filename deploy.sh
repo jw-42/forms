@@ -23,7 +23,7 @@ elif [ "$ENVIRONMENT" = "local" ]; then
     docker compose down
     docker compose up -d --build
     echo "Local deployment completed!"
-    echo "Your app is available at: http://localhost"
+    echo "Your app is available at: http://localhost:8080"
 else
     echo "Invalid environment. Use 'local' or 'production'"
     exit 1
