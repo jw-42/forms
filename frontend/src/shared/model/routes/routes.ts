@@ -54,6 +54,7 @@ export enum MODALS {
   QUESTION_CREATION = 'question-creation',
   QUESTION_BUILDER = 'question-builder',
   OPTIONS_BUILDER = 'options-builder',
+  ERROR = 'error',
 }
 
 export const routes = RoutesConfig.create([

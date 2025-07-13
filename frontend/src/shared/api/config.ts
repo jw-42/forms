@@ -3,6 +3,31 @@ import { store } from '@app/store'
 
 export const API_URL = import.meta.env.VITE_API_URL
 
+// Global error handler
+class ErrorService {
+  private static instance: ErrorService
+  private showErrorModal?: ((title: string, message: string) => void) | undefined
+
+  static getInstance(): ErrorService {
+    if (!ErrorService.instance) {
+      ErrorService.instance = new ErrorService()
+    }
+    return ErrorService.instance
+  }
+
+  setErrorModal(showErrorModal: ((title: string, message: string) => void) | undefined) {
+    this.showErrorModal = showErrorModal
+  }
+
+  showError(title: string, message: string) {
+    if (this.showErrorModal) {
+      this.showErrorModal(title, message)
+    }
+  }
+}
+
+export const errorService = ErrorService.getInstance()
+
 class Api {
   private api: AxiosInstance
 
@@ -21,6 +46,29 @@ class Api {
       }
       return config
     })
+
+    // Add response interceptor for error handling
+    this.api.interceptors.response.use(
+      (response) => response,
+      (error) => {
+        const status = error.response?.status
+        const message = error.response?.data?.message || error.message || 'Произошла неизвестная ошибка'
+        
+        let title = 'Ошибка'
+        if (status === 401) {
+          title = 'Ошибка авторизации'
+        } else if (status === 403) {
+          title = 'Доступ запрещен'
+        } else if (status === 404) {
+          title = 'Не найдено'
+        } else if (status === 500) {
+          title = 'Ошибка сервера'
+        }
+
+        errorService.showError(title, message)
+        return Promise.reject(error)
+      }
+    )
   }
 
   async get<T>(endpoint: string, config?: AxiosRequestConfig): Promise<T> {

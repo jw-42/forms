@@ -5,7 +5,7 @@ import { setInit } from './store/config-slice'
 import { useAuth } from '@shared/api/auth'
 import { RootState } from './store'
 
-import { VIEW, FORMS_PAGES, EpicTabbar, MODALS, FormDetails, BlankBuilderModal, QuestionBuilder, ANSWERS_PAGES, OptionsBuilder } from '@shared/index'
+import { VIEW, FORMS_PAGES, EpicTabbar, MODALS, FormDetails, BlankBuilderModal, QuestionBuilder, ANSWERS_PAGES, OptionsBuilder, ErrorModalWrapper } from '@shared/index'
 import { Blank, BlankBuilder, Forms, Sidebar } from '@pages/index'
 import React from 'react'
 import bridge from '@vkontakte/vk-bridge'
@@ -32,6 +32,7 @@ export const App = () => {
       <QuestionBuilder id={MODALS.QUESTION_CREATION} />
       <QuestionBuilder id={MODALS.QUESTION_BUILDER} />
       <OptionsBuilder id={MODALS.OPTIONS_BUILDER} />
+      <ErrorModalWrapper />
     </ModalRoot>
   )
 
