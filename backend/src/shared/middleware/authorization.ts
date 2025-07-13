@@ -36,12 +36,12 @@ export const AuthorizationMiddleware = async (ctx: Context, next: Next) => {
       })
 
       if (!session) {
-        throw ApiError.Forbidden("Access denied: session expired")
+        throw ApiError.Unauthorized("Session expired")
       }
 
       ctx.set('uid', decoded.uid)
     } else {
-      throw ApiError.Forbidden("Access denied: invalid token")
+      throw ApiError.Unauthorized("Invalid access token")
     }
 
     return next()
