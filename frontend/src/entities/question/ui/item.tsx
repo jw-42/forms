@@ -12,6 +12,7 @@ export const QuestionItem = (props: QuestionItemProps) => {
   return (
     <React.Fragment>
       <SimpleCell
+        multiline
         subtitle={QuestionTypeDict[props.type]}
         after={(form?.can_edit) && (
           <MoreButton items={
