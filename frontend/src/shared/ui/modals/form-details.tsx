@@ -3,7 +3,7 @@ import { formatDate } from "@shared/lib"
 import { Icon24Incognito } from "@vkontakte/icons"
 import bridge, { UserInfo } from "@vkontakte/vk-bridge"
 import { useParams } from "@vkontakte/vk-mini-apps-router"
-import { Avatar, Cell, Group, Header, MiniInfoCell, ModalPage, ModalPageHeader, NavIdProps } from "@vkontakte/vkui"
+import { Avatar, Cell, Div, Group, Header, ModalPage, ModalPageHeader, NavIdProps, Paragraph } from "@vkontakte/vkui"
 import React from "react"
 
 export const FormDetails = (props: NavIdProps) => {
@@ -51,9 +51,16 @@ export const FormDetails = (props: NavIdProps) => {
       <Group header={
         <Header size='s'>Описание</Header>
       }>
-        <MiniInfoCell textWrap='full'>
-          {form?.description}
-        </MiniInfoCell>
+        <Div>
+          <Paragraph 
+            style={{ 
+              color: 'var(--vkui--color_text_secondary)',
+              whiteSpace: 'pre-wrap'
+            }}
+          >
+            {form?.description}
+          </Paragraph>
+        </Div>
       </Group>
     </ModalPage>
   )
