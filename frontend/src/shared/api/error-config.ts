@@ -9,6 +9,12 @@ export function configureErrorHandling() {
     customMessage: 'Возможно, вы заполнили не все поля или ввели некорректные значения.'
   })
 
+  errorService.configureErrorForMethod('/forms', 409, 'POST', {
+    showModal: true,
+    customTitle: 'Достигнут лимит',
+    customMessage: 'Вы достигли лимита на количество активных форм. Отредактируйте уже имеющиеся или удалите одну из них, чтобы создать новую.'
+  })
+
   errorService.configureErrorForPatternAndMethod('/forms/:form_id', 404, 'GET', {
     showModal: true,
     customTitle: 'Форма не найдена',
