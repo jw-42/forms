@@ -27,6 +27,10 @@ export class ApiError extends Error {
         return new ApiError(403, message);
     }
 
+    static Conflict(message: string = 'Request conflicts with current state') {
+        return new ApiError(409, message);
+    }
+
     static Internal(message: string = 'Internal server error') {
         return new ApiError(500, message);
     }

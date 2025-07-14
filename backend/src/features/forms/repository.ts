@@ -75,3 +75,11 @@ export const deleteForm = async (form_id: string, owner_id: number) => {
     }
   })
 }
+
+export const countUserForms = async (owner_id: number) => {
+  const prisma = getPrisma()
+  
+  return prisma.form.count({
+    where: { owner_id }
+  })
+}
