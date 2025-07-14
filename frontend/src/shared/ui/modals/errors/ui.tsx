@@ -17,7 +17,7 @@ export const ErrorModal = ({ title, message, icon, ...props }: ErrorModalProps) 
       {...props}
     >
       <ModalPageContent>
-        <Placeholder icon={icon}>
+        <Placeholder icon={icon || undefined}>
           {message}
         </Placeholder>
       </ModalPageContent>
