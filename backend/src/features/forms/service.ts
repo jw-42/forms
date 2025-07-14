@@ -1,6 +1,7 @@
-import { getForms, getForm, createForm, updateForm, deleteForm } from './repository'
+import { getForms, getForm, createForm, updateForm, deleteForm, countUserForms } from './repository'
 import type { CreateFormInput, UpdateFormInput } from './types'
 import { getPrisma } from '@infra/database'
+import { ApiError } from '@shared/utils'
 
 class FormsService {
   async getAllForms(owner_id: number, count: number = 10, offset: number = 0) {
@@ -12,6 +13,13 @@ class FormsService {
   }
 
   async createForm(owner_id: number, data: CreateFormInput) {
+    // Проверяем количество существующих форм пользователя
+    const formsCount = await countUserForms(owner_id)
+    
+    if (formsCount >= 3) {
+      throw ApiError.Conflict('Form limit reached.')
+    }
+    
     return createForm(owner_id, data)
   }
 
