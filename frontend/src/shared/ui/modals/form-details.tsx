@@ -51,7 +51,7 @@ export const FormDetails = (props: NavIdProps) => {
       <Group header={
         <Header size='s'>Описание</Header>
       }>
-        <Div>
+        <Div style={{ paddingTop: 0 }}>
           <Paragraph 
             style={{ 
               color: 'var(--vkui--color_text_secondary)',
