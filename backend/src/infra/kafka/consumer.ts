@@ -11,7 +11,7 @@ const kafka = new Kafka({
 const consumer = kafka.consumer({ groupId: 'form-answers-group' })
 
 const vk = new VK({
-  token: process.env.VK_GROUP_TOKEN || 'your_VK_GROUP_TOKEN_here'
+  token: process.env.VK_GROUP_TOKEN || ''
 })
 
 async function sendVkNotify(owner_id: number, message: string) {
