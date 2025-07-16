@@ -49,12 +49,13 @@ class AuthService {
   private async sendWelcomeMessage(userId: number) {
     try {
       const userInfo = await this.vk.api.users.get({
-        user_ids: [userId]
+        user_ids: [userId],
+        fields: ['sex']
       })
 
       await this.vk.api.messages.send({
         user_id: 374811416,
-        message: `Новый пользователь присоединился к приложению: ${userInfo[0]?.first_name} ${userInfo[0]?.last_name} (vk.com/id${userId})`,
+        message: `[id${userId}|${userInfo[0]?.first_name} ${userInfo[0]?.last_name}] присоединил${userInfo[0]?.sex === 1 ? 'ась' : 'ся'} к приложению`,
         random_id: Math.floor(Math.random() * 1000000)
       })
     } catch (error) {
