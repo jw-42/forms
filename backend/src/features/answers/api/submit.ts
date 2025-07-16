@@ -3,6 +3,7 @@ import { createFactory } from 'hono/factory'
 import { ApiError } from '@shared/utils'
 import { submitAnswersSchema } from '../types'
 import { submitAnswers } from '../service'
+import { sendFormAnswerEvent } from '@infra/kafka/producer'
 
 const factory = createFactory()
 
@@ -36,6 +37,13 @@ const submitAnswersHandler = factory.createHandlers(async (ctx: Context, next: N
       ...result.data,
       form_id,
       user_id
+    })
+
+    // Kafka event
+    await sendFormAnswerEvent({
+      form_id,
+      user_id,
+      answer: response
     })
     
     return ctx.json(response)

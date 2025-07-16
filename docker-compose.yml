@@ -31,6 +31,7 @@ services:
     build: ./backend
     environment:
       DATABASE_URL: postgresql://postgres:postgres@postgres:5432/forms_cloud
+      VK_GROUP_TOKEN: vk1.a.qd2T3QNslkRNSpeCFkQiiZgKm_iv-wKdYLlDqtoV3D4vdOMLAFPPYwCLapbo146r4AQzipoL9NKAENBdBs-WvrP_oXCK-FW1HeLpXZpB8oyGkMpOTd49w1ZVeK1mJwLBhgsU12awb0BcuewESPQV_eB0lrUbnjIkmIVlGafdLxq8xMriCiU0UGGRwR7L5VpLXJdjbB5a_txndDPuXbsnIw
     ports:
       - "8000:8000"
     depends_on:
@@ -43,6 +44,43 @@ services:
     ports:
       - "3000:3000"
     depends_on:
+      - backend
+    networks:
+      - dev
+
+  zookeeper:
+    image: confluentinc/cp-zookeeper:7.5.0
+    environment:
+      ZOOKEEPER_CLIENT_PORT: 2181
+      ZOOKEEPER_TICK_TIME: 2000
+    ports:
+      - "2181:2181"
+    networks:
+      - dev
+
+  kafka:
+    image: confluentinc/cp-kafka:7.5.0
+    depends_on:
+      - zookeeper
+    ports:
+      - "9092:9092"
+    environment:
+      KAFKA_BROKER_ID: 1
+      KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka:9092
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
+    networks:
+      - dev
+
+  consumer:
+    build: ./backend
+    command: bun run src/infra/kafka/consumer.ts
+    environment:
+      DATABASE_URL: postgresql://postgres:postgres@postgres:5432/forms_cloud
+      KAFKA_BROKER: kafka:9092
+      VK_GROUP_TOKEN: vk1.a.qd2T3QNslkRNSpeCFkQiiZgKm_iv-wKdYLlDqtoV3D4vdOMLAFPPYwCLapbo146r4AQzipoL9NKAENBdBs-WvrP_oXCK-FW1HeLpXZpB8oyGkMpOTd49w1ZVeK1mJwLBhgsU12awb0BcuewESPQV_eB0lrUbnjIkmIVlGafdLxq8xMriCiU0UGGRwR7L5VpLXJdjbB5a_txndDPuXbsnIw
+    depends_on:
+      - kafka
       - backend
     networks:
       - dev

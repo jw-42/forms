@@ -30,6 +30,7 @@ export const getForm = async (form_id: string) => {
       description: true,
       created_at: true,
       updated_at: true,
+      notifications: true,
     }
   })
 }
