@@ -26,7 +26,7 @@ async function sendVkNotify(owner_id: number, message: string) {
 
 async function getUserName(user_id: number): Promise<{first_name: string, last_name: string}> {
   try {
-    const user = await vk.api.users.get({ user_ids: [user_id] })
+    const user = await vk.api.users.get({ user_ids: [user_id], name_case: 'Acc' })
     if (user && user[0]) {
       return { first_name: user[0].first_name, last_name: user[0].last_name }
     }
