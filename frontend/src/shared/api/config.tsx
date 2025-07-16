@@ -49,8 +49,8 @@ class Api {
           return HttpErrorHandler.handleOtherErrors(error, status)
         } catch (interceptorError) {
           console.error('Api interceptor: Error in error handler:', interceptorError)
-          // Fallback: show alert and reject the original error
-          alert(`Произошла ошибка: ${error.message}`)
+          // Fallback: log error and reject the original error
+          console.error('Api interceptor failed:', { error: error.message, interceptorError })
           return Promise.reject(error)
         }
       }
