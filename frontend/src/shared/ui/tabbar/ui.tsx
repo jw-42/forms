@@ -21,14 +21,14 @@ export const EpicTabbar = () => {
 
       <TabbarItem
         label='Ответы'
-        onClick={() => router.push(routes.forms.overview.path)}
+        onClick={() => router.push(routes.answers.overview.path)}
       >
         <Icon24RecentOutline />
       </TabbarItem>
 
       <TabbarItem
         label='Настройки'
-        onClick={() => router.push(routes.forms.overview.path)}
+        onClick={() => router.push(routes.settings.overview.path)}
       >
         <Icon28SettingsOutline width={24} height={24} />
       </TabbarItem>
