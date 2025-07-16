@@ -5,7 +5,9 @@ export const BlankOptions = () => {
   return(
     <React.Fragment>
       <Cell
-        after={<Switch defaultChecked />}
+        disabled
+        multiline
+        after={<Switch disabled />}
         extraSubtitle='Мы напишем в личных сообщениях'
       >
         Уведомления об ответах

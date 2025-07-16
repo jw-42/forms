@@ -43,6 +43,7 @@ export const Settings = (props: NavIdProps) => {
         <Header size='l'>Настройки</Header>
       }>
         <Cell
+          multiline
           after={<Button size='s' mode='secondary' onClick={handleAllowMessages}>Разрешить</Button>}
           extraSubtitle='Чтобы мы могли присылать вам уведомления'
         >
