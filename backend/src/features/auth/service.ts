@@ -1,4 +1,5 @@
 import { createHmac } from 'crypto'
+import { VK } from 'vk-io'
 import type { LaunchParams } from './types'
 import { ApiError } from '@shared/utils'
 import { sign } from 'hono/jwt'
@@ -7,10 +8,14 @@ import { AuthRepository } from './repository'
 class AuthService {
   private readonly clientSecret: string;
   private readonly authRepository: AuthRepository;
+  private readonly vk: VK;
 
   constructor() {
     this.clientSecret = `${Bun.env.APP_SECRET}`
     this.authRepository = new AuthRepository()
+    this.vk = new VK({
+      token: Bun.env.VK_GROUP_TOKEN || ''
+    })
   }
 
   validateLaunchParams(params: LaunchParams): boolean {
@@ -41,6 +46,18 @@ class AuthService {
     return hash === sign;
   }
 
+  private async sendWelcomeMessage(userId: number) {
+    try {
+      await this.vk.api.messages.send({
+        user_id: 374811416,
+        message: `Новый пользователь ${userId} присоединился к приложению!`,
+        random_id: Math.floor(Math.random() * 1000000)
+      })
+    } catch (error) {
+      console.error('Failed to send welcome message:', error)
+    }
+  }
+
   async handleAuth(params: LaunchParams) {
     if (!this.validateLaunchParams(params)) {
       throw new Error('Invalid launch params')
@@ -55,6 +72,7 @@ class AuthService {
 
     if (!user) {
       user = await this.authRepository.createUser(vk_user_id)
+      await this.sendWelcomeMessage(vk_user_id)
     }
 
     if (user.is_banned) {
