@@ -60,15 +60,7 @@ const commands: Record<string, CommandConfig> = {
             where: { owner_id: userId },
             select: {
               id: true,
-              title: true,
-              description: true,
-              created_at: true,
-              updated_at: true,
-              questions: {
-                select: {
-                  _count: true
-                }
-              }
+              title: true
             },
             orderBy: {
               created_at: 'desc'
