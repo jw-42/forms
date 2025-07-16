@@ -171,13 +171,13 @@ export class ErrorService {
         this.showErrorModal(title, message, _icon)
       } catch (error) {
         console.error('ErrorService: Error showing modal:', error)
-        // Fallback: show alert if modal fails
-        alert(`${title}\n\n${message}`)
+        // Fallback: log error instead of showing alert
+        console.error('Error modal failed:', { title, message, error })
       }
     } else {
       console.log('ErrorService: showErrorModal is not set')
-      // Fallback: show alert if no modal is set
-      alert(`${title}\n\n${message}`)
+      // Fallback: log error instead of showing alert
+      console.error('No error modal available:', { title, message })
     }
   }
 }
@@ -229,8 +229,8 @@ export class HttpErrorHandler {
       return Promise.reject(error)
     } catch (handlerError) {
       console.error('HttpErrorHandler: Error in handleOtherErrors:', handlerError)
-      // Fallback: show alert and reject the original error
-      alert(`Ошибка обработки: ${error.message}`)
+      // Fallback: log error and reject the original error
+      console.error('Error handler failed:', { error: error.message, handlerError })
       return Promise.reject(error)
     }
   }
