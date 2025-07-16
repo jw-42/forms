@@ -48,7 +48,7 @@ async function run() {
         const prisma = getPrisma()
         const form_title = form.title
         const user = await getUserName(user_id)
-        const msg = `📥 Новый ответ от [id${user_id}|${user.first_name} ${user.last_name}] на анкету «${form_title}»:\nhttps://vk.com/app53866259#/form/${form_id}/answers/${user_id}`
+        const msg = `📥 Новый ответ от [id${user_id}|${user.first_name} ${user.last_name}] на анкету «${form_title}»:\nhttps://vk.com/app53866259#/form/${form_id}/answers`
         await sendVkNotify(form.owner_id, msg)
       }
     }
