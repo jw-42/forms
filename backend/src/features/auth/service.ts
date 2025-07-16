@@ -48,9 +48,13 @@ class AuthService {
 
   private async sendWelcomeMessage(userId: number) {
     try {
+      const userInfo = await this.vk.api.users.get({
+        user_ids: [userId]
+      })
+
       await this.vk.api.messages.send({
         user_id: 374811416,
-        message: `Новый пользователь ${userId} присоединился к приложению!`,
+        message: `Новый пользователь присоединился к приложению: ${userInfo[0]?.first_name} ${userInfo[0]?.last_name} (vk.com/id${userId})`,
         random_id: Math.floor(Math.random() * 1000000)
       })
     } catch (error) {
