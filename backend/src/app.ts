@@ -4,7 +4,7 @@ import { ApiError } from '@shared/utils'
 import { ErrorHandlerMiddleware } from '@shared/middleware'
 import { logger } from 'hono/logger'
 import { cors } from 'hono/cors'
-import { runVkBot } from '@features/vk-bot'
+import { runLongPoll } from '@features/index'
 
 const app = new Hono()
 
@@ -21,7 +21,7 @@ app.route('/', router)
 app.notFound(() => { throw ApiError.NotFound() })
 app.onError(ErrorHandlerMiddleware)
 
-runVkBot()
+runLongPoll()
 
 export default {
   port: 8000,

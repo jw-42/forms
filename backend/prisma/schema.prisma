@@ -29,15 +29,16 @@ model Session {
 }
 
 model Form {
-  id          String         @id @default(uuid())
-  title       String
-  description String
-  owner_id    Int
-  owner       User           @relation(fields: [owner_id], references: [id], onDelete: Cascade)
-  created_at  DateTime       @default(now())
-  updated_at  DateTime       @updatedAt
-  questions   Question[]
-  answers     AnswersGroup[]
+  id            String         @id @default(uuid())
+  title         String
+  description   String
+  owner_id      Int
+  notifications Boolean        @default(false)
+  created_at    DateTime       @default(now())
+  updated_at    DateTime       @updatedAt
+  owner         User           @relation(fields: [owner_id], references: [id], onDelete: Cascade)
+  questions     Question[]
+  answers       AnswersGroup[]
 
   @@unique([title, owner_id])
 }

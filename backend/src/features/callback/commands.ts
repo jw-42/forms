@@ -1,11 +1,5 @@
-import { VK, MessageContext } from 'vk-io'
+import { MessageContext } from 'vk-io'
 import getPrisma from '@infra/database/prisma'
-
-const ALLOWED_ADMINS = [374811416]
-
-const vk = new VK({
-  token: Bun.env.VK_GROUP_TOKEN || ''
-})
 
 type CommandContext = {
   ctx: MessageContext
@@ -20,7 +14,9 @@ type CommandConfig = {
   allowedUsers?: number[]
 }
 
-const commands: Record<string, CommandConfig> = {
+export const ALLOWED_ADMINS = [374811416]
+
+export const commands: Record<string, CommandConfig> = {
   ban: {
     handler: async ({ ctx, args, prisma }) => {
       const id = args[0]
@@ -99,22 +95,3 @@ const commands: Record<string, CommandConfig> = {
     // allowedUsers не задан — команда доступна всем
   }
 }
-
-vk.updates.on('message_new', async (ctx: MessageContext) => {
-  if (!ctx.isOutbox && ctx.isUser) {
-    const [cmd, ...args] = (ctx.text ?? '').trim().split(/\s+/)
-    const command = cmd?.replace(/^\//, '').toLowerCase()
-    if (!command) return
-    const config = commands[command]
-    if (config) {
-      if (config.allowedUsers && !config.allowedUsers.includes(ctx.senderId)) {
-        return // Нет доступа
-      }
-      await config.handler({ ctx, args, prisma: getPrisma() })
-    }
-  }
-})
-
-export function runVkBot() {
-  vk.updates.start().catch(console.error)
-} 

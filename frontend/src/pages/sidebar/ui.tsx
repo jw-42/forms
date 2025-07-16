@@ -41,6 +41,17 @@ export const Sidebar = () => {
         >
           История ответов
         </Cell>
+
+        <Spacing>
+          <Separator/>
+        </Spacing>
+
+        <Cell
+          activated={activeStory === VIEW.SETTINGS}
+          onClick={() => router.push(routes.settings.overview.path)}
+        >
+          Настройки
+        </Cell>
       </Group>
     </Panel>
   )
