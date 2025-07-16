@@ -15,44 +15,61 @@ type CommandContext = {
 
 type CommandHandler = (context: CommandContext) => Promise<void>
 
-const commands: Record<string, CommandHandler> = {
-  ban: async ({ ctx, args, prisma }) => {
-    const id = args[0]
-    if (!id || !/^\d+$/.test(id)) {
-      await ctx.send('Usage: /ban <user_id> (user_id must be a number)')
-      return
-    }
-    const userId = Number(id)
-    await prisma.user.updateMany({ where: { id: userId }, data: { is_banned: true } })
-    await ctx.send(`User ${userId} banned`)
+type CommandConfig = {
+  handler: CommandHandler
+  allowedUsers?: number[]
+}
+
+const commands: Record<string, CommandConfig> = {
+  ban: {
+    handler: async ({ ctx, args, prisma }) => {
+      const id = args[0]
+      if (!id || !/^\d+$/.test(id)) {
+        await ctx.send('Usage: /ban <user_id> (user_id must be a number)')
+        return
+      }
+      const userId = Number(id)
+      await prisma.user.updateMany({ where: { id: userId }, data: { is_banned: true } })
+      await ctx.send(`User ${userId} banned`)
+    },
+    allowedUsers: ALLOWED_ADMINS
   },
-  unban: async ({ ctx, args, prisma }) => {
-    const id = args[0]
-    if (!id || !/^\d+$/.test(id)) {
-      await ctx.send('Usage: /unban <user_id> (user_id must be a number)')
-      return
-    }
-    const userId = Number(id)
-    await prisma.user.updateMany({ where: { id: userId }, data: { is_banned: false } })
-    await ctx.send(`User ${userId} unbanned`)
+  unban: {
+    handler: async ({ ctx, args, prisma }) => {
+      const id = args[0]
+      if (!id || !/^\d+$/.test(id)) {
+        await ctx.send('Usage: /unban <user_id> (user_id must be a number)')
+        return
+      }
+      const userId = Number(id)
+      await prisma.user.updateMany({ where: { id: userId }, data: { is_banned: false } })
+      await ctx.send(`User ${userId} unbanned`)
+    },
+    allowedUsers: ALLOWED_ADMINS
   },
-  echo: async ({ ctx, args }) => {
-    if (args.length === 0) {
-      await ctx.send('Usage: /echo <text>')
-      return
+  echo: {
+    handler: async ({ ctx, args }) => {
+      if (args.length === 0) {
+        await ctx.send('Usage: /echo <text>')
+        return
+      }
+      await ctx.send(args.join(' '))
     }
-    await ctx.send(args.join(' '))
+    // allowedUsers не задан — команда доступна всем
   }
 }
 
 vk.updates.on('message_new', async (ctx: MessageContext) => {
-  if (!ctx.isOutbox && ctx.isUser && ALLOWED_ADMINS.includes(ctx.senderId)) {
+  if (!ctx.isOutbox && ctx.isUser) {
     const [cmd, ...args] = (ctx.text ?? '').trim().split(/\s+/)
     const command = cmd?.replace(/^\//, '').toLowerCase()
     if (!command) return
-    const handler = commands[command]
-    if (handler) {
-      await handler({ ctx, args, prisma: getPrisma() })
+    const config = commands[command]
+    if (config) {
+      if (config.allowedUsers && !config.allowedUsers.includes(ctx.senderId)) {
+        return // Нет доступа
+      }
+      await config.handler({ ctx, args, prisma: getPrisma() })
     }
   }
 })
