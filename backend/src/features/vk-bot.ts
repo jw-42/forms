@@ -15,44 +15,27 @@ type CommandContext = {
 
 type CommandHandler = (context: CommandContext) => Promise<void>
 
-async function resolveUserId(arg: string): Promise<number | null> {
-  if (/^\d+$/.test(arg)) return Number(arg)
-  try {
-    const res = await vk.api.utils.resolveScreenName({ screen_name: arg })
-    return res && res.type === 'user' ? res.object_id : null
-  } catch {
-    return null
-  }
-}
-
 const commands: Record<string, CommandHandler> = {
   ban: async ({ ctx, args, prisma }) => {
-    if (!args[0]) {
-      await ctx.send('Usage: /ban <user_id|domain>')
+    const id = args[0]
+    if (!id || !/^\d+$/.test(id)) {
+      await ctx.send('Usage: /ban <user_id> (user_id must be a number)')
       return
     }
-    const userId = await resolveUserId(args[0])
-    if (!userId) {
-      await ctx.send('User not found')
-      return
-    }
+    const userId = Number(id)
     await prisma.user.updateMany({ where: { id: userId }, data: { is_banned: true } })
     await ctx.send(`User ${userId} banned`)
   },
   unban: async ({ ctx, args, prisma }) => {
-    if (!args[0]) {
-      await ctx.send('Usage: /unban <user_id|domain>')
+    const id = args[0]
+    if (!id || !/^\d+$/.test(id)) {
+      await ctx.send('Usage: /unban <user_id> (user_id must be a number)')
       return
     }
-    const userId = await resolveUserId(args[0])
-    if (!userId) {
-      await ctx.send('User not found')
-      return
-    }
+    const userId = Number(id)
     await prisma.user.updateMany({ where: { id: userId }, data: { is_banned: false } })
     await ctx.send(`User ${userId} unbanned`)
   },
-  // Пример новой команды с валидацией числа аргументов
   echo: async ({ ctx, args }) => {
     if (args.length === 0) {
       await ctx.send('Usage: /echo <text>')
@@ -75,7 +58,5 @@ vk.updates.on('message_new', async (ctx: MessageContext) => {
 })
 
 export function runVkBot() {
-  vk.updates.start()
-    .then(() => console.log('VK bot started'))
-    .catch(console.error)
+  vk.updates.start().catch(console.error)
 } 
