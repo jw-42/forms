@@ -29,7 +29,7 @@ class FormsService {
     return {
       ...form,
       can_edit: form.owner_id === current_user_id,
-      answers: !!answers.length
+      has_answer: !!answers.length
     }
   }
 
