@@ -19,11 +19,19 @@ async function handleNewAnswerEvent(event: NewAnswerEvent) {
 
   if (!notifications) return
 
-  const userInfo = await vkService.getUserInfo([user_id], { name_case: 'Gen' })
+  const userInfo = await vkService.getUserInfo([user_id], { fields: ['sex'] })
   const userName = `${userInfo[0].first_name} ${userInfo[0].last_name}`
 
-  const msg = `📥 Новый ответ от [id${user_id}|${userName}] на анкету «${title}»:\nhttps://vk.com/app53866259#/form/${form_id}/answers`
-  await vkService.sendMessage([owner_id], msg)
+  const msg = `📥 [id${user_id}|${userName}] ${userInfo[0].sex === 1 ? 'ответила' : 'ответил'} на анкету «${title}»`
+
+  const builder = Keyboard.builder().inline()
+    .applicationButton({
+      label: 'Посмотреть ответы',
+      appId: 53866259,
+      hash: `/form/${form_id}/answers`
+    })
+
+  await vkService.sendMessage([owner_id], msg, undefined, builder)
 }
 
 async function handleNewUserEvent(event: NewUserEvent) {
