@@ -1,151 +1,113 @@
-import type { CreateOptionProps, UpdateOptionProps, CreateMultipleOptionsProps } from './types'
-import { 
-  createOption as createOptionRepo,
-  getAllOptions as getAllOptionsRepo,
-  getOptionById as getOptionByIdRepo,
-  updateOption as updateOptionRepo,
-  deleteOption as deleteOptionRepo,
-  createMultipleOptions as createMultipleOptionsRepo,
-  getExistingOptions
-} from './repository'
-import { 
-  getQuestionWithOptionsAndForm,
-  getQuestionWithForm,
-  getQuestion
-} from '../questions/repository'
+import { formsService } from '@features/forms'
 import { ApiError } from '@shared/utils'
-import type { Prisma } from '@prisma/client'
+import type { CreateOptionsProps, UpdateOptionProps } from './types'
+import { questionsService } from '@features/questions'
+import optionsRepository from './repository'
 
-const MAX_OPTIONS_PER_QUESTION = 4
+class OptionsService {
+  async create(form_id: string, current_user_id: number, data: CreateOptionsProps) {
+    const form = await formsService.getById(form_id, current_user_id)
 
-export async function createOption(data: CreateOptionProps, userId: number) {
-  const question = await getQuestionWithOptionsAndForm(data.question_id) as (Prisma.QuestionGetPayload<{ include: { options: true, form: { select: { owner_id: true } } } }> | null)
-
-  if (!question) {
-    throw ApiError.NotFound('Question not found')
-  }
-
-  if (!question.form || question.form.owner_id !== userId) {
-    throw ApiError.Forbidden('Access denied')
-  }
-
-  if (question.type !== 'radio') {
-    throw ApiError.BadRequest('Options can only be created for radio questions')
-  }
-
-  if (question.options.length >= MAX_OPTIONS_PER_QUESTION) {
-    throw ApiError.BadRequest('Maximum options limit reached')
-  }
-
-  return createOptionRepo(data)
-}
-
-export async function getAllOptions(questionId: string) {
-  const question = await getQuestion(questionId)
-
-  if (!question) {
-    throw ApiError.NotFound('Question not found')
-  }
-
-  return getAllOptionsRepo(questionId)
-}
-
-export async function getOptionById(questionId: string, optionId: string) {
-  const question = await getQuestion(questionId)
-
-  if (!question) {
-    throw ApiError.NotFound('Question not found')
-  }
-
-  const option = await getOptionByIdRepo(questionId, optionId)
-  if (!option) {
-    throw ApiError.NotFound('Option not found')
-  }
-
-  return option
-}
-
-export async function updateOption(questionId: string, optionId: string, data: UpdateOptionProps, userId: number) {
-  const question = await getQuestionWithForm(questionId) as (Prisma.QuestionGetPayload<{ include: { form: { select: { owner_id: true } } } }> | null)
-
-  if (!question) {
-    throw ApiError.NotFound('Question not found')
-  }
-
-  if (!question.form || question.form.owner_id !== userId) {
-    throw ApiError.Forbidden('Access denied')
-  }
-
-  const option = await getOptionByIdRepo(questionId, optionId)
-  if (!option) {
-    throw ApiError.NotFound('Option not found')
-  }
-
-  return updateOptionRepo(questionId, optionId, data)
-}
-
-export async function deleteOption(questionId: string, optionId: string, userId: number) {
-  const question = await getQuestionWithForm(questionId) as (Prisma.QuestionGetPayload<{ include: { form: { select: { owner_id: true } } } }> | null)
-
-  if (!question) {
-    throw ApiError.NotFound('Question not found')
-  }
-
-  if (!question.form || question.form.owner_id !== userId) {
-    throw ApiError.Forbidden('Access denied')
-  }
-
-  const option = await getOptionByIdRepo(questionId, optionId)
-  if (!option) {
-    throw ApiError.NotFound('Option not found')
-  }
-
-  return deleteOptionRepo(questionId, optionId)
-}
-
-export async function createMultipleOptions(data: CreateMultipleOptionsProps, userId: number) {
-  const question = await getQuestionWithOptionsAndForm(data.question_id) as (Prisma.QuestionGetPayload<{ include: { options: true, form: { select: { owner_id: true } } } }> | null)
-
-  if (!question) {
-    throw ApiError.NotFound('Question not found')
-  }
-
-  if (!question.form || question.form.owner_id !== userId) {
-    throw ApiError.Forbidden('Access denied')
-  }
-
-  if (question.type !== 'radio') {
-    throw ApiError.BadRequest('Options can only be created for radio questions')
-  }
-
-  if (data.options.length > MAX_OPTIONS_PER_QUESTION) {
-    throw ApiError.BadRequest('Maximum options limit exceeded')
-  }
-
-  // Проверяем, что все существующие опции принадлежат указанному вопросу
-  const existingOptionIds = data.options.filter(option => option.id).map(option => option.id!)
-  if (existingOptionIds.length > 0) {
-    const existingOptions = await getExistingOptions(existingOptionIds, data.question_id)
-    
-    if (existingOptions.length !== existingOptionIds.length) {
-      throw ApiError.BadRequest('Some options do not belong to the specified question')
+    if (!form) {
+      throw ApiError.NotFound('Form not found')
+    } else if (form.can_edit !== true) {
+      throw ApiError.Forbidden()
     }
+
+    const question = await questionsService.getById(form_id, data.question_id, current_user_id)
+
+    if (!question) {
+      throw ApiError.NotFound('Question not found')
+    } else if (question.form_id !== form_id) {
+      throw ApiError.NotFound('Question not found')
+    }
+
+    return await optionsRepository.create(data)
   }
 
-  // Фильтруем дублирующие опции по тексту, отдавая предпочтение опциям с id
-  const uniqueOptions = data.options.filter((option, index, self) => {
-    const firstIndex = self.findIndex(o => o.text.toLowerCase().trim() === option.text.toLowerCase().trim())
-    if (firstIndex === index) return true
-    
-    // Если это дубликат, проверяем, есть ли у текущей опции id, а у первой - нет
-    const firstOption = self[firstIndex]
-    return option.id && !firstOption?.id
-  })
+  async get(form_id: string, question_id: number, current_user_id: number) {
+    const form = await formsService.getById(form_id, current_user_id)
 
-  // Проверяем лимит после фильтрации
-  if (uniqueOptions.length > MAX_OPTIONS_PER_QUESTION) {
-    throw ApiError.BadRequest('Maximum options limit exceeded after removing duplicates')
+    if (!form) {
+      throw ApiError.NotFound('Form not found')
+    }
+
+    const question = await questionsService.getById(form_id, question_id, current_user_id)
+
+    if (!question) {
+      throw ApiError.NotFound('Question not found')
+    } else if (question.form_id !== form_id) {
+      throw ApiError.NotFound('Question not found')
+    }
+
+    return await optionsRepository.get(question_id)
   }
 
-  return createMultipleOptionsRepo({ ...data, options: uniqueOptions })
+  async getById(form_id: string, question_id: number, option_id: number, current_user_id: number) {
+    const form = await formsService.getById(form_id, current_user_id)
+
+    if (!form) {
+      throw ApiError.NotFound('Form not found')
+    }
+
+    const question = await questionsService.getById(form_id, question_id, current_user_id)
+
+    if (!question) {
+      throw ApiError.NotFound('Question not found')
+    } else if (question.form_id !== form_id) {
+      throw ApiError.NotFound('Question not found')
+    }
+
+    const option = await optionsRepository.getById(option_id)
+
+    if (!option) {
+      throw ApiError.NotFound('Option not found')
+    } else if (option.question_id !== question_id) {
+      throw ApiError.NotFound('Option not found')
+    }
+
+    return option
+  }
+
+  async update(form_id: string, question_id: number, option_id: number, current_user_id: number, data: UpdateOptionProps) {
+    const form = await formsService.getById(form_id, current_user_id)
+
+    if (!form) {
+      throw ApiError.NotFound('Form not found')
+    } else if (form.can_edit !== true) {
+      throw ApiError.Forbidden()
+    }
+
+    const question = await questionsService.getById(form_id, question_id, current_user_id)
+
+    if (!question) {
+      throw ApiError.NotFound('Question not found')
+    } else if (question.form_id !== form_id) {
+      throw ApiError.NotFound('Question not found')
+    }
+
+    return await optionsRepository.update(form_id, question_id, option_id, data)
+  }
+
+  async delete(form_id: string, question_id: number, option_id: number, current_user_id: number) {
+    const form = await formsService.getById(form_id, current_user_id)
+
+    if (!form) {
+      throw ApiError.NotFound('Form not found')
+    } else if (form.can_edit !== true) {
+      throw ApiError.Forbidden()
+    }
+
+    const question = await questionsService.getById(form_id, question_id, current_user_id)
+
+    if (!question) {
+      throw ApiError.NotFound('Question not found')
+    } else if (question.form_id !== form_id) {
+      throw ApiError.NotFound('Question not found')
+    }
+
+    return await optionsRepository.deleteById(form_id, question_id, option_id)
+  }
 }
+
+export default new OptionsService()

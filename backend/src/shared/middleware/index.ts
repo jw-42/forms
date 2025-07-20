@@ -1,2 +1,2 @@
 export * from './error-handler'
-export * from './authorization'
+export * from './custom-logger'

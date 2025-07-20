@@ -1,123 +1,105 @@
-import type { CreateOptionProps, UpdateOptionProps, CreateMultipleOptionsProps } from './types'
-import getPrisma from '@infra/database/prisma'
-import { 
-  getQuestionWithOptionsAndForm,
-  getQuestionWithForm,
-  getQuestion
-} from '../questions/repository'
+import { getPrisma } from '@infra/database'
+import type { CreateOptionsProps, UpdateOptionProps } from './types';
 
-export async function createOption(data: CreateOptionProps) {
-  const prisma = getPrisma()
-  return prisma.option.create({
-    data: {
-      question_id: data.question_id,
-      text: data.text,
-      order: data.order || 0,
-    },
-  })
-}
+class OptionsRepository {
+  async create(data: CreateOptionsProps) {
+    const passedOptionsIds = data.options
+      .filter(option => option.id)
+      .map(option => option.id!)
 
-export async function getAllOptions(questionId: string) {
-  const prisma = getPrisma()
-  return prisma.option.findMany({
-    where: { question_id: questionId },
-    orderBy: { order: 'asc' }
-  })
-}
+    const prisma = getPrisma()
 
-export async function getOptionById(questionId: string, optionId: string) {
-  const prisma = getPrisma()
-  return prisma.option.findFirst({
-    where: { 
-      id: optionId,
-      question_id: questionId
-    }
-  })
-}
+    const deleteOperations = passedOptionsIds.length > 0
+      ? [prisma.option.deleteMany({
+          where: {
+            question_id: data.question_id,
+            id: { notIn: passedOptionsIds }
+          }
+        })]
+      : [prisma.option.deleteMany({
+          where: {
+            question_id: data.question_id,
+          }  
+        })]
 
-export async function updateOption(questionId: string, optionId: string, data: UpdateOptionProps) {
-  const prisma = getPrisma()
-  return prisma.option.update({
-    where: { 
-      id: optionId,
-      question_id: questionId
-    },
-    data: {
-      text: data.text,
-      order: data.order
-    }
-  })
-}
+    const upsertOperations = data.options.map((option, index) => {
+      if (option.id) {
+        return prisma.option.update({
+          where: {
+            id: option.id,
+            question_id: data.question_id,
+          },
+          data: {
+            text: option.text,
+            order: option.order ?? index,
+          }
+        })
+      } else {
+        return prisma.option.create({
+          data: {
+            question_id: data.question_id,
+            text: option.text,
+            order: option.order ?? index,
+          }
+        })
+      }
+    })
 
-export async function deleteOption(questionId: string, optionId: string) {
-  const prisma = getPrisma()
-  return prisma.option.delete({
-    where: { 
-      id: optionId,
-      question_id: questionId
-    },
-    select: {
-      id: true
-    }
-  })
-}
+    const result = await prisma.$transaction([
+      ...deleteOperations,
+      ...upsertOperations
+    ])
 
-export async function createMultipleOptions(data: CreateMultipleOptionsProps) {
-  const prisma = getPrisma()
-  
-  // Получаем ID всех переданных опций
-  const passedOptionIds = data.options.filter(option => option.id).map(option => option.id!)
-  
-  // Удаляем опции, которые не были переданы
-  const deleteOperations = passedOptionIds.length > 0 
-    ? [prisma.option.deleteMany({
-        where: {
-          question_id: data.question_id,
-          id: { notIn: passedOptionIds }
+    return result.slice(deleteOperations.length)
+  }
+
+  async get(question_id: number) {
+    const prisma = getPrisma()
+    return await prisma.option.findMany({
+      where: {
+        question_id,
+      },
+      orderBy: {
+        order: 'asc',
+      }
+    })
+  }
+
+  async getById(option_id: number) {
+    const prisma = getPrisma()
+    return await prisma.option.findUnique({
+      where: {
+        id: option_id,
+      }
+    })
+  }
+
+  async update(form_id: string, question_id: number, option_id: number, data: UpdateOptionProps) {
+    const prisma = getPrisma()
+    return await prisma.option.update({
+      where: {
+        id: option_id,
+        question: {
+          id: question_id,
+          form_id
         }
-      })]
-    : [prisma.option.deleteMany({
-        where: { question_id: data.question_id }
-      })]
-  
-  // Операции для создания/обновления опций
-  const upsertOperations = data.options.map((option, index) => {
-    if (option.id) {
-      // Обновляем существующую опцию
-      return prisma.option.update({
-        where: { 
-          id: option.id,
-          question_id: data.question_id
-        },
-        data: {
-          text: option.text,
-          order: option.order ?? index
-        }
-      })
-    } else {
-      // Создаем новую опцию
-      return prisma.option.create({
-        data: {
-          question_id: data.question_id,
-          text: option.text,
-          order: option.order ?? index
-        }
-      })
-    }
-  })
+      },
+      data,
+    })
+  }
 
-  const result = await prisma.$transaction([...deleteOperations, ...upsertOperations])
-  
-  // Возвращаем только опции (пропускаем результаты операций удаления)
-  return result.slice(deleteOperations.length)
+  async deleteById(form_id: string, question_id: number, option_id: number) {
+    const prisma = getPrisma()
+    return await prisma.option.delete({
+      where: {
+        id: option_id,
+        question: {
+          id: question_id,
+          form_id
+        }
+      }
+    })
+  }
 }
 
-export async function getExistingOptions(optionIds: string[], questionId: string) {
-  const prisma = getPrisma()
-  return prisma.option.findMany({
-    where: {
-      id: { in: optionIds },
-      question_id: questionId
-    }
-  })
-}
+export default new OptionsRepository()

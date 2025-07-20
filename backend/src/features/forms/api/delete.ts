@@ -1,35 +1,33 @@
+import { ApiError } from '@shared/utils'
 import type { Context, Next } from 'hono'
 import { createFactory } from 'hono/factory'
-import { ApiError } from '@shared/utils'
-import formsService from '../service'
+import { formsService } from '..'
 
 const factory = createFactory()
 
-const deleteForm = factory.createHandlers(async (ctx: Context, next: Next) => {
+export const deleteById = factory.createHandlers(async (ctx: Context, next: Next) => {
   try {
     const { form_id } = ctx.req.param()
-    
+
     if (!form_id) {
-      throw ApiError.BadRequest()
+      throw ApiError.BadRequest('form_id is required')
     }
     
     const owner_id = ctx.get('uid')
-    const existingForm = await formsService.getForm(form_id)
-    
+    const existingForm = await formsService.getById(form_id, owner_id)
+
     if (!existingForm) {
-      throw ApiError.NotFound()
+      throw ApiError.NotFound('Form not found')
     }
 
-    const form = await formsService.deleteForm(form_id, owner_id)
-    
+    const form = await formsService.delete(form_id, owner_id)
+
     return ctx.json(form)
   } catch (error) {
     if (error instanceof ApiError) {
-      throw error;
+      throw error
     } else {
-      throw ApiError.Internal();
+      throw ApiError.Internal()
     }
   }
 })
-
-export default deleteForm

@@ -1,16 +1,33 @@
 import z from 'zod'
 
+export const MIN_FORM_TITLE_LENGTH = 10
+export const MAX_FORM_TITLE_LENGTH = 64
+export const MIN_FORM_DESCRIPTION_LENGTH = 10
+export const MAX_FORM_DESCRIPTION_LENGTH = 256
+
+export const MAX_FORMS_PER_USER = 3
+
 export const createFormSchema = z.object({
-  title: z.string().min(10).max(64),
-  description: z.string().min(10).max(256),
+  title: z.string()
+    .min(MIN_FORM_TITLE_LENGTH)
+    .max(MAX_FORM_TITLE_LENGTH),
+  description: z.string()
+    .min(MIN_FORM_DESCRIPTION_LENGTH)
+    .max(MAX_FORM_DESCRIPTION_LENGTH),
 })
 
 export const updateFormSchema = z.object({
-  title: z.string().min(10).max(64).optional(),
-  description: z.string().min(10).max(256).optional(),
+  title: z.string()
+    .min(MIN_FORM_TITLE_LENGTH)
+    .max(MAX_FORM_TITLE_LENGTH)
+    .optional(),
+  description: z.string()
+    .min(MIN_FORM_DESCRIPTION_LENGTH)
+    .max(MAX_FORM_DESCRIPTION_LENGTH)
+    .optional(),
 }).refine(
   (data) => data.title !== undefined || data.description !== undefined,
-  { message: "Either title or description must be provided" }
+  { message: 'Either title or description must be provided' }
 )
 
 export const getFormsSchema = z.object({

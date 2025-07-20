@@ -5,21 +5,30 @@
   "private": true,
   "scripts": {
     "dev": "bun run --watch src/app.ts",
-    "start": "bun run src/app.ts",
-    "db:deploy": "bunx prisma migrate deploy && bunx prisma generate"
+    "lint": "eslint src/**/*.ts",
+    "lint:fix": "eslint src/**/*.ts --fix",
+    "format": "prettier --write src/**/*.ts",
+    "format:check": "prettier --check src/**/*.ts",
+    "check": "bun run lint && bun run format:check"
+  },
+  "dependencies": {
+    "@hono/zod-validator": "^0.7.1",
+    "@prisma/client": "^6.12.0",
+    "hono": "^4.8.5",
+    "kafkajs": "^2.2.4",
+    "prisma": "^6.12.0",
+    "vk-io": "^4.9.1",
+    "zod": "^4.0.5"
   },
   "devDependencies": {
-    "@types/bun": "latest"
+    "@types/bun": "^1.2.18",
+    "@typescript-eslint/eslint-plugin": "^8.37.0",
+    "@typescript-eslint/parser": "^8.37.0",
+    "eslint": "^9.31.0",
+    "eslint-config-prettier": "^10.1.5",
+    "prettier": "^3.6.2"
   },
   "peerDependencies": {
     "typescript": "^5"
-  },
-  "dependencies": {
-    "@hono/zod-validator": "^0.6.0",
-    "@prisma/client": "^6.8.2",
-    "hono": "^4.7.10",
-    "prisma": "^6.8.2",
-    "vk-io": "^4.9.1",
-    "zod": "^3.25.36"
   }
 }

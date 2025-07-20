@@ -1,101 +1,89 @@
+import authRepository from './repository'
+import usersRepository from '../users/repository'
+import { ApiError } from '@shared/utils'
 import { createHmac } from 'crypto'
 import { VK } from 'vk-io'
-import type { LaunchParams } from './types'
-import { ApiError } from '@shared/utils'
 import { sign } from 'hono/jwt'
-import { AuthRepository } from './repository'
+import type { LaunchParams } from './types'
+import { sendNewUserEvent } from '@infra/kafka/producer'
 
 class AuthService {
-  private readonly clientSecret: string;
-  private readonly authRepository: AuthRepository;
-  private readonly vk: VK;
+  private readonly client_secret: string
+  private readonly auth_repository: typeof authRepository
+  private readonly users_repository: typeof usersRepository
+  private readonly vk: VK
 
   constructor() {
-    this.clientSecret = `${Bun.env.APP_SECRET}`
-    this.authRepository = new AuthRepository()
+    this.client_secret = Bun.env.APP_SECRET as string
+    this.auth_repository = authRepository
+    this.users_repository = usersRepository
     this.vk = new VK({
-      token: Bun.env.VK_GROUP_TOKEN || ''
+      token: Bun.env.VK_GROUP_TOKEN as string
     })
   }
 
-  validateLaunchParams(params: LaunchParams): boolean {
-    const { sign, ...otherParams } = params;
-    
-    if (!sign) {
-      return false;
-    }
-
-    // Filter and sort vk_ parameters
-    const vkParams = Object.entries(otherParams)
-      .filter(([key]) => key.startsWith('vk_'))
-      .sort(([keyA], [keyB]) => keyA.localeCompare(keyB));
-
-    // Create query string
-    const queryString = vkParams
-      .map(([key, value]) => `${key}=${encodeURIComponent(value)}`)
-      .join('&');
-
-    // Calculate hash
-    const hash = createHmac('sha256', this.clientSecret)
-      .update(queryString)
-      .digest('base64')
-      .replace(/\+/g, '-')
-      .replace(/\//g, '_')
-      .replace(/=+$/, '');
-
-    return hash === sign;
-  }
-
-  private async sendWelcomeMessage(userId: number) {
-    try {
-      const userInfo = await this.vk.api.users.get({
-        user_ids: [userId],
-        fields: ['sex']
-      })
-
-      await this.vk.api.messages.send({
-        user_id: 374811416,
-        message: `[id${userId}|${userInfo[0]?.first_name} ${userInfo[0]?.last_name}] присоединил${userInfo[0]?.sex === 1 ? 'ась' : 'ся'} к приложению`,
-        random_id: Math.floor(Math.random() * 1000000)
-      })
-    } catch (error) {
-      console.error('Failed to send welcome message:', error)
-    }
-  }
-
-  async handleAuth(params: LaunchParams) {
+  async authenticate(params: LaunchParams) {
     if (!this.validateLaunchParams(params)) {
-      throw new Error('Invalid launch params')
+      throw ApiError.Unauthorized('Can not validate launch params')
     }
 
-    const vk_user_id = params?.vk_user_id
-    if (!vk_user_id) {
-      throw new Error('vk_user_id is required')
-    }
+    const { vk_user_id } = params
 
-    let user = await this.authRepository.findUserByVkId(vk_user_id)
+    let user = await this.users_repository.getById(vk_user_id!)
 
     if (!user) {
-      user = await this.authRepository.createUser(vk_user_id)
-      await this.sendWelcomeMessage(vk_user_id)
+      user = await this.users_repository.create(vk_user_id!)
+      void sendNewUserEvent({
+        user_id: user.id,
+      })
     }
 
     if (user.is_banned) {
-      throw ApiError.Forbidden('Access denied: user is banned')
+      throw ApiError.Forbidden('User is banned')
     }
 
-    const expires_at = new Date(Date.now() + 1000 * 60 * 60)
+    const expires_at = new Date(Date.now() + 60 * 60 * 1000) // 1 hour
 
-    const payload = {
-      uid: user.id,
-      exp: expires_at.getTime()
+    const access_token = await sign(
+      {
+        uid: user.id,
+        exp: expires_at.getTime(),
+      },
+      Bun.env.ACCESS_TOKEN_SECRET as string
+    )
+
+    const session = await this.auth_repository.createSession(user.id, access_token, expires_at)
+
+    if (!session) {
+      throw ApiError.Internal('Failed to create session')
     }
 
-    const access_token = await sign(payload, `${Bun.env.ACCESS_TOKEN_SECRET}`)
+    return session
+  }
 
-    await this.authRepository.createSession(user.id, access_token, expires_at)
+  private async validateLaunchParams(params: LaunchParams) {
+    const { sign, ...other_params } = params
 
-    return access_token
+    if (!sign) {
+      return false
+    }
+
+    const vk_params = Object.entries(other_params)
+      .filter(([key]) => key.startsWith('vk_'))
+      .sort(([keyA], [keyB]) => keyA.localeCompare(keyB))
+
+    const query_string = vk_params
+    .map(([key, value]) => `${key}=${encodeURIComponent(value)}`)
+    .join('&')
+
+    const hash = createHmac('sha256', this.client_secret)
+      .update(query_string)
+      .digest('base64')
+      .replace(/\+/g, '-')
+      .replace(/\//g, '_')
+      .replace(/=+$/, '')
+
+    return hash === sign
   }
 }
 

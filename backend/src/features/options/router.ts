@@ -1,17 +1,17 @@
 import { Hono } from 'hono'
 
-import { default as getAllOptions } from './api/getAll'
-import { default as getOptionById } from './api/getById'
-import { default as updateOption } from './api/update'
-import { default as deleteOption } from './api/delete'
-import { default as createOptions } from './api/createMultiple'
+import { create } from './api/create'
+import { get } from './api/get'
+import { getById } from './api/getById'
+import { update } from './api/update'
+import { deleteById } from './api/delete'
 
-const optionsRouter = new Hono()
+const router = new Hono()
 
-optionsRouter.post('/', ...createOptions)
-optionsRouter.get('/', ...getAllOptions)
-optionsRouter.get('/:option_id', ...getOptionById)
-optionsRouter.put('/:option_id', ...updateOption)
-optionsRouter.delete('/:option_id', ...deleteOption)
+router.post('/', ...create)
+router.get('/', ...get)
+router.get('/:option_id', ...getById)
+router.put('/:option_id', ...update)
+router.delete('/:option_id', ...deleteById)
 
-export default optionsRouter
+export default router

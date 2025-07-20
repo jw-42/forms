@@ -1,103 +1,82 @@
 import type { CreateQuestionProps, UpdateQuestionProps } from './types'
-import { 
-  createQuestion as createQuestionRepo,
-  getAllQuestions as getAllQuestionsRepo,
-  getQuestionById as getQuestionByIdRepo,
-  updateQuestion as updateQuestionRepo,
-  deleteQuestion as deleteQuestionRepo
-} from './repository'
+import { MAX_QUESTIONS_PER_FORM, questionsRepository } from './index'
+import { formsService } from '@features/forms'
 import { ApiError } from '@shared/utils'
-import getPrisma from '@infra/database/prisma'
 
-const MAX_QUESTIONS_PER_FORM = 5
+class QuestionsService {
+  async create(user_id: number, data: CreateQuestionProps) {
+    const form = await formsService.getById(data.form_id, user_id)
 
-export async function createQuestion(data: CreateQuestionProps) {
-  const prisma = getPrisma()
-  
-  const form = await prisma.form.findUnique({
-    where: { id: data.form_id },
-    include: { questions: true }
-  })
+    if (!form) {
+      throw ApiError.NotFound('Form not found')
+    } else if (form.can_edit !== true) {
+      throw ApiError.Forbidden()
+    }
 
-  if (!form) {
-    throw ApiError.NotFound('Form not found')
+    const questions = await questionsRepository.getByFormId(data.form_id)
+
+    if (questions.length >= MAX_QUESTIONS_PER_FORM) {
+      throw ApiError.BadRequest('Maximum questions limit reached')
+    }
+
+    return await questionsRepository.create(data)
   }
 
-  if (form.questions.length >= MAX_QUESTIONS_PER_FORM) {
-    throw ApiError.BadRequest('Maximum questions limit reached')
+  async getByFormId(form_id: string, current_user_id: number) {
+    const form = await formsService.getById(form_id, current_user_id)
+
+    if (!form) {
+      throw ApiError.NotFound('Form not found')
+    }
+
+    return await questionsRepository.getByFormId(form_id)
   }
 
-  return createQuestionRepo(data)
+  async getById(form_id: string, question_id: number, current_user_id: number) {
+    const form = await formsService.getById(form_id, current_user_id)
+
+    if (!form) {
+      throw ApiError.NotFound('Form not found')
+    }
+
+    return await questionsRepository.getById(form_id, question_id)
+  }
+
+  async update(form_id: string, question_id: number, user_id: number, data: UpdateQuestionProps) {
+    const form = await formsService.getById(form_id, user_id)
+
+    if (!form) {
+      throw ApiError.NotFound('Form not found')
+    } else if (form.can_edit !== true) {
+      throw ApiError.Forbidden()
+    }
+
+    const question = await questionsRepository.getById(form_id, question_id)
+
+    if (!question) {
+      throw ApiError.NotFound('Question not found')
+    }
+
+    return await questionsRepository.update(form_id, question_id, data)
+  }
+
+  async deleteById(form_id: string, question_id: number, user_id: number) {
+    const form = await formsService.getById(form_id, user_id)
+
+    if (!form) {
+      throw ApiError.NotFound('Form not found')
+    } else if (form.can_edit !== true) {
+      throw ApiError.Forbidden()
+    }
+
+    const question = await questionsRepository.getById(form_id, question_id)
+
+    if (!question) {
+      throw ApiError.NotFound('Question not found')
+    }
+
+    return await questionsRepository.deleteById(form_id, question_id)
+  }
 }
 
-export async function getAllQuestions(formId: string) {
-  const prisma = getPrisma()
-  
-  const form = await prisma.form.findUnique({
-    where: { id: formId }
-  })
-
-  if (!form) {
-    throw ApiError.NotFound('Form not found')
-  }
-
-  return getAllQuestionsRepo(formId)
-}
-
-export async function getQuestionById(formId: string, questionId: string) {
-  const prisma = getPrisma()
-  
-  const form = await prisma.form.findUnique({
-    where: { id: formId }
-  })
-
-  if (!form) {
-    throw ApiError.NotFound('Form not found')
-  }
-
-  const question = await getQuestionByIdRepo(formId, questionId)
-  if (!question) {
-    throw ApiError.NotFound('Question not found')
-  }
-
-  return question
-}
-
-export async function updateQuestion(formId: string, questionId: string, data: UpdateQuestionProps) {
-  const prisma = getPrisma()
-  
-  const form = await prisma.form.findUnique({
-    where: { id: formId }
-  })
-
-  if (!form) {
-    throw ApiError.NotFound('Form not found')
-  }
-
-  const question = await getQuestionByIdRepo(formId, questionId)
-  if (!question) {
-    throw ApiError.NotFound('Question not found')
-  }
-
-  return updateQuestionRepo(formId, questionId, data)
-}
-
-export async function deleteQuestion(formId: string, questionId: string) {
-  const prisma = getPrisma()
-  
-  const form = await prisma.form.findUnique({
-    where: { id: formId }
-  })
-
-  if (!form) {
-    throw ApiError.NotFound('Form not found')
-  }
-
-  const question = await getQuestionByIdRepo(formId, questionId)
-  if (!question) {
-    throw ApiError.NotFound('Question not found')
-  }
-
-  const result = await deleteQuestionRepo(formId, questionId)
-  return result
-}
+export default new QuestionsService()

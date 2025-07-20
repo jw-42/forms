@@ -1,8 +1,8 @@
 import { Hono } from 'hono'
-import { default as checkVkLaunchParams } from './api/check-launch-params'
+import { chechVkLaunchParams } from './api'
 
-const authRouter = new Hono()
+const router = new Hono()
 
-authRouter.post('/login',  ...checkVkLaunchParams)
+router.post('/login', ...chechVkLaunchParams)
 
-export default authRouter
+export default router

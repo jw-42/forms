@@ -1,8 +1,12 @@
 import { Hono } from 'hono'
-import { authRouter, formsRouter, questionsRouter, answersRouter, optionsRouter } from '@features/index'
-import AuthorizationMiddleware from '@shared/middleware/authorization'
+import { answersRouter, authRouter, formsRouter, optionsRouter, questionsRouter } from '@features/index'
+import { AuthorizationMiddleware } from '@shared/middleware/authorization'
 
 const app = new Hono()
+
+// Health check endpoint
+app.get('/health', (c) => c.json({ status: 'ok', timestamp: new Date().toISOString() }))
+
 app.basePath('/api')
 
 app.route('/auth', authRouter)

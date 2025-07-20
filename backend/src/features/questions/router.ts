@@ -1,17 +1,17 @@
 import { Hono } from 'hono'
 
-import { default as createQuestion } from './api/create'
-import { default as getAllQuestions } from './api/getAll'
-import { default as getQuestionById } from './api/getById'
-import { default as updateQuestion } from './api/update'
-import { default as deleteQuestion } from './api/delete'
+import { create } from './api/create'
+import { get } from './api/get'
+import { getById } from './api/getById'
+import { update } from './api/update'
+import { deleteById } from './api/delete'
 
-const questionsRouter = new Hono()
+const router = new Hono()
 
-questionsRouter.post('/', ...createQuestion)
-questionsRouter.get('/', ...getAllQuestions)
-questionsRouter.get('/:question_id', ...getQuestionById)
-questionsRouter.put('/:question_id', ...updateQuestion)
-questionsRouter.delete('/:question_id', ...deleteQuestion)
+router.post('/', ...create)
+router.get('/', ...get)
+router.get('/:question_id', ...getById)
+router.put('/:question_id', ...update)
+router.delete('/:question_id', ...deleteById)
 
-export default questionsRouter 
+export default router

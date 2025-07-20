@@ -49,7 +49,7 @@ enum QuestionType {
 }
 
 model Question {
-  id         String       @id @default(uuid())
+  id         Int       @id @default(autoincrement())
   type       QuestionType @default(text)
   form_id    String
   text       String
@@ -61,8 +61,8 @@ model Question {
 }
 
 model Option {
-  id          String   @id @default(uuid())
-  question_id String
+  id          Int   @id @default(autoincrement())
+  question_id Int
   text        String
   order       Int      @default(0)
   created_at  DateTime @default(now())
@@ -84,7 +84,7 @@ model AnswersGroup {
 model Answer {
   id               String       @id @default(uuid())
   answers_group_id String
-  question_id      String
+  question_id      Int
   value            String
   created_at       DateTime     @default(now())
   answers_group    AnswersGroup @relation(fields: [answers_group_id], references: [id], onDelete: Cascade)

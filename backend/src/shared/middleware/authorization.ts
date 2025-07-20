@@ -1,10 +1,9 @@
-import type { Context, Next } from 'hono'
 import { ApiError } from '@shared/utils'
+import type { Context, Next } from 'hono'
 import { verify } from 'hono/jwt'
-import { getPrisma } from '@infra/database'
+import { authRepository } from '@features/index'
 
 export const AuthorizationMiddleware = async (ctx: Context, next: Next) => {
-
   const header = ctx.req.header('Authorization')
 
   if (!header || !header.startsWith('Bearer ')) {
@@ -12,47 +11,35 @@ export const AuthorizationMiddleware = async (ctx: Context, next: Next) => {
   }
 
   try {
-    const access_token = header.split('Bearer ')[1]  
+    const access_token = header.split(' ')[1]
 
     const decoded = await verify(
-      `${access_token}`,
-      `${Bun.env.ACCESS_TOKEN_SECRET}`
+      access_token as string,
+      Bun.env.ACCESS_TOKEN_SECRET as string,
     )
 
     if (decoded.uid && decoded.exp) {
-      const prisma = getPrisma()
-
-      const session = await prisma.session.findFirst({
-        where: {
-          access_token,
-          expires_at: {
-            gt: new Date()
-          },
-          user: {
-            id: decoded.uid,
-            is_banned: false
-          }
-        }
-      })
+      const session = await authRepository.getSession(
+        access_token as string,
+        decoded.uid as number
+      )
 
       if (!session) {
-        throw ApiError.Unauthorized("Session expired")
+        throw ApiError.Unauthorized('Session expired')
       }
 
       ctx.set('uid', decoded.uid)
     } else {
-      throw ApiError.Unauthorized("Invalid access token")
+      throw ApiError.Unauthorized('Invalid access token')
     }
 
     return next()
-    
   } catch (error) {
     if (error instanceof ApiError) {
       throw error;
     } else {
-      throw ApiError.Internal();
+      console.error('Authorization middleware error:', error);
+      throw ApiError.Unauthorized('Invalid access token');
     }
   }
 }
-
-export default AuthorizationMiddleware
