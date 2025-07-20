@@ -76,6 +76,13 @@ class AnswersRepository {
     })
   }
 
+  async getByUserId(form_id: string, user_id: number) {
+    const prisma = getPrisma()
+    return prisma.answersGroup.findMany({
+      where: { form_id, user_id }
+    })
+  }
+
   async deleteByUserId(form_id : string, user_id: number) {
     const prisma = getPrisma()
     return prisma.answersGroup.deleteMany({

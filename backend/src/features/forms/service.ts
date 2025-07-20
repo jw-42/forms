@@ -1,3 +1,4 @@
+import { answersRepository } from '@features/responses'
 import { formsRepository, MAX_FORMS_PER_USER, type CreateFormInput, type UpdateFormInput } from './index'
 import { ApiError } from '@shared/utils'
 
@@ -23,11 +24,12 @@ class FormsService {
       throw ApiError.NotFound('Form not found')
     }
 
-    // TODO: get answers for current form
+    const answers = await answersRepository.getByUserId(form_id, current_user_id)
 
     return {
       ...form,
       can_edit: form.owner_id === current_user_id,
+      answers: !!answers.length
     }
   }
 
