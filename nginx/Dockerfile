@@ -5,7 +5,8 @@ COPY nginx.conf /etc/nginx/conf.d/default.conf
 
 # Копируем скрипт настройки SSL
 COPY nginx-ssl-setup.sh /usr/local/bin/nginx-ssl-setup.sh
-RUN chmod +x /usr/local/bin/nginx-ssl-setup.sh
+RUN chmod +x /usr/local/bin/nginx-ssl-setup.sh && \
+    dos2unix /usr/local/bin/nginx-ssl-setup.sh 2>/dev/null || true
 
 # Создаем пустой SSL-конфиг (будет перезаписан скриптом)
 RUN touch /etc/nginx/ssl.conf

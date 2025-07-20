@@ -154,6 +154,14 @@ check_ports "$ENV"
 echo "Запуск сервисов..."
 docker compose up -d --build
 
+# В production режиме принудительно пересобираем nginx
+if [ "$ENV" = "production" ]; then
+    echo "🔄 Принудительная пересборка nginx для production..."
+    docker compose build --no-cache nginx
+    docker compose up -d nginx
+    sleep 5
+fi
+
 # Ждем немного для запуска контейнеров
 echo "⏳ Ожидание запуска контейнеров..."
 sleep 10
@@ -178,7 +186,29 @@ if [ "$ENV" = "production" ]; then
     # Проверяем наличие сертификатов
     if [ -d "/etc/letsencrypt/live/bugs-everywhere.ru" ]; then
         echo "SSL-сертификаты найдены. Настройка HTTPS..."
-        docker compose exec nginx nginx-ssl-setup.sh
+        
+        # Проверяем, существует ли скрипт в контейнере
+        if docker compose exec nginx test -f /usr/local/bin/nginx-ssl-setup.sh; then
+            echo "SSL скрипт найден, запускаем настройку..."
+            # Проверяем содержимое скрипта для диагностики
+            echo "📋 Проверка содержимого SSL скрипта:"
+            docker compose exec nginx head -5 /usr/local/bin/nginx-ssl-setup.sh
+            docker compose exec nginx /usr/local/bin/nginx-ssl-setup.sh
+        else
+            echo "⚠️  SSL скрипт не найден в контейнере nginx"
+            echo "Пересобираем nginx контейнер..."
+            docker compose build nginx
+            docker compose up -d nginx
+            sleep 5
+            
+            # Повторная попытка
+            if docker compose exec nginx test -f /usr/local/bin/nginx-ssl-setup.sh; then
+                echo "SSL скрипт найден после пересборки, запускаем настройку..."
+                docker compose exec nginx /usr/local/bin/nginx-ssl-setup.sh
+            else
+                echo "❌ SSL скрипт все еще не найден. Проверьте файл nginx/nginx-ssl-setup.sh"
+            fi
+        fi
     else
         echo "SSL-сертификаты не найдены. Работаем в HTTP режиме."
         echo "Для настройки SSL выполните:"
