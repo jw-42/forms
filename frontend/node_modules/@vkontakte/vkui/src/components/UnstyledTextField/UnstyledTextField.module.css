@@ -1,0 +1,32 @@
+.host {
+  margin: 0;
+  appearance: none;
+  resize: none;
+  outline: none;
+  background: transparent;
+  border: 0;
+  box-shadow: none;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.noPadding {
+  padding: 0;
+}
+
+.host:focus {
+  outline: none;
+}
+
+/*
+ * Отключаем нативные элементы для <input type="number" />
+ *
+ * см. https://www.w3schools.com/howto/howto_css_hide_arrow_number.asp
+ */
+.host::-webkit-outer-spin-button,
+.host::-webkit-inner-spin-button {
+  appearance: none;
+}
+
+.host[type='number'] {
+  appearance: textfield;
+}

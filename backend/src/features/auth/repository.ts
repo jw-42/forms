@@ -1,28 +1,35 @@
 import { getPrisma } from '@infra/database'
 
-export class AuthRepository {
-  async findUserByVkId(id: number) {
-    const prisma = getPrisma()
-    return prisma.user.findUnique({
-      where: { id }
-    })
-  }
-
-  async createUser(id: number) {
-    const prisma = getPrisma()
-    return prisma.user.create({
-      data: { id }
-    })
-  }
-
+class AuthRepository {
   async createSession(user_id: number, access_token: string, expires_at: Date) {
     const prisma = getPrisma()
-    return prisma.session.create({
+    return await prisma.session.create({
       data: {
         user_id,
         access_token,
-        expires_at
+        expires_at,
+      },
+      select: {
+        access_token: true,
+      }
+    })
+  }
+
+  async getSession(access_token: string, user_id: number) {
+    const prisma = getPrisma()
+    return await prisma.session.findUnique({
+      where: {
+        access_token,
+        expires_at: {
+          gt: new Date()
+        },
+        user: {
+          id: user_id,
+          is_banned: false,
+        }
       }
     })
   }
 }
+
+export default new AuthRepository()

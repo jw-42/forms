@@ -1,0 +1,27 @@
+import { jsx as _jsx, jsxs as _jsxs } from "react/jsx-runtime";
+import * as React from "react";
+import { SvgIconRootV2 } from "@vkontakte/icons-sprite";
+export const Icon28DonateOutline = (props)=>{
+    return /*#__PURE__*/ _jsxs(SvgIconRootV2, {
+        viewBox: "0 0 28 28",
+        width: 28,
+        height: 28,
+        vkuiIconId: "donate_outline_28",
+        vkuiAttrs: {
+            "fill": "currentColor"
+        },
+        vkuiProps: props,
+        children: [
+            /*#__PURE__*/ _jsx("path", {
+                fillRule: "evenodd",
+                d: "M15.793 8.115a2 2 0 0 0-3.586 0l-1.005 2.034-2.245.327a2 2 0 0 0-1.108 3.411l1.624 1.584-.383 2.236a2 2 0 0 0 2.902 2.108L14 18.76l2.008 1.055a2 2 0 0 0 2.902-2.108l-.383-2.236 1.624-1.584a2 2 0 0 0-1.108-3.411l-2.245-.327zm-3.262 3.862L14 9l1.47 2.977 3.285.478-2.377 2.318.56 3.272L14 16.5l-2.939 1.545.561-3.273-2.377-2.317z",
+                clipRule: "evenodd"
+            }),
+            /*#__PURE__*/ _jsx("path", {
+                fillRule: "evenodd",
+                d: "M14 2C7.373 2 2 7.373 2 14s5.373 12 12 12 12-5.373 12-12S20.627 2 14 2M4 14C4 8.477 8.477 4 14 4s10 4.477 10 10-4.477 10-10 10S4 19.523 4 14",
+                clipRule: "evenodd"
+            })
+        ]
+    });
+};

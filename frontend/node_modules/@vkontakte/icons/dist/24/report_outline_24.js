@@ -1,0 +1,20 @@
+import { jsx as _jsx } from "react/jsx-runtime";
+import * as React from "react";
+import { SvgIconRootV2 } from "@vkontakte/icons-sprite";
+export const Icon24ReportOutline = (props)=>{
+    return /*#__PURE__*/ _jsx(SvgIconRootV2, {
+        viewBox: "0 0 24 24",
+        width: 24,
+        height: 24,
+        vkuiIconId: "report_outline_24",
+        vkuiAttrs: {
+            "fill": "currentColor"
+        },
+        vkuiProps: props,
+        children: /*#__PURE__*/ _jsx("path", {
+            fillRule: "evenodd",
+            d: "M8.863 2.1h6.274c.674-.002 1.2.211 1.683.697l4.383 4.383c.478.476.699.998.697 1.683v6.274c.002.685-.22 1.207-.697 1.683l-4.383 4.383c-.476.478-.998.699-1.683.697H8.863c-.685.002-1.207-.22-1.683-.697L2.797 16.82c-.478-.476-.699-.998-.697-1.683V8.863c-.002-.685.22-1.207.697-1.683L7.18 2.797c.484-.486 1.009-.699 1.683-.697m-.445 2.005L4.105 8.418c-.18.18-.205.242-.205.495v6.174c0 .25.025.316.205.495l4.313 4.313c.179.179.24.205.495.205h6.174c.253 0 .316-.026.495-.205l4.313-4.313c.18-.18.205-.245.205-.495V8.913c0-.254-.026-.316-.205-.495l-4.313-4.313c-.18-.18-.242-.205-.495-.205H8.913c-.254 0-.319.029-.495.205M13 16a1 1 0 1 1-2 0 1 1 0 0 1 2 0m-.1-8.1a.9.9 0 1 0-1.8 0v5.2a.9.9 0 1 0 1.8 0z",
+            clipRule: "evenodd"
+        })
+    });
+};

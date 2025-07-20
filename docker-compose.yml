@@ -1,9 +1,24 @@
-version: '3.8'
-
 networks:
   dev:
 
 services:
+  nginx:
+    build:
+      context: ./nginx
+      dockerfile: Dockerfile
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      # Монтируем сертификаты из хоста (если есть)
+      - /etc/letsencrypt:/etc/letsencrypt:ro
+    depends_on:
+      backend:
+        condition: service_healthy
+    networks:
+      - dev
+    restart: on-failure
+
   postgres:
     image: postgres:16-alpine
     environment:
@@ -28,72 +43,65 @@ services:
         max-file: "3"
 
   backend:
-    build: ./backend
+    build: 
+      context: ./backend
+      dockerfile: Dockerfile
     environment:
       DATABASE_URL: postgresql://postgres:postgres@postgres:5432/forms_cloud
       VK_GROUP_TOKEN: vk1.a.qd2T3QNslkRNSpeCFkQiiZgKm_iv-wKdYLlDqtoV3D4vdOMLAFPPYwCLapbo146r4AQzipoL9NKAENBdBs-WvrP_oXCK-FW1HeLpXZpB8oyGkMpOTd49w1ZVeK1mJwLBhgsU12awb0BcuewESPQV_eB0lrUbnjIkmIVlGafdLxq8xMriCiU0UGGRwR7L5VpLXJdjbB5a_txndDPuXbsnIw
+      ACCESS_TOKEN_SECRET: your-secret-key-here-change-in-production
+      APP_SECRET: your-app-secret-here-change-in-production
     ports:
       - "8000:8000"
     depends_on:
       postgres:
         condition: service_healthy
-      kafka:
-        condition: service_healthy
     networks:
       - dev
+    healthcheck:
+      test: ["CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://localhost:8000/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+    restart: on-failure
 
-  frontend:
-    build: ./frontend
+  kafka:
+    image: confluentinc/cp-kafka:7.4.0
+    environment:
+      KAFKA_BROKER_ID: 1
+      KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT:PLAINTEXT,PLAINTEXT_HOST:PLAINTEXT
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka:9092,PLAINTEXT_HOST://localhost:29092
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
+      KAFKA_TRANSACTION_STATE_LOG_MIN_ISR: 1
+      KAFKA_TRANSACTION_STATE_LOG_REPLICATION_FACTOR: 1
     ports:
-      - "3000:3000"
+      - "29092:29092"
     depends_on:
-      - backend
+      - zookeeper
     networks:
       - dev
 
   zookeeper:
-    image: confluentinc/cp-zookeeper:7.5.0
+    image: confluentinc/cp-zookeeper:7.4.0
     environment:
       ZOOKEEPER_CLIENT_PORT: 2181
       ZOOKEEPER_TICK_TIME: 2000
-    ports:
-      - "2181:2181"
     networks:
       - dev
 
-  kafka:
-    image: confluentinc/cp-kafka:7.5.0
-    depends_on:
-      - zookeeper
-    ports:
-      - "9092:9092"
+  notify-service:
+    build:
+      context: ./notify-service
+      dockerfile: Dockerfile
     environment:
-      KAFKA_BROKER_ID: 1
-      KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
-      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka:9092
-      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
-    networks:
-      - dev
-    healthcheck:
-      test: ["CMD", "kafka-topics", "--bootstrap-server", "localhost:9092", "--list"]
-      interval: 10s
-      timeout: 5s
-      retries: 10
-
-  consumer:
-    build: ./backend
-    command: bun run src/infra/kafka/consumer.ts
-    environment:
-      DATABASE_URL: postgresql://postgres:postgres@postgres:5432/forms_cloud
-      KAFKA_BROKER: kafka:9092
       VK_GROUP_TOKEN: vk1.a.qd2T3QNslkRNSpeCFkQiiZgKm_iv-wKdYLlDqtoV3D4vdOMLAFPPYwCLapbo146r4AQzipoL9NKAENBdBs-WvrP_oXCK-FW1HeLpXZpB8oyGkMpOTd49w1ZVeK1mJwLBhgsU12awb0BcuewESPQV_eB0lrUbnjIkmIVlGafdLxq8xMriCiU0UGGRwR7L5VpLXJdjbB5a_txndDPuXbsnIw
     depends_on:
-      kafka:
-        condition: service_healthy
-      backend:
-        condition: service_started
+      - kafka
     networks:
       - dev
+    restart: on-failure
 
 volumes:
   postgres_data:

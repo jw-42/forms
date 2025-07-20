@@ -1,0 +1,28 @@
+.host {
+  position: relative;
+}
+
+.empty {
+  padding-block: 12px;
+  padding-inline: 0;
+  color: var(--vkui--color_text_secondary);
+  text-align: center;
+}
+
+.popDown {
+  border-end-start-radius: 0;
+  border-end-end-radius: 0;
+}
+
+.popUp {
+  border-start-start-radius: 0;
+  border-start-end-radius: 0;
+}
+
+.dropdownIcon {
+  cursor: pointer;
+}
+
+.dropdownIconWithOffset {
+  margin-inline-end: 8px;
+}

@@ -4,7 +4,6 @@ import { tokenRefreshService } from './token-refresh'
 import { errorService, HttpErrorHandler } from './error-handler'
 import { configureErrorHandling } from './error-config'
 
-// Initialize error handling configuration
 configureErrorHandling()
 
 class Api {
@@ -26,19 +25,11 @@ class Api {
       return config
     })
 
-    // Add response interceptor for error handling
     this.api.interceptors.response.use(
       (response) => {
-        console.log('Api interceptor: success response', { url: response.config?.url, status: response.status })
         return response
       },
       async (error) => {
-        console.log('Api interceptor: error caught', { 
-          url: error.config?.url, 
-          status: error.response?.status,
-          message: error.message 
-        })
-        
         try {
           const status = error.response?.status
           
@@ -49,7 +40,6 @@ class Api {
           return HttpErrorHandler.handleOtherErrors(error, status)
         } catch (interceptorError) {
           console.error('Api interceptor: Error in error handler:', interceptorError)
-          // Fallback: log error and reject the original error
           console.error('Api interceptor failed:', { error: error.message, interceptorError })
           return Promise.reject(error)
         }
@@ -60,12 +50,10 @@ class Api {
   private async handleAuthError(error: any) {
     const newToken = await tokenRefreshService.refreshToken()
     if (newToken) {
-      // Retry the original request with new token
       const originalRequest = error.config
       originalRequest.headers.Authorization = `Bearer ${newToken}`
       return this.api.request(originalRequest)
     } else {
-      // If refresh failed, show error modal
       HttpErrorHandler.showAuthError()
       return Promise.reject(error)
     }

@@ -1,0 +1,19 @@
+import { jsx as _jsx } from "react/jsx-runtime";
+import * as React from "react";
+import { SvgIconRootV2 } from "@vkontakte/icons-sprite";
+export const Icon16Phone = (props)=>{
+    return /*#__PURE__*/ _jsx(SvgIconRootV2, {
+        viewBox: "0 0 16 16",
+        width: 16,
+        height: 16,
+        vkuiIconId: "phone_16",
+        vkuiAttrs: {
+            "fill": "none"
+        },
+        vkuiProps: props,
+        children: /*#__PURE__*/ _jsx("path", {
+            fill: "currentColor",
+            d: "m5.443 2.64.575.684c.796.943.713 2.365-.19 3.268l-.49.49a.48.48 0 0 0-.11.499q.269.73 1.364 1.827 1.097 1.096 1.827 1.364c.174.064.369.02.5-.11l.489-.49c.903-.902 2.324-.985 3.269-.19l.683.574c.779.656.858 1.839.175 2.64-.372.431-.896.702-1.463.756q-3.273.44-6.868-3.155Q1.607 7.2 2.048 3.927q.022-.256.106-.5c.127-.373.351-.705.65-.963.802-.682 1.984-.603 2.64.177"
+        })
+    });
+};

@@ -1,0 +1,24 @@
+import { jsx as _jsx, jsxs as _jsxs } from "react/jsx-runtime";
+import * as React from "react";
+import { SvgIconRootV2 } from "@vkontakte/icons-sprite";
+export const Icon28Dismiss = (props)=>{
+    return /*#__PURE__*/ _jsxs(SvgIconRootV2, {
+        viewBox: "0 0 28 28",
+        width: 28,
+        height: 28,
+        vkuiIconId: "dismiss_28",
+        vkuiAttrs: {
+            "fill": "currentColor"
+        },
+        vkuiProps: props,
+        children: [
+            /*#__PURE__*/ _jsx("path", {
+                d: "M14 28c7.732 0 14-6.268 14-14S21.732 0 14 0 0 6.268 0 14s6.268 14 14 14",
+                opacity: ".12"
+            }),
+            /*#__PURE__*/ _jsx("path", {
+                d: "M18.736 9.264a.9.9 0 0 1 0 1.272L15.273 14l3.463 3.464a.9.9 0 0 1 .08 1.18l-.08.092a.9.9 0 0 1-1.272 0L14 15.273l-3.464 3.463a.9.9 0 1 1-1.272-1.272L12.727 14l-3.463-3.464a.9.9 0 0 1-.08-1.18l.08-.092a.9.9 0 0 1 1.272 0L14 12.727l3.464-3.463a.9.9 0 0 1 1.272 0"
+            })
+        ]
+    });
+};

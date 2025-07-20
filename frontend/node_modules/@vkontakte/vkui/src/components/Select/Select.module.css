@@ -1,0 +1,82 @@
+.host {
+  position: relative;
+  box-sizing: border-box;
+  font-family: var(--vkui--font_family_base);
+  cursor: pointer;
+}
+
+.el {
+  position: absolute;
+  inset-block-start: 0;
+  inset-inline-start: 0;
+  z-index: var(--vkui_internal--z_index_form_field_side);
+  display: block;
+  inline-size: 100%;
+  block-size: 100%;
+  font-family: inherit;
+  font-size: var(--vkui--font_paragraph--font_size--regular);
+  appearance: none;
+  border: 0;
+  opacity: 0;
+}
+
+.container {
+  position: relative;
+  z-index: var(--vkui_internal--z_index_form_field_element);
+  box-sizing: border-box;
+  flex-grow: 1;
+  flex-shrink: 1;
+  align-self: center;
+  padding-inline: 12px 0;
+  overflow: hidden;
+  color: var(--vkui--color_text_primary);
+}
+
+.hasBefore .container {
+  padding-inline-start: 0;
+}
+
+.multiline .container {
+  padding-block: 12px;
+}
+
+.sizeYCompact.multiline .container {
+  padding-block: 8px;
+}
+
+@media (--sizeY-compact) {
+  .sizeYNone.multiline .container {
+    padding-block: 8px;
+  }
+}
+
+.title {
+  display: block;
+}
+
+.host:not(.multiline) .title {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.empty .title {
+  color: var(--vkui--color_text_secondary);
+}
+
+.alignRight .title {
+  text-align: end;
+}
+
+.alignCenter .title {
+  text-align: center;
+}
+
+/**
+ * CMP:
+ * CalendarHeader
+ */
+/* stylelint-disable-next-line selector-pseudo-class-disallowed-list */
+:global(.vkuiInternalCalendarHeader__picker) .container {
+  padding-inline-end: 4px;
+}

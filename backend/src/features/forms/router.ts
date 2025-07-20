@@ -1,17 +1,17 @@
 import { Hono } from 'hono'
 
-import { default as createForm } from './api/create'
-import { default as getAll } from './api/getAll'
-import { default as getById } from './api/getById'
-import { default as updateForm } from './api/update'
-import { default as deleteForm } from './api/delete'
+import { create } from './api/create'
+import { get } from './api/get'
+import { getById } from './api/getById'
+import { update } from './api/update'
+import { deleteById } from './api/delete'
 
-const formsRouter = new Hono()
+const router = new Hono()
 
-formsRouter.post('/', ...createForm)
-formsRouter.get('/', ...getAll)
-formsRouter.get('/:form_id', ...getById)
-formsRouter.put('/:form_id', ...updateForm)
-formsRouter.delete('/:form_id', ...deleteForm)
+router.post('/', ...create)
+router.get('/', ...get)
+router.get('/:form_id', ...getById)
+router.put('/:form_id', ...update)
+router.delete('/:form_id', ...deleteById)
 
-export default formsRouter
+export default router

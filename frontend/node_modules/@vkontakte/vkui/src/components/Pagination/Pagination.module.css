@@ -1,0 +1,14 @@
+.list {
+  display: flex;
+  padding: 0;
+  margin: 0;
+  list-style-type: none;
+}
+
+.prevButtonContainer {
+  margin-inline-end: 8px;
+}
+
+.nextButtonContainer {
+  margin-inline-start: 8px;
+}

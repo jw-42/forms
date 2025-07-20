@@ -1,0 +1,28 @@
+import { jsx as _jsx, jsxs as _jsxs } from "react/jsx-runtime";
+import * as React from "react";
+import { SvgIconRootV2 } from "@vkontakte/icons-sprite";
+export const Icon20LinkCircleOutline = (props)=>{
+    return /*#__PURE__*/ _jsx(SvgIconRootV2, {
+        viewBox: "0 0 20 20",
+        width: 20,
+        height: 20,
+        vkuiIconId: "link_circle_outline_20",
+        vkuiAttrs: {
+            "fill": "none"
+        },
+        vkuiProps: props,
+        children: /*#__PURE__*/ _jsxs("g", {
+            fill: "currentColor",
+            children: [
+                /*#__PURE__*/ _jsx("path", {
+                    d: "M7 7.75c0 .414.336.75.75.75h2.69l-3.22 3.22a.75.75 0 1 0 1.06 1.06l3.22-3.22v2.69a.75.75 0 0 0 1.5 0v-4.5a.75.75 0 0 0-.75-.75h-4.5a.75.75 0 0 0-.75.75"
+                }),
+                /*#__PURE__*/ _jsx("path", {
+                    fillRule: "evenodd",
+                    d: "M10 18.5a8.5 8.5 0 1 0 0-17 8.5 8.5 0 0 0 0 17m7-8.5a7 7 0 1 1-14 0 7 7 0 0 1 14 0",
+                    clipRule: "evenodd"
+                })
+            ]
+        })
+    });
+};

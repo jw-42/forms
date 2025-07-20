@@ -1,14 +1,12 @@
-import { Hono } from 'hono'
 import { router } from '@shared/config'
+import { ErrorHandlerMiddleware, customLogger } from '@shared/middleware'
 import { ApiError } from '@shared/utils'
-import { ErrorHandlerMiddleware } from '@shared/middleware'
-import { logger } from 'hono/logger'
+import { Hono } from 'hono'
 import { cors } from 'hono/cors'
-import { runLongPoll } from '@features/index'
 
 const app = new Hono()
 
-app.use(logger())
+app.use(customLogger())
 
 app.use(cors({
   origin: '*',
@@ -19,9 +17,8 @@ app.use(cors({
 app.route('/', router)
 
 app.notFound(() => { throw ApiError.NotFound() })
-app.onError(ErrorHandlerMiddleware)
 
-runLongPoll()
+app.onError(ErrorHandlerMiddleware)
 
 export default {
   port: 8000,

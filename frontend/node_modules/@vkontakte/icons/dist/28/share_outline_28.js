@@ -1,0 +1,21 @@
+import { jsx as _jsx } from "react/jsx-runtime";
+import * as React from "react";
+import { SvgIconRootV2 } from "@vkontakte/icons-sprite";
+export const Icon28ShareOutline = (props)=>{
+    return /*#__PURE__*/ _jsx(SvgIconRootV2, {
+        viewBox: "0 0 28 28",
+        width: 28,
+        height: 28,
+        vkuiIconId: "share_outline_28",
+        vkuiAttrs: {
+            "fill": "none"
+        },
+        vkuiProps: props,
+        children: /*#__PURE__*/ _jsx("path", {
+            fill: "currentColor",
+            fillRule: "evenodd",
+            d: "M13.476 6.513c0-.442.485-.651.797-.406l9.532 7.483a.52.52 0 0 1 0 .812l-9.532 7.484a.495.495 0 0 1-.797-.406v-4.485a1 1 0 0 0-1-1c-3.565 0-6.252 1.449-8.26 3.267.362-2.161 1.153-3.807 2.225-5.046 1.497-1.73 3.637-2.78 6.22-3.264a1 1 0 0 0 .815-.983zm2.032-1.979c-1.654-1.298-4.032-.093-4.032 1.979V9.16c-2.565.61-4.854 1.79-6.548 3.749C3.051 15.079 2 18.093 2 22.05a1 1 0 0 0 1.788.616c1.741-2.226 4.175-4.292 7.688-4.625v3.438c0 2.072 2.378 3.277 4.032 1.978l9.532-7.483a2.518 2.518 0 0 0 0-3.957z",
+            clipRule: "evenodd"
+        })
+    });
+};

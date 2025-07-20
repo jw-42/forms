@@ -1,0 +1,18 @@
+import { jsx as _jsx } from "react/jsx-runtime";
+import * as React from "react";
+import { SvgIconRootV2 } from "@vkontakte/icons-sprite";
+export const Icon24Headphones = (props)=>{
+    return /*#__PURE__*/ _jsx(SvgIconRootV2, {
+        viewBox: "0 0 24 24",
+        width: 24,
+        height: 24,
+        vkuiIconId: "headphones_24",
+        vkuiAttrs: {
+            "fill": "currentColor"
+        },
+        vkuiProps: props,
+        children: /*#__PURE__*/ _jsx("path", {
+            d: "M12 2.25a9 9 0 0 0-9 9V18a3 3 0 0 0 3 3h1.5A1.5 1.5 0 0 0 9 19.5v-5A1.5 1.5 0 0 0 7.5 13H5v-1.75c0-3.87 3.13-7 7-7s7 3.13 7 7V13h-2.5a1.5 1.5 0 0 0-1.5 1.5v5a1.5 1.5 0 0 0 1.5 1.5H18a3 3 0 0 0 3-3v-6.75a9 9 0 0 0-9-9"
+        })
+    });
+};

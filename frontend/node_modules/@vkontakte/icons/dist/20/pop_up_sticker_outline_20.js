@@ -1,0 +1,18 @@
+import { jsx as _jsx } from "react/jsx-runtime";
+import * as React from "react";
+import { SvgIconRootV2 } from "@vkontakte/icons-sprite";
+export const Icon20PopUpStickerOutline = (props)=>{
+    return /*#__PURE__*/ _jsx(SvgIconRootV2, {
+        viewBox: "0 0 20 20",
+        width: 20,
+        height: 20,
+        vkuiIconId: "pop_up_sticker_outline_20",
+        vkuiAttrs: {
+            "fill": "currentColor"
+        },
+        vkuiProps: props,
+        children: /*#__PURE__*/ _jsx("path", {
+            d: "M10 5.5A.75.75 0 1 0 10 4H6.45A2.45 2.45 0 0 0 4 6.45v3.547a.75.75 0 1 0 1.5 0V6.45a.95.95 0 0 1 .95-.95zm0 9a.75.75 0 0 0 0 1.5h3.55A2.45 2.45 0 0 0 16 13.55V9.997a.75.75 0 0 0-1.5 0v3.553a.95.95 0 0 1-.95.95z"
+        })
+    });
+};
