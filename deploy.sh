@@ -193,7 +193,10 @@ if [ "$ENV" = "production" ]; then
             # Проверяем содержимое скрипта для диагностики
             echo "📋 Проверка содержимого SSL скрипта:"
             docker compose exec nginx head -5 /usr/local/bin/nginx-ssl-setup.sh
-            docker compose exec nginx /usr/local/bin/nginx-ssl-setup.sh
+            echo "🔍 Проверка прав доступа:"
+            docker compose exec nginx ls -la /usr/local/bin/nginx-ssl-setup.sh
+            echo "🚀 Запуск SSL скрипта:"
+            docker compose exec nginx sh /usr/local/bin/nginx-ssl-setup.sh
         else
             echo "⚠️  SSL скрипт не найден в контейнере nginx"
             echo "Пересобираем nginx контейнер..."
