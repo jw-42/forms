@@ -82,6 +82,12 @@ services:
       - zookeeper
     networks:
       - dev
+    healthcheck:
+      test: ["CMD-SHELL", "kafka-topics --bootstrap-server localhost:29092 --list"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+      start_period: 30s
 
   zookeeper:
     image: confluentinc/cp-zookeeper:7.4.0
@@ -98,7 +104,8 @@ services:
     environment:
       VK_GROUP_TOKEN: vk1.a.qd2T3QNslkRNSpeCFkQiiZgKm_iv-wKdYLlDqtoV3D4vdOMLAFPPYwCLapbo146r4AQzipoL9NKAENBdBs-WvrP_oXCK-FW1HeLpXZpB8oyGkMpOTd49w1ZVeK1mJwLBhgsU12awb0BcuewESPQV_eB0lrUbnjIkmIVlGafdLxq8xMriCiU0UGGRwR7L5VpLXJdjbB5a_txndDPuXbsnIw
     depends_on:
-      - kafka
+      kafka:
+        condition: service_healthy
     networks:
       - dev
     restart: on-failure
