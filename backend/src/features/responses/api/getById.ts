@@ -8,14 +8,14 @@ const factory = createFactory()
 export const getById = factory.createHandlers(async (ctx: Context, next: Next) => {
   try {
     const form_id = ctx.req.param('form_id')
-    const answers_group_id = ctx.req.param('answers_group_id')
-    const user_id = ctx.get('uid')
+    const user_id = ctx.req.param('user_id') as unknown as number
+    const current_user_id = ctx.get('uid')
 
-    if (!form_id || !answers_group_id) {
-      throw ApiError.BadRequest('form_id and answers_group_id are required')
+    if (!user_id) {
+      throw ApiError.BadRequest('user_id is required')
     }
 
-    const answers = await answersService.getById(form_id, answers_group_id, user_id)
+    const answers = await answersService.getByUserId(form_id, user_id, current_user_id)
 
     return ctx.json(answers)
   } catch (error) {

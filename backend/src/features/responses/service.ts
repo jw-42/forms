@@ -38,6 +38,24 @@ class AnswersService {
     return await answersRepository.getById(answers_group_id)
   }
 
+  async getByUserId(form_id: string, user_id: number, current_user_id: number) {
+    const form = await formsService.getById(form_id, current_user_id)
+
+    if (!form) {
+      throw ApiError.NotFound('Form not found')
+    } else if (form.can_edit !== true && current_user_id !== user_id) {
+      throw ApiError.Forbidden()
+    }
+
+    const answers = await answersRepository.getByUserId(form_id, user_id)
+
+    if (!answers) {
+      throw ApiError.NotFound('Answers not found')
+    }
+
+    return answers
+  }
+
   async deleteByUserId(form_id: string, user_id: number, current_user_id: number) {
     const form = await formsService.getById(form_id, current_user_id)
 
