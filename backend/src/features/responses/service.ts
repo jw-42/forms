@@ -26,19 +26,7 @@ class AnswersService {
     return await answersRepository.get(form_id)
   }
 
-  async getById(form_id: string, answers_group_id: string, current_user_id: number) {
-    const form = await formsService.getById(form_id, current_user_id)
-
-    if (!form) {
-      throw ApiError.NotFound('Form not found')
-    } else if (form.can_edit !== true && current_user_id !== form.owner_id) {
-      throw ApiError.Forbidden()
-    }
-
-    return await answersRepository.getById(answers_group_id)
-  }
-
-  async getByUserId(form_id: string, user_id: number, current_user_id: number) {
+  async getById(form_id: string, user_id: number, current_user_id: number) {
     const form = await formsService.getById(form_id, current_user_id)
 
     if (!form) {
@@ -47,7 +35,7 @@ class AnswersService {
       throw ApiError.Forbidden()
     }
 
-    const answers = await answersRepository.getByUserId(form_id, user_id)
+    const answers = await answersRepository.getById(form_id, user_id)
 
     if (!answers) {
       throw ApiError.NotFound('Answers not found')

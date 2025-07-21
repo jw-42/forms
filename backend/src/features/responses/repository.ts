@@ -39,10 +39,10 @@ class AnswersRepository {
     })
   }
 
-  async getById(answers_group_id: string) {
+  async getById(form_id: string, user_id: number) {
     const prisma = getPrisma()
-    return prisma.answersGroup.findUnique({
-      where: { id: answers_group_id },
+    return prisma.answersGroup.findFirst({
+      where: { form_id, user_id },
       select: {
         id: true,
         user_id: true,
@@ -70,24 +70,6 @@ class AnswersRepository {
             question: {
               created_at: 'asc'
             }
-          }
-        }
-      }
-    })
-  }
-
-  async getByUserId(form_id: string, user_id: number) {
-    const prisma = getPrisma()
-    return prisma.answersGroup.findFirst({
-      where: { form_id, user_id },
-      select: {
-        id: true,
-        user_id: true,
-        created_at: true,
-        items: {
-          select: {
-            question_id: true,
-            value: true,
           }
         }
       }
