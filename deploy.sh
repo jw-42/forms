@@ -154,6 +154,23 @@ check_ports "$ENV"
 echo "Запуск сервисов..."
 docker compose up -d --build
 
+# Копирование юридических документов
+if [ -d "legal-docs" ]; then
+    if [ "$ENV" = "production" ]; then
+        sudo mkdir -p /srv/legal-docs
+        sudo cp -r legal-docs/* /srv/legal-docs/
+        echo "✅ Юридические документы скопированы в /srv/legal-docs/"
+        # Для деплоя на удалённый сервер используйте:
+        # scp -r legal-docs/* user@your-server:/srv/legal-docs/
+    else
+        mkdir -p /srv/legal-docs
+        cp -r legal-docs/* /srv/legal-docs/
+        echo "✅ Юридические документы скопированы в /srv/legal-docs/ (dev)"
+    fi
+else
+    echo "⚠️  Папка legal-docs не найдена, документы не скопированы!"
+fi
+
 # В production режиме принудительно пересобираем nginx
 if [ "$ENV" = "production" ]; then
     echo "🔄 Принудительная пересборка nginx для production..."
