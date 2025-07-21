@@ -35,13 +35,7 @@ class AnswersService {
       throw ApiError.Forbidden()
     }
 
-    const answers = await answersRepository.getById(form_id, user_id)
-
-    if (!answers) {
-      throw ApiError.NotFound('Answers not found')
-    }
-
-    return answers
+    return await answersRepository.getById(form_id, user_id)
   }
 
   async deleteByUserId(form_id: string, user_id: number, current_user_id: number) {
