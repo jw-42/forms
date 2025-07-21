@@ -24,12 +24,12 @@ class FormsService {
       throw ApiError.NotFound('Form not found')
     }
 
-    const answers = await answersRepository.getByUserId(form_id, current_user_id)
+    const answers = await answersRepository.getById(form_id, current_user_id)
 
     return {
       ...form,
       can_edit: form.owner_id === current_user_id,
-      has_answer: !!answers.length
+      has_answer: !!answers
     }
   }
 
