@@ -22,6 +22,7 @@ export const getById = factory.createHandlers(async (ctx: Context, next: Next) =
 
     return ctx.json(form)
   } catch (error) {
+    console.log(error)
     if (error instanceof ApiError) {
       throw error
     } else {
