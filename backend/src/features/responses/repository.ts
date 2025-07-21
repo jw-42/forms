@@ -78,8 +78,19 @@ class AnswersRepository {
 
   async getByUserId(form_id: string, user_id: number) {
     const prisma = getPrisma()
-    return prisma.answersGroup.findMany({
-      where: { form_id, user_id }
+    return prisma.answersGroup.findFirst({
+      where: { form_id, user_id },
+      select: {
+        id: true,
+        user_id: true,
+        created_at: true,
+        items: {
+          select: {
+            question_id: true,
+            value: true,
+          }
+        }
+      }
     })
   }
 
