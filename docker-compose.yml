@@ -13,7 +13,7 @@ services:
       # Монтируем сертификаты из хоста (если есть)
       - /etc/letsencrypt:/etc/letsencrypt:ro
       # Монтируем юридические документы
-      - /legal-docs:/srv/legal-docs:ro
+      - /legal-docs:/legal-docs:ro
     depends_on:
       backend:
         condition: service_healthy
