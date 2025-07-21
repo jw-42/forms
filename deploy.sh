@@ -156,17 +156,9 @@ docker compose up -d --build
 
 # Копирование юридических документов
 if [ -d "legal-docs" ]; then
-    if [ "$ENV" = "production" ]; then
-        sudo mkdir -p /srv/legal-docs
-        sudo cp -r legal-docs/* /srv/legal-docs/
-        echo "✅ Юридические документы скопированы в /srv/legal-docs/"
-        # Для деплоя на удалённый сервер используйте:
-        # scp -r legal-docs/* user@your-server:/srv/legal-docs/
-    else
-        mkdir -p /srv/legal-docs
-        cp -r legal-docs/* /srv/legal-docs/
-        echo "✅ Юридические документы скопированы в /srv/legal-docs/ (dev)"
-    fi
+    mkdir -p /legal-docs
+    cp -r legal-docs/* /legal-docs/
+    echo "✅ Юридические документы скопированы в /legal-docs/"
 else
     echo "⚠️  Папка legal-docs не найдена, документы не скопированы!"
 fi
