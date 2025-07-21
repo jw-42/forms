@@ -8,7 +8,8 @@ const factory = createFactory()
 export const getById = factory.createHandlers(async (ctx: Context, next: Next) => {
   try {
     const form_id = ctx.req.param('form_id')
-    const user_id = ctx.req.param('user_id') as unknown as number
+    const uid_str = ctx.req.param('user_id')
+    const user_id = uid_str ? parseInt(uid_str) : null
     const current_user_id = ctx.get('uid')
 
     if (!user_id) {

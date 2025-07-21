@@ -8,7 +8,6 @@ const factory = createFactory()
 
 export const create = factory.createHandlers(async (ctx: Context, next: Next) => {
   try {
-    console.log('create form')
     const body = await ctx.req.json()
     const result = createFormSchema.safeParse(body)
     
