@@ -1,26 +1,11 @@
 import { useState } from "react"
 import { Icon20DocumentTextOutline } from "@vkontakte/icons"
 import { Accordion, Footnote, FormItem, IconButton, Input, Link } from "@vkontakte/vkui"
+import { isValidPrivacyUrl } from '@shared/lib'
 
 export const Privacy = ({ value, onChange }: { value: string, onChange: (v: string) => void }) => {
   const [touched, setTouched] = useState(false)
-  const isValidUrl = (url: string) => {
-    if (url.includes(' ')) return false
-    try {
-      const u = new URL(url)
-      // Должна быть точка в hostname
-      if (!u.hostname.includes('.')) return false
-      // Порт не разрешён
-      if (u.port) return false
-      // После последней точки минимум 2 символа
-      const lastDot = u.hostname.lastIndexOf('.')
-      if (lastDot === -1 || u.hostname.length - lastDot - 1 < 2) return false
-      return true
-    } catch {
-      return false
-    }
-  }
-  const error = touched && value && !isValidUrl(value) ? 'Введите корректную ссылку' : undefined
+  const error = touched && value && !isValidPrivacyUrl(value) ? 'Введите корректную ссылку' : undefined
   return(
     <Accordion>
       <Accordion.Summary before={

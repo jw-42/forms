@@ -1,5 +1,6 @@
 import { useCreateForm, useForm, useUpdateForm } from '@entities/form'
 import { Privacy } from './index'
+import { isValidPrivacyUrl } from '@shared/lib/privacy-url-validator'
 import { routes } from '@shared/model/routes'
 import { Icon20FlashOutline } from '@vkontakte/icons'
 import { useParams, useRouteNavigator } from '@vkontakte/vk-mini-apps-router'
@@ -21,6 +22,8 @@ export const BaseInfo = () => {
   const [title, setTitle] = React.useState<string>('')
   const [description, setDescription] = React.useState<string>('')
   const [privacyUrl, setPrivacyUrl] = React.useState('')
+
+  const isPrivacyUrlValid = isValidPrivacyUrl(privacyUrl)
 
   const {
     mutate: createForm,
@@ -152,7 +155,7 @@ export const BaseInfo = () => {
           size='l'
           stretched
           onClick={handleSubmit}
-          disabled={isPending || !title || !description}
+          disabled={isPending || !title || !description || (!id && !isPrivacyUrlValid)}
         >
           {id ? 'Обновить анкету' : 'Создать анкету'}
         </Button>
