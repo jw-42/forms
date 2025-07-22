@@ -19,7 +19,7 @@ class FormsRepository {
         }
       })
 
-      const data_processing_agreement = await tx.dataProcessingAgreementLog.create({
+      await tx.dataProcessingAgreementLog.create({
         data: {
           ...legal,
           form_id: form.id,
@@ -27,10 +27,7 @@ class FormsRepository {
         }
       })
 
-      return {
-        ...form,
-        data_processing_agreement,
-      }
+      return form
     })
   }
 
