@@ -13,6 +13,7 @@ export const create = factory.createHandlers(async (ctx: Context, next: Next) =>
     const result = createFormSchema.safeParse(body)
     
     if (!result.success) {
+      console.log(result.error)
       throw ApiError.BadRequest()
     }
 
