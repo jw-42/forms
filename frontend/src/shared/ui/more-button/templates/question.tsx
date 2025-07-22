@@ -6,7 +6,7 @@ import React from "react"
 
 export interface QuestionMoreButtonProps {
   formId: string
-  questionId: string
+  questionId: number
 }
 
 export const QuestionMoreButton = ({ formId, questionId }: QuestionMoreButtonProps) => {
@@ -19,7 +19,7 @@ export const QuestionMoreButton = ({ formId, questionId }: QuestionMoreButtonPro
     setTimeout(() => {
       router.push(routes.forms.blank.questions["question-builder"].path, {
         'id': formId,
-        'qid': questionId
+        'qid': String(questionId)
       })
     }, 100)
   }

@@ -1,7 +1,7 @@
-import { BlankForm } from "@features/blank-form"
+import { BaseInfo } from "@features/blank-form"
 import { routes } from "@shared/model"
 import { ResizePanel } from "@shared/ui"
-import { Group, NavIdProps, PanelHeaderBack } from "@vkontakte/vkui"
+import { Group, Header, NavIdProps, PanelHeaderBack } from "@vkontakte/vkui"
 import { useRouteNavigator } from "@vkontakte/vk-mini-apps-router"
 
 export const BlankBuilder = (props: NavIdProps) => {
@@ -14,8 +14,10 @@ export const BlankBuilder = (props: NavIdProps) => {
       before={<PanelHeaderBack onClick={() => router.push(routes.forms.overview.path)} />}
       {...props}
     >
-      <Group>
-        <BlankForm />
+      <Group header={
+        <Header size='l'>Новая анкета</Header>
+      }>
+        <BaseInfo />
       </Group>
     </ResizePanel>
   )

@@ -1,18 +1,18 @@
-import { FormIdType, AnswersGroupIdType, UserIdType, QuestionIdType, AnswerValueType } from '@shared/model'
+import { FormIdType, AnswersGroupIdType, UserIdType, QuestionIdType, AnswerValueType, OptionIdType } from '@shared/model'
 import { QuestionType } from '@entities/question'
 
 export interface AnswerItemProps {
-  question_id: QuestionIdType
+  question_id: number
   value: AnswerValueType
 }
 
 export interface AnswerItemResponse extends AnswerItemProps {
   question: {
-    id: string
+    id: number
     text: string
     type: QuestionType
     options?: {
-      id: string
+      id: number
       text: string
       order: number
     }[]

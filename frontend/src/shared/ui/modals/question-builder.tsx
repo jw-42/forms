@@ -18,7 +18,7 @@ export const QuestionBuilder = (props: NavIdProps) => {
   const [text, setText] = React.useState<string>('')
   const [type, setType] = React.useState<QuestionProps['type']>(params?.type as QuestionProps['type'] || 'text')
 
-  const { data: question } = useQuestion(params?.id, params?.qid)
+  const { data: question } = useQuestion(params?.id, Number(params?.qid))
 
   const {
     mutate: createQuestion,
@@ -53,7 +53,7 @@ export const QuestionBuilder = (props: NavIdProps) => {
     if (params?.id && params?.qid) {
       updateQuestion({
         formId: params.id,
-        questionId: params.qid,
+        questionId: Number(params.qid),
         data: { text }
       }, {
         onSuccess: handleSuccess

@@ -45,7 +45,7 @@ export const Settings = (props: NavIdProps) => {
         <Cell
           multiline
           after={<Button size='s' mode='secondary' onClick={handleAllowMessages}>Разрешить</Button>}
-          extraSubtitle='Чтобы мы могли присылать вам уведомления'
+          extraSubtitle='Чтобы мы могли написать вам сообщение'
         >
           Сообщения от сообщества
         </Cell>

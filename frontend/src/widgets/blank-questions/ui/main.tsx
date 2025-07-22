@@ -2,7 +2,7 @@ import { useQuestions } from "@entities/question/hooks"
 import { QuestionItem } from "@entities/question"
 import { useParams } from "@vkontakte/vk-mini-apps-router"
 import { Separator, Spacing } from "@vkontakte/vkui"
-import React, { useState } from "react"
+import React from "react"
 import { QuestionBuilder } from "./builder"
 import { QuestionFooter } from "./footer"
 import { List } from "@shared/ui"
@@ -21,16 +21,24 @@ export const BlankQuestions = () => {
   const { userId } = useSelector((state: RootState) => state.config)
   const { data: userAnswers } = useGetAnswersByUserId(params?.id as string, userId as number)
 
-  const [answers, setAnswers] = useState<Record<string, string>>({})
+  const [answers, setAnswers] = React.useState<Record<string, string>>({})
 
-  const handleAnswerChange = (questionId: string, value: string) => {
+  const handleAnswerChange = (questionId: number, value: string) => {
     if (!form?.has_answer) {
       setAnswers(prev => ({
         ...prev,
-        [questionId]: value
+        [questionId.toString()]: value
       }))
     }
   }
+
+  React.useEffect(() => {
+    console.log(`new forn data`, form?.can_edit, form?.has_answer)
+  }, [ form ])
+
+  React.useEffect(() => {
+    console.log(`new user answers`, userAnswers)
+  }, [ userAnswers ])
 
   return (
     <React.Fragment>
@@ -42,9 +50,9 @@ export const BlankQuestions = () => {
           <QuestionItem
             {...question}
             value={
-              userAnswers?.items.find(answer => answer.question_id === question.id)?.value || 
-              answers[question.id] || 
-              ''
+              String(userAnswers?.items.find(answer => answer.question_id === question.id)?.value || 
+              answers[question.id.toString()] || 
+              '')
             }
             onChange={(value) => handleAnswerChange(question.id, value)}
             readOnly={form?.has_answer}

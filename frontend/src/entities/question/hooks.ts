@@ -4,7 +4,7 @@ import { QuestionProps } from './types'
 
 export const questionKeys = {
   lists: (form_id: string) => ['questions', form_id] as const,
-  detail: (questionId: string) => ['questions', questionId] as const
+  detail: (questionId: number) => ['questions', questionId] as const
 }
 
 /**
@@ -21,10 +21,10 @@ export const useQuestions = (formId?: string) => {
 /**
  * Хук для получения вопроса
  */
-export const useQuestion = (formId?: string, questionId?: string) => {
+export const useQuestion = (formId?: string, questionId?: number) => {
   return useQuery({
-    queryKey: questionKeys.detail(questionId as string),
-    queryFn: () => questionApi.getById(formId as string, questionId as string),
+    queryKey: questionKeys.detail(questionId as number),
+    queryFn: () => questionApi.getById(formId as string, questionId as number),
     enabled: !!(formId && questionId)
   })
 }
@@ -51,7 +51,7 @@ export const useUpdateQuestion = () => {
   const queryClient = useQueryClient()
   
   return useMutation({
-    mutationFn: ({ formId, questionId, data }: { formId: string, questionId: string, data: Partial<QuestionProps> }) => 
+    mutationFn: ({ formId, questionId, data }: { formId: string, questionId: number, data: Partial<QuestionProps> }) => 
       questionApi.update(formId, questionId, data),
     onSuccess: (_, { formId, questionId }) => {
       queryClient.invalidateQueries({ queryKey: questionKeys.lists(formId) })
@@ -67,7 +67,7 @@ export const useDeleteQuestion = () => {
   const queryClient = useQueryClient()
   
   return useMutation({
-    mutationFn: ({ formId, questionId }: { formId: string, questionId: string }) => 
+    mutationFn: ({ formId, questionId }: { formId: string, questionId: number }) => 
       questionApi.delete(formId, questionId),
     onSuccess: (_, { formId, questionId }) => {
       queryClient.invalidateQueries({ queryKey: questionKeys.lists(formId) })

@@ -1,13 +1,13 @@
 import { AnswerValueType, FormIdType, QuestionIdType } from "@shared/model"
 
 export interface QuestionProps {
-  id: QuestionIdType
+  id: number
   type: QuestionType
   form_id: FormIdType
   text: string
   disabled?: boolean
   options?: {
-    id: string
+    id: number
     text: string
     order: number
   }[]
@@ -28,7 +28,7 @@ export const QuestionTypeDict: Record<QuestionType, string> = {
 } as const
 
 export interface QuestionItemProps {
-  id: string
+  id: number
   form_id: string
 
   text: string
@@ -39,7 +39,7 @@ export interface QuestionItemProps {
   onChange?: (value: string) => void
 
   options?: {
-    id: string
+    id: number
     text: string
     order: number
   }[]

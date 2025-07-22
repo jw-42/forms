@@ -4,27 +4,27 @@ import { OptionProps, UpdateOptionProps, CreateMultipleOptionsProps } from "./ty
 export const optionKeys = {
   all: ["options"] as const,
   lists: () => [...optionKeys.all, "list"] as const,
-  list: (questionId: string) => [...optionKeys.lists(), questionId] as const,
+  list: (questionId: number) => [...optionKeys.lists(), questionId] as const,
   details: () => [...optionKeys.all, "detail"] as const,
-  detail: (questionId: string, optionId: string) => [...optionKeys.details(), questionId, optionId] as const,
+  detail: (questionId: number, optionId: number) => [...optionKeys.details(), questionId, optionId] as const,
 }
 
-export const createMultipleOptions = async (formId: string, questionId: string, data: CreateMultipleOptionsProps): Promise<OptionProps[]> => {
+export const createMultipleOptions = async (formId: string, questionId: number, data: CreateMultipleOptionsProps): Promise<OptionProps[]> => {
   return await apiClient.post(`/forms/${formId}/questions/${questionId}/options`, data)
 }
 
-export const getOptions = async (formId: string, questionId: string): Promise<OptionProps[]> => {
+export const getOptions = async (formId: string, questionId: number): Promise<OptionProps[]> => {
   return await apiClient.get(`/forms/${formId}/questions/${questionId}/options`)
 }
 
-export const getOptionById = async (formId: string, questionId: string, optionId: string): Promise<OptionProps> => {
+export const getOptionById = async (formId: string, questionId: number, optionId: number): Promise<OptionProps> => {
   return await apiClient.get(`/forms/${formId}/questions/${questionId}/options/${optionId}`)
 }
 
-export const updateOption = async (formId: string, questionId: string, optionId: string, data: UpdateOptionProps): Promise<OptionProps> => {
+export const updateOption = async (formId: string, questionId: number, optionId: number, data: UpdateOptionProps): Promise<OptionProps> => {
   return await apiClient.put(`/forms/${formId}/questions/${questionId}/options/${optionId}`, data)
 }
 
-export const deleteOption = async (formId: string, questionId: string, optionId: string): Promise<{ id: string }> => {
+export const deleteOption = async (formId: string, questionId: number, optionId: number): Promise<{ id: number }> => {
   return await apiClient.delete(`/forms/${formId}/questions/${questionId}/options/${optionId}`)
 }

@@ -1,9 +1,9 @@
 import { useForm } from "@entities/form"
 import { formatDate } from "@shared/lib"
-import { Icon24Incognito } from "@vkontakte/icons"
+import { Icon24Incognito, Icon24MessageOutline } from "@vkontakte/icons"
 import bridge, { UserInfo } from "@vkontakte/vk-bridge"
 import { useParams } from "@vkontakte/vk-mini-apps-router"
-import { Avatar, Cell, Div, Group, Header, ModalPage, ModalPageHeader, NavIdProps, Paragraph } from "@vkontakte/vkui"
+import { Avatar, Cell, Div, Group, Header, IconButton, ModalPage, ModalPageHeader, NavIdProps, Paragraph } from "@vkontakte/vkui"
 import React from "react"
 
 export const FormDetails = (props: NavIdProps) => {
@@ -37,6 +37,11 @@ export const FormDetails = (props: NavIdProps) => {
               fallbackIcon={<Icon24Incognito/>}
               src={userInfo?.photo_100}
             />
+          }
+          after={
+            <IconButton target='_blank' href={`https://vk.com/im?sel=${form?.owner_id}`}>
+              <Icon24MessageOutline/>
+            </IconButton>
           }
           extraSubtitle={form?.created_at && `Анкета создана ${formatDate(form?.created_at)}`}
         >

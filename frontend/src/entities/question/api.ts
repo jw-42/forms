@@ -8,12 +8,12 @@ export const questionApi = {
   getAll: (formId: string) => 
     apiClient.get<QuestionProps[]>(`/forms/${formId}/questions`),
 
-  getById: (formId: string, questionId: string) =>
+  getById: (formId: string, questionId: number) =>
     apiClient.get<QuestionProps>(`/forms/${formId}/questions/${questionId}`),
     
-  update: (formId: string, questionId: string, data: Partial<QuestionProps>) =>
+  update: (formId: string, questionId: number, data: Partial<QuestionProps>) =>
     apiClient.put<QuestionProps>(`/forms/${formId}/questions/${questionId}`, data),
     
-  delete: (formId: string, questionId: string) =>
+  delete: (formId: string, questionId: number) =>
     apiClient.delete(`/forms/${formId}/questions/${questionId}`)
 }

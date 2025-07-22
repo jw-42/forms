@@ -5,12 +5,12 @@ export interface OptionProps {
   /**
    * ID варианта ответа
    */
-  id: string
+  id: number
 
   /**
    * ID вопроса, к которому относится вариант ответа
    */
-  question_id: string
+  question_id: number
 
   /**
    * Текст варианта ответа
@@ -54,7 +54,7 @@ export interface UpdateOptionProps {
  */
 export interface CreateMultipleOptionsProps {
   options: Array<{
-    id?: string
+    id?: number
     text: string
     order?: number
   }>
@@ -77,7 +77,7 @@ export interface OptionItemProps {
   /**
    * ID вопроса
    */
-  question_id: string
+  question_id: number
 
   /**
    * Обработчик изменения значения для режима default

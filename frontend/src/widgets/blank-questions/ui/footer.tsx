@@ -22,7 +22,7 @@ export const QuestionFooter = ({ currentAnswers }: QuestionFooterProps) => {
       formId: params?.id as string,
       data: {
         answers: Object.entries(currentAnswers).map(([questionId, value]) => ({
-          question_id: questionId,
+          question_id: Number(questionId),
           value
         }))
       }
@@ -53,7 +53,7 @@ export const QuestionFooter = ({ currentAnswers }: QuestionFooterProps) => {
           <Spacing size={6} />
 
           <Footnote style={{ textAlign: 'center', color: 'var(--vkui--color_text_secondary)' }}>
-            Нажимая на кнопку, вы принимаете условия <Link href='https://dev.vk.com/ru/user-agreement'>пользовательского соглашения</Link> и <Link href='https://dev.vk.com/ru/privacy-policy'>политики конфиденциальности</Link>.
+            Нажимая на кнопку, вы принимаете условия <Link target='_blank' href='https://bugs-everywhere.ru/user-agreement'>пользовательского соглашения</Link> и <Link target='_blank' href='https://bugs-everywhere.ru/typical-data-proccessing-agreement'>политики конфиденциальности</Link> лица, разместившего анкету.
           </Footnote>
         </Div>
       )}

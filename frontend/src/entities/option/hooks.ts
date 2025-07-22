@@ -10,18 +10,18 @@ import {
 import { UpdateOptionProps, CreateMultipleOptionsProps } from "./types"
 import { questionKeys } from "@entities/question/hooks"
 
-export const useOptions = (formId?: string, questionId?: string) => {
+export const useOptions = (formId?: string, questionId?: number) => {
   return useQuery({
-    queryKey: optionKeys.list(questionId as string),
-    queryFn: () => getOptions(formId as string, questionId as string),
+    queryKey: optionKeys.list(questionId as number),
+    queryFn: () => getOptions(formId as string, questionId as number),
     enabled: !!questionId
   })
 }
 
-export const useOption = (formId?: string, questionId?: string, optionId?: string) => {
+export const useOption = (formId?: string, questionId?: number, optionId?: number) => {
   return useQuery({
-    queryKey: optionKeys.detail(questionId as string, optionId as string),
-    queryFn: () => getOptionById(formId as string, questionId as string, optionId as string),
+    queryKey: optionKeys.detail(questionId as number, optionId as number),
+    queryFn: () => getOptionById(formId as string, questionId as number, optionId as number),
     enabled: !!questionId && !!optionId
   })
 }
@@ -30,7 +30,7 @@ export const useUpdateOption = () => {
   const queryClient = useQueryClient()
   
   return useMutation({
-    mutationFn: (data: { formId: string; questionId: string; optionId: string; data: UpdateOptionProps }) => 
+    mutationFn: (data: { formId: string; questionId: number; optionId: number; data: UpdateOptionProps }) => 
       updateOption(data.formId, data.questionId, data.optionId, data.data),
     onSuccess: (_, { questionId, optionId }) => {
       queryClient.invalidateQueries({ queryKey: optionKeys.list(questionId) })
@@ -43,7 +43,7 @@ export const useDeleteOption = () => {
   const queryClient = useQueryClient()
   
   return useMutation({
-    mutationFn: (data: { formId: string; questionId: string; optionId: string }) => 
+    mutationFn: (data: { formId: string; questionId: number; optionId: number }) => 
       deleteOption(data.formId, data.questionId, data.optionId),
     onSuccess: (_, { questionId, optionId }) => {
       queryClient.invalidateQueries({ queryKey: optionKeys.list(questionId) })
@@ -56,7 +56,7 @@ export const useCreateMultipleOptions = () => {
   const queryClient = useQueryClient()
   
   return useMutation({
-    mutationFn: (data: { formId: string; questionId: string; data: CreateMultipleOptionsProps }) => 
+    mutationFn: (data: { formId: string; questionId: number; data: CreateMultipleOptionsProps }) => 
       createMultipleOptions(data.formId, data.questionId, data.data),
     onSuccess: (_, { formId, questionId }) => {
       queryClient.invalidateQueries({ queryKey: optionKeys.list(questionId) })

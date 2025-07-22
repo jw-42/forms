@@ -9,7 +9,7 @@ import { Icon20ListPlusOutline } from "@vkontakte/icons"
 export interface RadioQuestionProps {
   readOnly?: boolean
   options?: {
-    id: string
+    id: number
     text: string
   }[]
   value?: string
@@ -24,7 +24,7 @@ export const RadioQuestion = ({ id, form_id, readOnly, options, value, onChange 
   const handleAddOption = () => {
     router.push(routes.forms.blank.questions["options-builder"].path, {
       id: form_id,
-      qid: id
+      qid: String(id)
     })
   }
 
@@ -34,8 +34,8 @@ export const RadioQuestion = ({ id, form_id, readOnly, options, value, onChange 
         options.map((option) => (
           <Radio
             key={option.id}
-            checked={value === option.id}
-            onChange={() => onChange?.(option.id)}
+            checked={value === option.id.toString()}
+            onChange={() => onChange?.(option.id.toString())}
             disabled={readOnly}
           >
             {option.text}

@@ -52,6 +52,15 @@ export const Sidebar = () => {
         >
           Настройки
         </Cell>
+
+        <Spacing size={2} />
+
+        <Cell
+          activated={activeStory === VIEW.HELP}
+          onClick={() => router.push(routes.help.overview.path)}
+        >
+          Помощь
+        </Cell>
       </Group>
     </Panel>
   )
