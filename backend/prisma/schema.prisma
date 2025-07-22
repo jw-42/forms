@@ -9,13 +9,13 @@ datasource db {
 }
 
 model User {
-  id         Int            @id
-  is_banned  Boolean        @default(false)
-  created_at DateTime       @default(now())
-  updated_at DateTime       @updatedAt
-  sessions   Session[]
-  forms      Form[]
-  answers    AnswersGroup[]
+  id                             Int                          @id
+  is_banned                      Boolean                      @default(false)
+  created_at                     DateTime                     @default(now())
+  updated_at                     DateTime                     @updatedAt
+  sessions                       Session[]
+  forms                          Form[]
+  answers                        AnswersGroup[]
 }
 
 model Session {
@@ -29,17 +29,17 @@ model Session {
 }
 
 model Form {
-  id             String         @id @default(uuid())
-  title          String
-  description    String
-  owner_id       Int
-  notifications  Boolean        @default(false)
-  privacy_policy String         @default("https://bugs-everywhere.ru/typical-data-processing-agreement")
-  created_at     DateTime       @default(now())
-  updated_at     DateTime       @updatedAt
-  owner          User           @relation(fields: [owner_id], references: [id], onDelete: Cascade)
-  questions      Question[]
-  answers        AnswersGroup[]
+  id                         String                       @id @default(uuid())
+  title                      String
+  description                String
+  owner_id                   Int
+  notifications              Boolean                      @default(false)
+  privacy_policy             String                       @default("https://bugs-everywhere.ru/typical-data-processing-agreement")
+  created_at                 DateTime                     @default(now())
+  updated_at                 DateTime                     @updatedAt
+  owner                      User                         @relation(fields: [owner_id], references: [id], onDelete: Cascade)
+  questions                  Question[]
+  answers                    AnswersGroup[]
 
   @@unique([title, owner_id])
 }
@@ -90,4 +90,15 @@ model Answer {
   created_at       DateTime     @default(now())
   answers_group    AnswersGroup @relation(fields: [answers_group_id], references: [id], onDelete: Cascade)
   question         Question     @relation(fields: [question_id], references: [id], onDelete: Cascade)
+}
+
+model DataProcessingAgreementLog {
+  id             String   @id @default(uuid())
+  user_id        Int
+  form_id        String
+  accepted_at    DateTime @default(now())
+  agreement_url  String   @default("https://bugs-everywhere.ru/typical-data-processing-agreement")
+  agreement_hash String
+  ip_address     String?
+  user_agent     String?
 }
