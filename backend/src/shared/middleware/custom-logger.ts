@@ -1,5 +1,6 @@
 import type { MiddlewareHandler } from 'hono'
 import { getColorEnabledAsync } from 'hono/utils/color'
+import { getConnInfo } from 'hono/bun'
 
 enum LogPrefix {
   Outgoing = '-->',
@@ -16,31 +17,6 @@ const humanize = (times: string[]) => {
 const time = (start: number) => {
   const delta = Date.now() - start
   return humanize([delta < 1000 ? delta + 'ms' : Math.round(delta / 1000) + 's'])
-}
-
-const getClientIP = (c: any) => {
-  // Try different headers for IP address
-  const headers = [
-    'cf-connecting-ip', // Cloudflare
-    'x-forwarded-for',  // Standard proxy header
-    'x-real-ip',        // Nginx
-    'x-client-ip',      // Apache
-  ]
-  
-  for (const header of headers) {
-    const ip = c.req.header(header)
-    if (ip) {
-      // x-forwarded-for can contain multiple IPs, take the first one
-      return ip.split(',')[0].trim()
-    }
-  }
-  
-  // Fallback to connection info if available
-  if (c.req.raw?.cf?.connectingIP) {
-    return c.req.raw.cf.connectingIP
-  }
-  
-  return 'unknown'
 }
 
 const colorStatus = async (status: number) => {
@@ -87,12 +63,11 @@ export const customLogger = (fn: PrintFunc = console.log): MiddlewareHandler => 
     const { method, url } = c.req
     const path = url.slice(url.indexOf('/', 8))
     const timestamp = new Date().toISOString()
-    const ip = getClientIP(c)
-
-    if (ip) {
-      c.set('ip', ip)
-      c.set('user-agent', c.req.header('user-agent'))
-    }
+    const info = getConnInfo(c)
+    const ip = info.remote.address
+    
+    c.set('ip', ip)
+    c.set('user-agent', c.req.header('User-Agent'))
 
     await log(fn, LogPrefix.Incoming, method, path, 0, undefined, timestamp, ip)
 
