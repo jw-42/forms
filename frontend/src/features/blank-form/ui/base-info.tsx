@@ -5,8 +5,6 @@ import { Icon20FlashOutline } from '@vkontakte/icons'
 import { useParams, useRouteNavigator } from '@vkontakte/vk-mini-apps-router'
 import { Button, Div, Footnote, FormItem, FormLayoutGroup, IconButton, Input, Link, PanelSpinner, Separator, Spacing, Textarea, Tooltip } from '@vkontakte/vkui'
 import React from 'react'
-import { useSelector } from 'react-redux'
-import type { RootState } from '@app/store'
 
 export const BaseInfo = () => {
 
@@ -39,7 +37,6 @@ export const BaseInfo = () => {
   } = useUpdateForm()
 
   const isPending = isCreating || isUpdating
-  const userId = useSelector((state: RootState) => state.config.userId)
   const handleSubmit = () => {
     if (!title || !description) return
 
