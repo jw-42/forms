@@ -18,10 +18,6 @@ export const createFormSchema = z.object({
 })
 
 export const dataProcessingAgreementLogSchema = z.object({
-  id: z.uuid(),
-  user_id: z.number(),
-  form_id: z.string(),
-  accepted_at: z.date(),
   agreement_url: z.string(),
   agreement_hash: z.string(),
   ip_address: z.string().optional(),
@@ -46,6 +42,13 @@ export const getFormsSchema = z.object({
   count: z.number().min(1).max(100).optional(),
   offset: z.number().min(0).optional(),
 })
+
+export interface DataProcessingAgreementInput {
+  agreement_url: string
+  agreement_hash: string
+  ip_address?: string | undefined
+  user_agent?: string | undefined
+}
 
 export type CreateFormInput = z.infer<typeof createFormSchema>
 export type UpdateFormInput = z.infer<typeof updateFormSchema>
