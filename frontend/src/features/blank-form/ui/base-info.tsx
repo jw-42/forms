@@ -45,7 +45,11 @@ export const BaseInfo = () => {
         id, 
         data: { title, description }
       })
-      : createForm({ title, description })
+      : createForm({
+          title,
+          description,
+          privacy_policy: privacyUrl.length > 0 ? privacyUrl : undefined,
+        })
   }
 
   React.useEffect(() => {

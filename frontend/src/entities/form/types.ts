@@ -7,6 +7,7 @@ export interface FormBaseProps {
 export interface FormDetailProps extends FormBaseProps {
   owner_id: number
   description: string
+  privacy_policy: string
   created_at: string
   can_edit: boolean
   has_answer: boolean
@@ -24,6 +25,7 @@ export interface LegalInfo {
 export interface CreateFormProps {
   title: string
   description: string
+  privacy_policy?: string
   legal?: LegalInfo
 }
 
