@@ -12,9 +12,19 @@ export interface FormDetailProps extends FormBaseProps {
   has_answer: boolean
 }
 
+export interface LegalInfo {
+  user_id: number
+  form_id: string
+  agreement_url: string
+  agreement_hash: string
+  ip_address?: string
+  user_agent?: string
+}
+
 export interface CreateFormProps {
   title: string
   description: string
+  legal: LegalInfo
 }
 
 export interface UpdateFormProps {
