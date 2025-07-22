@@ -29,16 +29,17 @@ model Session {
 }
 
 model Form {
-  id            String         @id @default(uuid())
-  title         String
-  description   String
-  owner_id      Int
-  notifications Boolean        @default(false)
-  created_at    DateTime       @default(now())
-  updated_at    DateTime       @updatedAt
-  owner         User           @relation(fields: [owner_id], references: [id], onDelete: Cascade)
-  questions     Question[]
-  answers       AnswersGroup[]
+  id             String         @id @default(uuid())
+  title          String
+  description    String
+  owner_id       Int
+  notifications  Boolean        @default(false)
+  privacy_policy String         @default("https://bugs-everywhere.ru/typical-data-processing-agreement")
+  created_at     DateTime       @default(now())
+  updated_at     DateTime       @updatedAt
+  owner          User           @relation(fields: [owner_id], references: [id], onDelete: Cascade)
+  questions      Question[]
+  answers        AnswersGroup[]
 
   @@unique([title, owner_id])
 }
@@ -49,7 +50,7 @@ enum QuestionType {
 }
 
 model Question {
-  id         Int       @id @default(autoincrement())
+  id         Int          @id @default(autoincrement())
   type       QuestionType @default(text)
   form_id    String
   text       String
@@ -61,7 +62,7 @@ model Question {
 }
 
 model Option {
-  id          Int   @id @default(autoincrement())
+  id          Int      @id @default(autoincrement())
   question_id Int
   text        String
   order       Int      @default(0)
