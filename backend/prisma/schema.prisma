@@ -34,7 +34,7 @@ model Form {
   description                String
   owner_id                   Int
   notifications              Boolean                      @default(false)
-  privacy_policy             String                       @default("https://bugs-everywhere.ru/typical-data-processing-agreement")
+  privacy_policy             String                       @default("https://bugs-everywhere.ru/typical-data-proccessing-agreement")
   created_at                 DateTime                     @default(now())
   updated_at                 DateTime                     @updatedAt
   owner                      User                         @relation(fields: [owner_id], references: [id], onDelete: Cascade)

@@ -15,6 +15,8 @@ export const QuestionFooter = ({ currentAnswers }: QuestionFooterProps) => {
   const { data: form } = useForm(params?.id)
   const { mutate: submitAnswers, isPending } = useSubmitAnswers()
 
+  const [safeLink, setSafeLink] = React.useState<string>('')
+
   const handleSubmitAnswers = () => {
     if (Object.keys(currentAnswers).length === 0) return
 
@@ -28,6 +30,14 @@ export const QuestionFooter = ({ currentAnswers }: QuestionFooterProps) => {
       }
     })
   }
+
+  React.useEffect(() => {
+    if (form?.privacy_policy) {
+      const encodedUrl = encodeURIComponent(form.privacy_policy)
+      const vkLink = `https://vk.com/away.php?to=${encodedUrl}`
+      setSafeLink(vkLink)
+    }
+  }, [form?.privacy_policy])
 
   return (
     <React.Fragment>
@@ -53,7 +63,7 @@ export const QuestionFooter = ({ currentAnswers }: QuestionFooterProps) => {
           <Spacing size={6} />
 
           <Footnote style={{ textAlign: 'center', color: 'var(--vkui--color_text_secondary)' }}>
-            Нажимая на кнопку, вы принимаете условия <Link target='_blank' href='https://bugs-everywhere.ru/user-agreement'>пользовательского соглашения</Link> и <Link target='_blank' href='https://bugs-everywhere.ru/typical-data-proccessing-agreement'>политики конфиденциальности</Link> лица, разместившего анкету.
+            Нажимая на кнопку, вы принимаете условия <Link target='_blank' href='https://bugs-everywhere.ru/user-agreement'>пользовательского соглашения</Link> и <Link target='_blank' href={safeLink}>политику конфиденциальности</Link> лица, разместившего анкету.
           </Footnote>
         </Div>
       )}
