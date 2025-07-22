@@ -89,6 +89,11 @@ export const customLogger = (fn: PrintFunc = console.log): MiddlewareHandler => 
     const timestamp = new Date().toISOString()
     const ip = getClientIP(c)
 
+    if (ip) {
+      c.set('ip', ip)
+      c.set('user-agent', c.req.header('user-agent'))
+    }
+
     await log(fn, LogPrefix.Incoming, method, path, 0, undefined, timestamp, ip)
 
     const start = Date.now()
