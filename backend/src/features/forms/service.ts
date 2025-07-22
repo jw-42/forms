@@ -1,16 +1,27 @@
 import { answersRepository } from '@features/responses'
-import { formsRepository, MAX_FORMS_PER_USER, type CreateFormInput, type UpdateFormInput } from './index'
+import { formsRepository, MAX_FORMS_PER_USER, type CreateFormInput, type DataProcessingAgreementInput, type UpdateFormInput } from './index'
 import { ApiError } from '@shared/utils'
+import { getAgreementHash } from '@shared/utils/get-agreement-hash'
 
 class FormsService {
-  async create(owner_id: number, data: CreateFormInput) {
+  async create(owner_id: number, data: CreateFormInput, legal_info?: Partial<DataProcessingAgreementInput>) {
     const formsCount = await formsRepository.count(owner_id)
 
     if (formsCount >= MAX_FORMS_PER_USER) {
       throw ApiError.Conflict('You have reached the maximum number of forms')
     }
 
-    return await formsRepository.create(owner_id, data)
+    const {
+      url: agreement_url,
+      hash: agreement_hash
+    } = await getAgreementHash('https://bugs-everywhere.ru/data-processing-agreement')
+
+    const legal: DataProcessingAgreementInput = {
+      agreement_url,
+      agreement_hash,
+    }
+
+    return await formsRepository.create(owner_id, data, legal)
   }
 
   async get(owner_id: number, count: number = 10, offset: number = 0) {

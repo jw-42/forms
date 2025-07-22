@@ -3,7 +3,6 @@ import type { Context, Next } from 'hono'
 import { createFactory } from 'hono/factory'
 import { createFormSchema, formsService } from '..'
 import { sendNewFormEvent } from '@infra/kafka/producer'
-import { getAgreementHash } from '@shared/utils/get-agreement-hash'
 
 const factory = createFactory()
 
@@ -22,15 +21,11 @@ export const create = factory.createHandlers(async (ctx: Context, next: Next) =>
       )
     }
 
-    // const { legal } = result.data
-
-    // const {
-    //   url,
-    //   hash
-    // } = await getAgreementHash(legal.agreement_url)
-
     const owner_id = ctx.get('uid')
-    const form = await formsService.create(owner_id, result.data)
+    const form = await formsService.create(owner_id, result.data, {
+      ip_address: ctx.get('ip'),
+      user_agent: ctx.get('user-agent'),
+    })
 
     if (!!form) {
       void sendNewFormEvent({
