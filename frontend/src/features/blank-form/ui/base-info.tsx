@@ -43,19 +43,12 @@ export const BaseInfo = () => {
   const handleSubmit = () => {
     if (!title || !description) return
 
-    const legal = {
-      user_id: userId!,
-      form_id: '',
-      agreement_url: privacyUrl || 'https://bugs-everywhere.ru/typical-data-proccessing-agreement',
-      agreement_hash: '',
-    }
-
     id
       ? updateForm({
         id, 
         data: { title, description }
       })
-      : createForm({ title, description, legal })
+      : createForm({ title, description })
   }
 
   React.useEffect(() => {

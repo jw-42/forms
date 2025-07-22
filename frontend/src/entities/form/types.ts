@@ -13,10 +13,10 @@ export interface FormDetailProps extends FormBaseProps {
 }
 
 export interface LegalInfo {
-  user_id: number
-  form_id: string
-  agreement_url: string
-  agreement_hash: string
+  user_id?: number
+  form_id?: string
+  agreement_url?: string
+  agreement_hash?: string
   ip_address?: string
   user_agent?: string
 }
@@ -24,7 +24,7 @@ export interface LegalInfo {
 export interface CreateFormProps {
   title: string
   description: string
-  legal: LegalInfo
+  legal?: LegalInfo
 }
 
 export interface UpdateFormProps {

@@ -14,14 +14,7 @@ export const createFormSchema = z.object({
   description: z.string()
     .min(MIN_FORM_DESCRIPTION_LENGTH)
     .max(MAX_FORM_DESCRIPTION_LENGTH),
-  legal: z.object({
-    user_id: z.number(),
-    form_id: z.string(),
-    agreement_url: z.string(),
-    agreement_hash: z.string(),
-    ip_address: z.string().optional(),
-    user_agent: z.string().optional(),
-  }),
+  privacy_policy: z.url().optional(),
 })
 
 export const dataProcessingAgreementLogSchema = z.object({

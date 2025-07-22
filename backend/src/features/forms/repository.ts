@@ -2,7 +2,7 @@ import { getPrisma } from "@infra/database"
 import type { CreateFormInput, UpdateFormInput } from "./types"
 
 class FormsRepository {
-  async create(owner_id: number, { legal, ...data }: CreateFormInput) {
+  async create(owner_id: number, data: CreateFormInput) {
     const prisma = getPrisma()
 
     return await prisma.$transaction(async (tx) => {
@@ -15,16 +15,17 @@ class FormsRepository {
           id: true,
           title: true,
           owner_id: true,
+          privacy_policy: true,
         }
       })
 
-      await tx.dataProcessingAgreementLog.create({
-        data: {
-          ...legal,
-          form_id: form.id,
-          user_id: owner_id,
-        }
-      })
+      // await tx.dataProcessingAgreementLog.create({
+      //   data: {
+      //     ...legal,
+      //     form_id: form.id,
+      //     user_id: owner_id,
+      //   }
+      // })
 
       return form
     })
