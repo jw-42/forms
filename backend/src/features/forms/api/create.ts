@@ -14,7 +14,13 @@ export const create = factory.createHandlers(async (ctx: Context, next: Next) =>
     
     if (!result.success) {
       console.log(result.error)
-      throw ApiError.BadRequest()
+      throw ApiError.BadRequest(
+        'One or more parameters is invalid or not provided',
+        result.error.issues.map(issue => ({
+          path: issue.path.join('.'),
+          message: issue.message
+        }))
+      )
     }
 
     const { legal } = result.data

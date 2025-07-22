@@ -18,9 +18,11 @@ class FormsRepository {
         }
       })
 
-      await tx.dataProcessingAgreementLog.create({
+      const log = await tx.dataProcessingAgreementLog.create({
         data: legal
       })
+
+      console.log(log)
 
       return form
     })
