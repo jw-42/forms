@@ -13,7 +13,6 @@ export const create = factory.createHandlers(async (ctx: Context, next: Next) =>
     const result = createFormSchema.safeParse(body)
     
     if (!result.success) {
-      console.log(result.error)
       throw ApiError.BadRequest(
         'One or more parameters is invalid or not provided',
         result.error.issues.map(issue => ({
@@ -23,24 +22,15 @@ export const create = factory.createHandlers(async (ctx: Context, next: Next) =>
       )
     }
 
-    const { legal } = result.data
+    // const { legal } = result.data
 
-    const {
-      url,
-      hash
-    } = await getAgreementHash(legal.agreement_url)
+    // const {
+    //   url,
+    //   hash
+    // } = await getAgreementHash(legal.agreement_url)
 
     const owner_id = ctx.get('uid')
-    const form = await formsService.create(owner_id, {
-      ...result.data,
-      legal: {
-        ...legal,
-        agreement_url: url as string,
-        agreement_hash: hash || '',
-        ip_address: ctx.get('ip'),
-        user_agent: ctx.get('user-agent'),
-      }
-    })
+    const form = await formsService.create(owner_id, result.data)
 
     if (!!form) {
       void sendNewFormEvent({
