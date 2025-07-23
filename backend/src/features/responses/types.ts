@@ -10,4 +10,8 @@ export const submitAnswersSchema = z.object({
 export type SubmitAnswers = z.infer<typeof submitAnswersSchema> & {
   form_id: string
   user_id: number
+  agreement_url: string
+  agreement_hash: string
+  ip_address?: string
+  user_agent?: string
 }

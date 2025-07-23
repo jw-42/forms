@@ -5,12 +5,16 @@ import { get } from './api/get'
 import { getById } from './api/getById'
 import { update } from './api/update'
 import { deleteById } from './api/delete'
+import { getDataProccessingAgreement } from './api/getDataProccessingAgreement'
+import { getPersonalDataAgreement } from './api/getPersonalDataAgreement'
 
 const router = new Hono()
 
 router.post('/', ...create)
 router.get('/', ...get)
 router.get('/:form_id', ...getById)
+router.get('/:form_id/data-proccessing', ...getDataProccessingAgreement)
+router.get('/:form_id/personal-data', ...getPersonalDataAgreement)
 router.put('/:form_id', ...update)
 router.delete('/:form_id', ...deleteById)
 
