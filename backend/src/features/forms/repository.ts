@@ -97,6 +97,24 @@ class FormsRepository {
       where: { owner_id }
     })
   }
+
+  async getDataProccessingAgreement(form_id: string) {
+    const prisma = getPrisma()
+    return await prisma.dataProcessingAgreementLog.findFirst({
+      where: { form_id }
+    })
+  }
+
+  async getPersonalDataAgreements(form_id: string, user_ids?: number[]) {
+    const prisma = getPrisma()
+    return await prisma.personalDataAgreementLog.findMany({
+      where: {
+        form_id,
+        user_id: user_ids ? { in: user_ids } : undefined
+      }
+    })
+  }
+  
 }
 
 export default new FormsRepository()

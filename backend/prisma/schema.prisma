@@ -102,3 +102,15 @@ model DataProcessingAgreementLog {
   ip_address     String?
   user_agent     String?
 }
+
+model PersonalDataAgreementLog {
+  id             String   @id @default(uuid())
+  user_id        Int
+  form_id        String
+  accepted_at    DateTime @default(now())
+  withdrawn_at   DateTime?
+  agreement_url  String
+  agreement_hash String
+  ip_address     String?
+  user_agent     String?
+}

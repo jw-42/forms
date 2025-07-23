@@ -15,6 +15,17 @@ class AnswersRepository {
         }
       })
 
+      await tx.personalDataAgreementLog.create({
+        data: {
+          user_id: data.user_id,
+          form_id: data.form_id,
+          agreement_url: data.agreement_url,
+          agreement_hash: data.agreement_hash,
+          ip_address: data.ip_address ?? undefined,
+          user_agent: data.user_agent ?? undefined,
+        }
+      })
+
       await tx.answer.createMany({
         data: data.answers.map((answer) => ({
           answers_group_id,
