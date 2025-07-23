@@ -86,9 +86,9 @@ class FormsService {
     const form = await formsRepository.getById(form_id)
     const is_admin = ADMINS.includes(current_user_id)
 
-    if (!form) {
-      throw ApiError.NotFound('Form not found')
-    } else if (form.owner_id !== current_user_id && !is_admin) {
+    if (!form && !is_admin) {
+      throw ApiError.NotFound()
+    } else if (form && form.owner_id !== current_user_id && !is_admin) {
       throw ApiError.Forbidden()
     }
 
