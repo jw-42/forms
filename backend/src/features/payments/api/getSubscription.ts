@@ -80,6 +80,7 @@ export const getSubscription = factory.createHandlers(async (ctx: Context, next:
         })
     }
   } catch (error) {
+    console.error(error)
     return ctx.json({
       error: {
         error_code: 1, 
