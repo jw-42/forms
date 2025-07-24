@@ -1,4 +1,3 @@
-import { ApiError } from '@shared/utils'
 import { createFactory } from 'hono/factory'
 import { GetSubscriptionParams } from '../types'
 import type { Context, Next } from 'hono'
@@ -25,9 +24,6 @@ export const getSubscription = factory.createHandlers(async (ctx: Context, next:
   try {
     const body = await ctx.req.parseBody()
     const result = GetSubscriptionParams.safeParse({...body})
-
-    console.log('body', {...body})
-    console.log('result', result.error?.issues)
 
     if (!result.success) {
       return ctx.json({

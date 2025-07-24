@@ -11,7 +11,7 @@ export const GetSubscriptionParams = z.object({
   order_id: z.coerce.number(),
   receiver_id: z.coerce.number(),
   user_id: z.coerce.number(),
-  version: z.string(),
+  version: z.string().optional(),
   sig: z.string()
 })
 
