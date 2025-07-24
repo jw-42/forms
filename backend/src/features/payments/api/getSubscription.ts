@@ -26,7 +26,7 @@ export const getSubscription = factory.createHandlers(async (ctx: Context, next:
     const body = await ctx.req.parseBody()
     const result = GetSubscriptionParams.safeParse(body)
 
-    console.log('Content-Type:', ctx.req.header('Content-Type'))
+    console.log('Parsed body:', ctx.req.parseBody())
 
     if (!result.success) {
       return ctx.json({
