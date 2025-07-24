@@ -23,11 +23,14 @@ const factory = createFactory()
 
 export const getSubscription = factory.createHandlers(async (ctx: Context, next: Next) => {
   try {
-    const params = ctx.req.query()
+    const query = ctx.req.query()
+    const params = ctx.req.param()
     const body = await ctx.req.json()
-    const result = GetSubscriptionParams.safeParse(params)
+    const result = GetSubscriptionParams.safeParse(query)
 
-    console.log(JSON.stringify(params), JSON.stringify(body))
+    console.log('params:', params);
+    console.log('query:', query);
+    console.log('body:', body);
 
     if (!result.success) {
       throw ApiError.BadRequest(
