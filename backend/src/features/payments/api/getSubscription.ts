@@ -23,14 +23,8 @@ const factory = createFactory()
 
 export const getSubscription = factory.createHandlers(async (ctx: Context, next: Next) => {
   try {
-    const query = ctx.req.query()
-    const params = ctx.req.param()
-    const body = await ctx.req.json()
-    const result = GetSubscriptionParams.safeParse(query)
-
-    console.log('params:', params);
-    console.log('query:', query);
-    console.log('body:', body);
+    const body = await ctx.req.parseBody()
+    const result = GetSubscriptionParams.safeParse(body)
 
     if (!result.success) {
       return ctx.json({
@@ -86,6 +80,7 @@ export const getSubscription = factory.createHandlers(async (ctx: Context, next:
         })
     }
   } catch (error) {
+    console.error(error)
     console.log(JSON.stringify(error))
     return ctx.json({
       error: {
