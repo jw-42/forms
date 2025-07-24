@@ -4,3 +4,4 @@ export * from './forms';
 export * from './questions';
 export * from './options';
 export * from './responses';
+export * from './payments';
