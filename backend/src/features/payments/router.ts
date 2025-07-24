@@ -4,6 +4,6 @@ import { getSubscription } from './api/getSubscription'
 
 const router = new Hono()
 
-router.get('/', ...getSubscription)
+router.post('/', ...getSubscription)
 
 export default router
