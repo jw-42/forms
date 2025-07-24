@@ -17,6 +17,7 @@ export enum VIEW {
   ANSWERS = 'answers',
   SETTINGS = 'settings',
   HELP = 'help',
+  SUBSCRIPTION = 'subscription',
 }
 
 export enum FORMS_PAGES {
@@ -45,6 +46,10 @@ export enum SETTINGS_PAGES {
 }
 
 export enum HELP_PAGES {
+  OVERVIEW = 'overview',
+}
+
+export enum SUBSCRIPTION_PAGES {
   OVERVIEW = 'overview',
 }
 
@@ -85,6 +90,10 @@ export const routes = RoutesConfig.create([
 
   createView(VIEW.HELP, [
     createPanel(HELP_PAGES.OVERVIEW, '/help', []),
+  ]),
+
+  createView(VIEW.SUBSCRIPTION, [
+    createPanel(SUBSCRIPTION_PAGES.OVERVIEW, '/subscription', []),
   ]),
 ])
 

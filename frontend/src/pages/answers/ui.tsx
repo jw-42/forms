@@ -1,4 +1,5 @@
 import { ResizePanel } from "@shared/ui"
+import { Icon56HourglassErrorBadgeOutline } from "@vkontakte/icons"
 import { Group, Header, NavIdProps, Placeholder } from "@vkontakte/vkui"
 
 export const Answers = (props: NavIdProps) => {
@@ -8,10 +9,13 @@ export const Answers = (props: NavIdProps) => {
       {...props}
     >
       <Group header={
-        <Header size='s'>Мои ответы</Header>
+        <Header size='l'>Мои ответы</Header>
       }>
-        <Placeholder>
-          Здесь пока ничего нет.
+        <Placeholder
+          icon={<Icon56HourglassErrorBadgeOutline/>}
+          title='Здесь пока ничего нет'
+        >
+          Мы уже работаем над этим разделом.
         </Placeholder>
       </Group>
     </ResizePanel>

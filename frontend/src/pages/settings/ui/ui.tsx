@@ -3,7 +3,7 @@ import { Button, Cell, Group, Header, NavIdProps, PanelHeaderBack, Snackbar } fr
 import { useRouteNavigator } from "@vkontakte/vk-mini-apps-router"
 import { routes } from "@shared/model"
 import bridge from "@vkontakte/vk-bridge"
-import { Icon24CheckCircleFillGreen } from "@vkontakte/icons"
+import { Icon24CheckCircleFillGreen, Icon32StarsCircleFillViolet } from "@vkontakte/icons"
 
 export const Settings = (props: NavIdProps) => {
 
@@ -39,6 +39,16 @@ export const Settings = (props: NavIdProps) => {
       before={<PanelHeaderBack onClick={handleBack} />}
       {...props}
     >
+      <Group>
+        <Cell
+          before={<Icon32StarsCircleFillViolet/>}
+          extraSubtitle='Меньше кликов — больше смысла'
+          onClick={() => router.push(routes.subscription.overview.path)}
+        >
+          Подписка, которая думает за тебя
+        </Cell>
+      </Group>
+
       <Group header={
         <Header size='l'>Настройки</Header>
       }>
