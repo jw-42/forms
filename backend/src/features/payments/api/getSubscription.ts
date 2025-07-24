@@ -37,13 +37,25 @@ export const getSubscription = factory.createHandlers(async (ctx: Context, next:
     }
 
     if (!verifySignature(result.data)) {
-      throw ApiError.BadRequest('Invalid signature')
+      return ctx.json({
+        error: {
+          error_code: 10, 
+          error_msg: 'Неверная подпись',
+          critical: true
+        }
+      })
     }
 
     const { app_id, item } = result.data
 
     if (app_id !== 53866259) {
-      throw ApiError.BadRequest('Unsupported app_id')
+      return ctx.json({
+        error: {
+          error_code: 100, 
+          error_msg: 'Это приложение не поддерживается',
+          critical: true
+        }
+      })
     }
 
     switch (item) {
@@ -59,14 +71,21 @@ export const getSubscription = factory.createHandlers(async (ctx: Context, next:
         })
 
       default:
-        throw ApiError.BadRequest('Unknown subscription type')
+        return ctx.json({
+          error: {
+            error_code: 20, 
+            error_msg: 'Такой подписки не существует',
+            critical: true
+          }
+        })
     }
   } catch (error) {
-    console.error(error)
-    if (error instanceof ApiError) {
-      throw error
-    } else {
-      throw ApiError.Internal()
-    }
+    return ctx.json({
+      error: {
+        error_code: 1, 
+        error_msg: 'Ошибка обновления информации на сервере. Попробуйте ещё раз позже.',
+        critical: false
+      }
+    })
   }
 })

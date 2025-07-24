@@ -1,7 +1,8 @@
 import { ResizePanel, routes } from "@shared/index"
-import { Icon28NewsfeedOutline, Icon28ChatsOutline, Icon28MagicWandOutline, Icon28StatisticsOutline, Icon48StarsCircleFillViolet } from "@vkontakte/icons"
+import { Icon28NewsfeedOutline, Icon28MagicWandOutline, Icon28StatisticsOutline, Icon48StarsCircleFillViolet } from "@vkontakte/icons"
+import bridge from "@vkontakte/vk-bridge"
 import { useRouteNavigator } from "@vkontakte/vk-mini-apps-router"
-import { Button, Cell, Div, Group, Header, NavIdProps, PanelHeaderBack, Placeholder, Separator, Spacing } from "@vkontakte/vkui"
+import { Button, Cell, Div, Group, Header, NavIdProps, PanelHeaderBack, Placeholder, Spacing } from "@vkontakte/vkui"
 
 export const Subscription = (props: NavIdProps) => {
 
@@ -9,6 +10,23 @@ export const Subscription = (props: NavIdProps) => {
 
   const handleBack = () => {
     router.push(routes.forms.overview.path)
+  }
+
+  const handleSubscribe = async () => {
+    bridge.send('VKWebAppShowSubscriptionBox', {
+      action: 'create',
+      item: 'vk_testers_30',
+    })
+      .then((data) => {
+        if (data.success) {
+          console.log('Subscription created successfully')
+        } else {
+          console.log('Subscription creation failed')
+        }
+      })
+      .catch((error) => {
+        console.error('Error creating subscription:', error)
+      })
   }
 
   return(
@@ -28,7 +46,7 @@ export const Subscription = (props: NavIdProps) => {
           icon={<Icon48StarsCircleFillViolet width={56} height={56} />}
           title='Подписка, которая думает за тебя'
           action={
-            <Button size='l' mode='secondary' disabled>
+            <Button size='l' mode='secondary' onClick={handleSubscribe}>
               Попробовать бесплатно
             </Button>
           }
@@ -71,7 +89,7 @@ export const Subscription = (props: NavIdProps) => {
         <Spacing/>
 
         <Div>
-          <Button stretched size='l' mode='secondary' disabled>
+          <Button stretched size='l' mode='secondary' onClick={handleSubscribe}>
             Попробовать бесплатно
           </Button>
         </Div>
