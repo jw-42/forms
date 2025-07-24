@@ -33,13 +33,13 @@ export const getSubscription = factory.createHandlers(async (ctx: Context, next:
     console.log('body:', body);
 
     if (!result.success) {
-      throw ApiError.BadRequest(
-        'One or more parameters is invalid or not provided',
-        result.error.issues.map(issue => ({
-          path: issue.path.join('.'),
-          message: issue.message
-        }))
-      )
+      return ctx.json({
+        error: {
+          error_code: 101, 
+          error_msg: `Неверные параметры запроса: ${JSON.stringify(result.error.issues)}`,
+          critical: true
+        }
+      })
     }
 
     if (!verifySignature(result.data)) {
