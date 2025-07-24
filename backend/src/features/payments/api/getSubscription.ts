@@ -30,7 +30,8 @@ export const getSubscription = factory.createHandlers(async (ctx: Context, next:
       return ctx.json({
         error: {
           error_code: 101, 
-          error_msg: `Неверные параметры запроса: ${JSON.stringify(body)}`,
+          error_msg: 'Неверные параметры запроса',
+          content_type: ctx.req.header('Content-Type'),
           critical: true
         }
       })
