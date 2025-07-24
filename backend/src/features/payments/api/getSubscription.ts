@@ -24,7 +24,7 @@ const factory = createFactory()
 export const getSubscription = factory.createHandlers(async (ctx: Context, next: Next) => {
   try {
     const params = ctx.req.query()
-    const body = ctx.req.json()
+    const body = await ctx.req.json()
     const result = GetSubscriptionParams.safeParse(params)
 
     console.log(JSON.stringify(params), JSON.stringify(body))
