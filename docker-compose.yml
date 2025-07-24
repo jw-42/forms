@@ -51,8 +51,8 @@ services:
     environment:
       DATABASE_URL: postgresql://postgres:postgres@postgres:5432/forms_cloud
       VK_GROUP_TOKEN: vk1.a.qd2T3QNslkRNSpeCFkQiiZgKm_iv-wKdYLlDqtoV3D4vdOMLAFPPYwCLapbo146r4AQzipoL9NKAENBdBs-WvrP_oXCK-FW1HeLpXZpB8oyGkMpOTd49w1ZVeK1mJwLBhgsU12awb0BcuewESPQV_eB0lrUbnjIkmIVlGafdLxq8xMriCiU0UGGRwR7L5VpLXJdjbB5a_txndDPuXbsnIw
-      ACCESS_TOKEN_SECRET: your-secret-key-here-change-in-production
-      APP_SECRET: your-app-secret-here-change-in-production
+      ACCESS_TOKEN_SECRET: VxMn9ZeK#@ppSv9Jmai52tYnF^7q4Utn
+      APP_SECRET: A4tR2molasKBwIaN3vKe
     ports:
       - "8000:8000"
     depends_on:

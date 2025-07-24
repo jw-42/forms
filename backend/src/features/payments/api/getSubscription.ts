@@ -26,8 +26,6 @@ export const getSubscription = factory.createHandlers(async (ctx: Context, next:
     const result = GetSubscriptionParams.safeParse({...body})
 
     if (!result.success) {
-      console.log('body', {...body})
-      console.log('result', result.error?.issues)
       return ctx.json({
         error: {
           error_code: 101, 
