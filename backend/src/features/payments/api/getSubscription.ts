@@ -26,12 +26,13 @@ export const getSubscription = factory.createHandlers(async (ctx: Context, next:
     const body = await ctx.req.parseBody()
     const result = GetSubscriptionParams.safeParse(body)
 
+    console.log('Content-Type:', ctx.req.header('Content-Type'))
+
     if (!result.success) {
       return ctx.json({
         error: {
           error_code: 101, 
           error_msg: 'Неверные параметры запроса',
-          content_type: ctx.req.header('Content-Type'),
           critical: true
         }
       })
