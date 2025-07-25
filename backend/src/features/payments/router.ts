@@ -1,7 +1,12 @@
 import { Hono } from 'hono'
 import { getSubscription, subscriptionStatusChange } from './api'
+import { AuthorizationMiddleware } from '@shared/middleware/authorization'
+import { getActiveSubscriptions } from './api/getActiveSubscriptions'
 
 const router = new Hono()
+
+router.use(AuthorizationMiddleware)
+router.get('/active', ...getActiveSubscriptions)
 
 router.post('/', async (ctx, next) => {
   const body = await ctx.req.parseBody()
