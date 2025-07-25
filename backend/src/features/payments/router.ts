@@ -5,9 +5,6 @@ import { getActiveSubscriptions } from './api/getActiveSubscriptions'
 
 const router = new Hono()
 
-router.use(AuthorizationMiddleware)
-router.get('/active', ...getActiveSubscriptions)
-
 router.post('/', async (ctx, next) => {
   const body = await ctx.req.parseBody()
   const notification_type = body.notification_type
@@ -28,5 +25,8 @@ router.post('/', async (ctx, next) => {
     }
   })
 })
+
+router.use('/active', AuthorizationMiddleware)
+router.get('/active', ...getActiveSubscriptions)
 
 export default router
