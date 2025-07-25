@@ -58,16 +58,16 @@ export const getSubscription = factory.createHandlers(async (ctx: Context, next:
     }
 
     switch (item) {
-      // case 'vk_testers_30':
-      //   return ctx.json({
-      //     item_id: item,
-      //     title: 'Премиум для участников VK Testers',
-      //     description: 'Для участников программы бета-тестирования',
-      //     period: 30,
-      //     trial_duration: 3,
-      //     price: 5,
-      //     expiration: 0
-      //   })
+      case 'vk_testers_30':
+        return ctx.json({
+          item_id: item,
+          title: 'Премиум для участников VK Testers',
+          description: 'Для участников программы бета-тестирования',
+          period: 30,
+          trial_duration: 3,
+          price: 5,
+          expiration: 0
+        })
 
       default:
         return ctx.json({
