@@ -1,22 +1,7 @@
 import { createFactory } from 'hono/factory'
 import { GetSubscriptionParams } from '../types'
 import type { Context, Next } from 'hono'
-import { VKUrlDecode } from '@shared/utils'
-
-
-const verifySignature = (params: GetSubscriptionParams) => {
-  const { sig, ...rest } = params
-  const restObj = rest as Record<string, unknown>
-  const keys = Object.keys(restObj).sort()
-  let baseString = ''
-  for (const key of keys) {
-    baseString += key + '=' + VKUrlDecode(String(restObj[key]))
-  }
-  baseString += Bun.env.APP_SECRET
-  const hash = new Bun.CryptoHasher('md5').update(baseString).digest('hex')
-  
-  return hash === sig
-}
+import { verifySignature } from '@shared/utils'
 
 const factory = createFactory()
 
@@ -35,7 +20,12 @@ export const getSubscription = factory.createHandlers(async (ctx: Context, next:
       })
     }
 
-    if (!verifySignature(result.data)) {
+    const secret = Bun.env.APP_SECRET
+    if (!secret) {
+      throw new Error('APP_SECRET is not set in environment')
+    }
+
+    if (!verifySignature(result.data, 'sig', secret)) {
       return ctx.json({
         error: {
           error_code: 10, 

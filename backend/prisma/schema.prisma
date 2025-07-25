@@ -9,13 +9,14 @@ datasource db {
 }
 
 model User {
-  id                             Int                          @id
-  is_banned                      Boolean                      @default(false)
-  created_at                     DateTime                     @default(now())
-  updated_at                     DateTime                     @updatedAt
-  sessions                       Session[]
-  forms                          Form[]
-  answers                        AnswersGroup[]
+  id           Int            @id
+  is_banned    Boolean        @default(false)
+  created_at   DateTime       @default(now())
+  updated_at   DateTime       @updatedAt
+  sessions     Session[]
+  forms        Form[]
+  answers      AnswersGroup[]
+  subscription Subscription[]
 }
 
 model Session {
@@ -29,17 +30,17 @@ model Session {
 }
 
 model Form {
-  id                         String                       @id @default(uuid())
-  title                      String
-  description                String
-  owner_id                   Int
-  notifications              Boolean                      @default(false)
-  privacy_policy             String                       @default("https://bugs-everywhere.ru/typical-data-proccessing-agreement")
-  created_at                 DateTime                     @default(now())
-  updated_at                 DateTime                     @updatedAt
-  owner                      User                         @relation(fields: [owner_id], references: [id], onDelete: Cascade)
-  questions                  Question[]
-  answers                    AnswersGroup[]
+  id             String         @id @default(uuid())
+  title          String
+  description    String
+  owner_id       Int
+  notifications  Boolean        @default(false)
+  privacy_policy String         @default("https://bugs-everywhere.ru/typical-data-proccessing-agreement")
+  created_at     DateTime       @default(now())
+  updated_at     DateTime       @updatedAt
+  owner          User           @relation(fields: [owner_id], references: [id], onDelete: Cascade)
+  questions      Question[]
+  answers        AnswersGroup[]
 
   @@unique([title, owner_id])
 }
@@ -104,13 +105,38 @@ model DataProcessingAgreementLog {
 }
 
 model PersonalDataAgreementLog {
-  id             String   @id @default(uuid())
+  id             String    @id @default(uuid())
   user_id        Int
   form_id        String
-  accepted_at    DateTime @default(now())
+  accepted_at    DateTime  @default(now())
   withdrawn_at   DateTime?
   agreement_url  String
   agreement_hash String
   ip_address     String?
   user_agent     String?
+}
+
+enum SubscriptionStatus {
+  chargeable
+  active
+  cancelled
+}
+
+enum SubscriptionCancelReason {
+  user_decision
+  app_decision
+  payment_fail
+  unknown
+}
+
+model Subscription {
+  subscription_id Int                       @id @unique
+  user_id         Int
+  status          SubscriptionStatus
+  cancel_reason   SubscriptionCancelReason?
+  item_id         String
+  item_price      Int
+  next_bill_time  DateTime
+  pending_cancel  Int?
+  user            User                      @relation(fields: [user_id], references: [id], onDelete: Cascade)
 }
