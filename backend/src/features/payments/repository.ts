@@ -32,7 +32,7 @@ class PaymentsRepository {
   }
 
   async getSubscriptionByUserId (user_id: number, status?: 'active'|'chargeable'|'cancelled') {
-    return await getPrisma().subscription.findFirst({
+    return await getPrisma().subscription.findMany({
       where: { user_id, status }
     })
   }
