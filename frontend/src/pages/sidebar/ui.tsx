@@ -1,12 +1,16 @@
+import { useGetSubscriptions } from "@entities/subscriptions";
 import { routes } from "@shared/index";
 import { VIEW } from "@shared/index";
 import { Icon24GearOutline, Icon32StarsCircleFillViolet } from "@vkontakte/icons";
 import { useActiveVkuiLocation, useRouteNavigator } from "@vkontakte/vk-mini-apps-router";
-import { Avatar, Button, ButtonGroup, Cell, Div, Group, Panel, Separator, Spacing } from "@vkontakte/vkui";
+import { Button, ButtonGroup, Cell, Div, Group, Panel, Separator, Spacing } from "@vkontakte/vkui";
+import React from "react";
 
 export const Sidebar = () => {
 
   const router = useRouteNavigator()
+
+  const { data: subscriptions } = useGetSubscriptions()
 
   const { view: activeStory = VIEW.FORMS } = useActiveVkuiLocation()
 
@@ -63,17 +67,21 @@ export const Sidebar = () => {
           Помощь
         </Cell>
 
-        <Spacing>
-          <Separator/>
-        </Spacing>
+        {(subscriptions && subscriptions.length === 0) && (
+          <React.Fragment>
+            <Spacing>
+              <Separator/>
+            </Spacing>
 
-        <Cell
-          before={<Icon32StarsCircleFillViolet/>}
-          extraSubtitle='Меньше кликов — больше смысла'
-          onClick={() => router.push(routes.subscription.overview.path)}
-        >
-          Подписка, которая думает за тебя
-        </Cell>
+            <Cell
+              before={<Icon32StarsCircleFillViolet/>}
+              extraSubtitle='Меньше кликов — больше смысла'
+              onClick={() => router.push(routes.subscription.overview.path)}
+            >
+              Подписка, которая думает за тебя
+            </Cell>
+          </React.Fragment>
+        )}
       </Group>
     </Panel>
   )

@@ -9,14 +9,15 @@ datasource db {
 }
 
 model User {
-  id           Int            @id
-  is_banned    Boolean        @default(false)
-  created_at   DateTime       @default(now())
-  updated_at   DateTime       @updatedAt
-  sessions     Session[]
-  forms        Form[]
-  answers      AnswersGroup[]
-  subscription Subscription[]
+  id               Int            @id
+  is_banned        Boolean        @default(false)
+  has_subscription Boolean        @default(false)
+  created_at       DateTime       @default(now())
+  updated_at       DateTime       @updatedAt
+  sessions         Session[]
+  forms            Form[]
+  answers          AnswersGroup[]
+  subscription     Subscription[]
 }
 
 model Session {

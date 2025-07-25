@@ -1,10 +1,11 @@
-import { ResizePanel, routes } from "@shared/index"
+import { formatDate, ResizePanel, routes } from "@shared/index"
 import { Icon28NewsfeedOutline, Icon28MagicWandOutline, Icon28StatisticsOutline, Icon48StarsCircleFillViolet } from "@vkontakte/icons"
 import bridge from "@vkontakte/vk-bridge"
 import { useRouteNavigator } from "@vkontakte/vk-mini-apps-router"
 import { Button, Cell, Div, Group, Header, NavIdProps, PanelHeaderBack, Placeholder, Spacing } from "@vkontakte/vkui"
 import { queryClient } from '@shared/index'
 import { subscriptionsKeys, useGetSubscriptions } from '@entities/subscriptions'
+import React from 'react'
 
 // Карта для читаемых названий подписок по item_id
 const SUBSCRIPTION_TITLES: Record<string, string> = {
@@ -43,7 +44,6 @@ export const Subscription = (props: NavIdProps) => {
     })
       .then((data) => {
         if (data.success) {
-          console.log('Subscription created successfully')
           queryClient.invalidateQueries({ queryKey: subscriptionsKeys.list() })
         } else {
           console.log('Subscription creation failed')
@@ -51,6 +51,20 @@ export const Subscription = (props: NavIdProps) => {
       })
       .catch((error) => {
         console.error('Error creating subscription:', error)
+      })
+  }
+
+  const handleCancelSubscription = async (subscription_id: number) => {
+    bridge.send('VKWebAppShowSubscriptionBox', {
+      action: 'cancel',
+      subscription_id: subscription_id.toString(),
+    })
+      .then((data) => {
+        if (data.success) {
+          queryClient.invalidateQueries({ queryKey: subscriptionsKeys.list() })
+        } else {
+          console.log('Subscription cancellation failed')
+        }
       })
   }
 
@@ -70,10 +84,13 @@ export const Subscription = (props: NavIdProps) => {
         {(subscriptions && subscriptions?.length > 0) ? (
           subscriptions.map((subscription) => (
             <Cell
+              multiline
               key={subscription.subscription_id}
-              extraSubtitle={getSubscriptionStatusLabel(subscription.status)}
+              extraSubtitle={
+                `${getSubscriptionStatusLabel(subscription.status)} ${subscription.next_bill_time ? ` • Списание ${formatDate(subscription.next_bill_time)}` : ''}`
+              }
               after={
-                <Button size='s' mode='secondary'>
+                <Button size='s' mode='secondary' onClick={() => handleCancelSubscription(subscription.subscription_id)}>
                   Отменить
                 </Button>
               }
@@ -127,13 +144,17 @@ export const Subscription = (props: NavIdProps) => {
           Отключение рекламы
         </Cell>
 
-        <Spacing/>
+        {(subscriptions && subscriptions.length === 0) && (
+          <React.Fragment>
+            <Spacing/>
 
-        <Div>
-          <Button stretched size='l' mode='secondary' onClick={handleSubscribe}>
-            Попробовать бесплатно
-          </Button>
-        </Div>
+            <Div>
+              <Button stretched size='l' mode='secondary' onClick={handleSubscribe}>
+                Попробовать бесплатно
+              </Button>
+            </Div>
+          </React.Fragment>
+        )}
       </Group>
     </ResizePanel>
   )

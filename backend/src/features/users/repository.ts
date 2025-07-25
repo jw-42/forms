@@ -24,6 +24,20 @@ class UsersRepository {
       }
     })
   }
+
+  async updateHasSubscription(id: number, hasSubscription: boolean) {
+    const prisma = getPrisma()
+    return await prisma.user.update({
+      where: { id },
+      data: { has_subscription: hasSubscription },
+      select: {
+        id: true,
+        is_banned: true,
+        has_subscription: true,
+        created_at: true,
+      }
+    })
+  }
 }
 
 export default new UsersRepository()

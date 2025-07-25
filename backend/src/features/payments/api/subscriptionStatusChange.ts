@@ -3,6 +3,7 @@ import { ChangeSubscriptionStatus } from '../types'
 import type { Context, Next } from 'hono'
 import { verifySignature } from '@shared/utils'
 import paymentsRepository from '../repository'
+import usersRepository from '@features/users/repository'
 
 const factory = createFactory()
 
@@ -82,13 +83,48 @@ export const subscriptionStatusChange = factory.createHandlers(async (ctx: Conte
       })
     }
 
-    // Ответ VK
-    return ctx.json({
-      response: {
-        subscription_id,
-        app_order_id: subscription_id // Можно заменить на свой уникальный id заказа, если требуется
-      }
-    })
+    switch (status) {
+      case 'chargeable':
+        await usersRepository.updateHasSubscription(user_id, true)
+
+        return ctx.json({
+          response: {
+            subscription_id,
+            app_order_id: subscription_id
+          }
+        })
+
+      case 'cancelled':
+        await usersRepository.updateHasSubscription(user_id, false)
+
+        return ctx.json({
+          response: {
+            subscription_id,
+            app_order_id: subscription_id
+          }
+        })
+
+      case 'active':
+        if (cancel_reason === 'user_decision') {
+          // TODO: handle user decision
+        }
+
+        return ctx.json({
+          response: {
+            subscription_id,
+            app_order_id: subscription_id
+          }
+        })
+
+      default:
+        return ctx.json({
+          error: {
+            error_code: 1,
+            error_msg: 'Ошибка обновления информации на сервере. Попробуйте ещё раз позже.',
+            critical: true
+          }
+        })
+    }
   } catch (error) {
     console.error(error)
     return ctx.json({
