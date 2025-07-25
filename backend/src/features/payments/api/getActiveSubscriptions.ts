@@ -11,7 +11,7 @@ export const getActiveSubscriptions = factory.createHandlers(async (ctx: Context
     if (!user_id) {
       throw ApiError.Unauthorized('User not authorized')
     }
-    const subscriptions = await paymentsService.getActiveSubscriptions(user_id)
+    const subscriptions = await paymentsService.getActiveSubscriptions(user_id, ['active', 'chargeable'])
     return ctx.json(subscriptions)
   } catch (error) {
     if (error instanceof ApiError) {
