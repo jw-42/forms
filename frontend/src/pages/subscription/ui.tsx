@@ -72,6 +72,11 @@ export const Subscription = (props: NavIdProps) => {
             <Cell
               key={subscription.subscription_id}
               extraSubtitle={getSubscriptionStatusLabel(subscription.status)}
+              after={
+                <Button size='s' mode='secondary'>
+                  Отменить
+                </Button>
+              }
             >
               {getSubscriptionTitleByItemId(subscription.item_id)}
             </Cell>

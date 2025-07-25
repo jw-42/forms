@@ -6,7 +6,7 @@ class PaymentsService {
     if (!user_id) {
       throw ApiError.Unauthorized('User ID is required')
     }
-    return await paymentsRepository.getSubscriptionsByUserId(user_id)
+    return await paymentsRepository.getSubscriptionsByUserId(user_id, status)
   }
 }
 
