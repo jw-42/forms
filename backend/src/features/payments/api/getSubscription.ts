@@ -62,9 +62,11 @@ export const getSubscription = factory.createHandlers(async (ctx: Context, next:
         return ctx.json({
           response: {
             item_id: item,
-            title: 'Премиум для участников VK Testers',
+            title: 'Премиум для VK Testers',
+            description: 'Специальный тариф для участников программы бета-тестирования',
             period: 30,
-            price: 10,
+            trial_duration: 3,
+            price: 5,
             expiration: 600
           }
         })
