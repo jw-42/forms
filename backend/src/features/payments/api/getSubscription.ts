@@ -64,7 +64,7 @@ export const getSubscription = factory.createHandlers(async (ctx: Context, next:
           title: 'Премиум для участников VK Testers',
           period: 30,
           price: 10,
-          expiration: 0
+          expiration: 600
         })
 
       default:
