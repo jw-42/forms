@@ -1,4 +1,5 @@
-import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
+import { useMutation, useQuery } from '@tanstack/react-query'
+import { queryClient } from '@shared/api/query-client'
 import { 
   answerKeys, 
   submit,
@@ -10,7 +11,7 @@ import { formKeys } from '@entities/form/api'
 
 // Hook for submitting answers
 export const useSubmitAnswers = () => {
-  const queryClient = useQueryClient()
+  // используем общий queryClient
   
   return useMutation({
     mutationFn: submit,
@@ -43,7 +44,7 @@ export const useGetAnswersByUserId = (formId: string, userId: number | undefined
 
 // Hook for resetting answers
 export const useResetAnswers = () => {
-  const queryClient = useQueryClient()
+  // используем общий queryClient
   
   return useMutation({
     mutationFn: reset,

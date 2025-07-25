@@ -3,10 +3,34 @@ import { Icon28NewsfeedOutline, Icon28MagicWandOutline, Icon28StatisticsOutline,
 import bridge from "@vkontakte/vk-bridge"
 import { useRouteNavigator } from "@vkontakte/vk-mini-apps-router"
 import { Button, Cell, Div, Group, Header, NavIdProps, PanelHeaderBack, Placeholder, Spacing } from "@vkontakte/vkui"
+import { queryClient } from '@shared/index'
+import { subscriptionsKeys, useGetSubscriptions } from '@entities/subscriptions'
+
+// Карта для читаемых названий подписок по item_id
+const SUBSCRIPTION_TITLES: Record<string, string> = {
+  'vk_testers_30': 'Премиум для VK Testers',
+  // Добавьте другие item_id по мере необходимости
+}
+
+function getSubscriptionTitleByItemId(item_id: string): string {
+  return SUBSCRIPTION_TITLES[item_id] || item_id
+}
+
+// Карта для читаемых статусов
+const SUBSCRIPTION_STATUS_LABELS: Record<string, string> = {
+  'active': 'Активна',
+  'chargeable': 'Ожидает оплаты',
+  'cancelled': 'Отменена',
+}
+
+function getSubscriptionStatusLabel(status: string): string {
+  return SUBSCRIPTION_STATUS_LABELS[status] || status
+}
 
 export const Subscription = (props: NavIdProps) => {
 
   const router = useRouteNavigator()
+  const { data: subscriptions } = useGetSubscriptions()
 
   const handleBack = () => {
     router.push(routes.forms.overview.path)
@@ -20,6 +44,7 @@ export const Subscription = (props: NavIdProps) => {
       .then((data) => {
         if (data.success) {
           console.log('Subscription created successfully')
+          queryClient.invalidateQueries({ queryKey: subscriptionsKeys.list() })
         } else {
           console.log('Subscription creation failed')
         }
@@ -42,17 +67,28 @@ export const Subscription = (props: NavIdProps) => {
           </Header>
         }
       >
-        <Placeholder
-          icon={<Icon48StarsCircleFillViolet width={56} height={56} />}
-          title='Подписка, которая думает за тебя'
-          action={
-            <Button size='l' mode='secondary' onClick={handleSubscribe}>
-              Попробовать бесплатно
-            </Button>
-          }
-        >
-          Прокачай свои анкеты и получи доступ к новым функциям!
-        </Placeholder>
+        {(subscriptions && subscriptions?.length > 0) ? (
+          subscriptions.map((subscription) => (
+            <Cell
+              key={subscription.subscription_id}
+              extraSubtitle={getSubscriptionStatusLabel(subscription.status)}
+            >
+              {getSubscriptionTitleByItemId(subscription.item_id)}
+            </Cell>
+          ))
+        ) : (
+          <Placeholder
+            icon={<Icon48StarsCircleFillViolet width={56} height={56} />}
+            title='Подписка, которая думает за тебя'
+            action={
+              <Button size='l' mode='secondary' onClick={handleSubscribe}>
+                Попробовать бесплатно
+              </Button>
+            }
+          >
+            Прокачай свои анкеты и получи доступ к новым функциям!
+          </Placeholder>
+        )}
       </Group>
 
       <Group

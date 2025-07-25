@@ -1,4 +1,5 @@
-import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
+import { useMutation, useQuery } from '@tanstack/react-query'
+import { queryClient } from '@shared/api/query-client'
 import { formKeys, getForms, getFormById, createForm, updateForm, deleteForm } from './api'
 import { UpdateFormProps } from './types'
 
@@ -18,7 +19,7 @@ export const useForm = (id?: string) => {
 }
 
 export const useCreateForm = () => {
-  const queryClient = useQueryClient()
+  // используем общий queryClient
   
   return useMutation({
     mutationFn: createForm,
@@ -29,7 +30,7 @@ export const useCreateForm = () => {
 }
 
 export const useUpdateForm = () => {
-  const queryClient = useQueryClient()
+  // используем общий queryClient
   
   return useMutation({
     mutationFn: (data: { id: string; data: UpdateFormProps }) => 
@@ -42,7 +43,7 @@ export const useUpdateForm = () => {
 }
 
 export const useDeleteForm = () => {
-  const queryClient = useQueryClient()
+  // используем общий queryClient
   
   return useMutation({
     mutationFn: (id: string) => deleteForm(id),

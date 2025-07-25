@@ -31,7 +31,7 @@ class PaymentsRepository {
     })
   }
 
-  async getSubscriptionByUserId (user_id: number, status?: ('active'|'chargeable'|'cancelled')[]) {
+  async getSubscriptionsByUserId (user_id: number, status?: ('active'|'chargeable'|'cancelled')[]) {
     return await getPrisma().subscription.findMany({
       where: { user_id, status: { in: status } },
       orderBy: { subscription_id: 'desc' }

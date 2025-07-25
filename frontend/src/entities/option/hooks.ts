@@ -1,4 +1,5 @@
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
+import { useMutation, useQuery } from "@tanstack/react-query"
+import { queryClient } from "@shared/api/query-client"
 import { 
   optionKeys, 
   getOptions, 
@@ -27,7 +28,7 @@ export const useOption = (formId?: string, questionId?: number, optionId?: numbe
 }
 
 export const useUpdateOption = () => {
-  const queryClient = useQueryClient()
+  // используем общий queryClient
   
   return useMutation({
     mutationFn: (data: { formId: string; questionId: number; optionId: number; data: UpdateOptionProps }) => 
@@ -40,7 +41,7 @@ export const useUpdateOption = () => {
 }
 
 export const useDeleteOption = () => {
-  const queryClient = useQueryClient()
+  // используем общий queryClient
   
   return useMutation({
     mutationFn: (data: { formId: string; questionId: number; optionId: number }) => 
@@ -53,7 +54,7 @@ export const useDeleteOption = () => {
 }
 
 export const useCreateMultipleOptions = () => {
-  const queryClient = useQueryClient()
+  // используем общий queryClient
   
   return useMutation({
     mutationFn: (data: { formId: string; questionId: number; data: CreateMultipleOptionsProps }) => 

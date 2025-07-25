@@ -1,4 +1,5 @@
-import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
+import { useMutation, useQuery } from '@tanstack/react-query'
+import { queryClient } from '@shared/api/query-client'
 import { questionApi } from './api'
 import { QuestionProps } from './types'
 
@@ -33,7 +34,7 @@ export const useQuestion = (formId?: string, questionId?: number) => {
  * Хук для создания вопроса
  */
 export const useCreateQuestion = () => {
-  const queryClient = useQueryClient()
+  // используем общий queryClient
   
   return useMutation({
     mutationFn: ({ formId, data }: { formId: string, data: Omit<QuestionProps, 'id'|'form_id'> }) => 
@@ -48,7 +49,7 @@ export const useCreateQuestion = () => {
  * Хук для обновления вопроса
  */
 export const useUpdateQuestion = () => {
-  const queryClient = useQueryClient()
+  // используем общий queryClient
   
   return useMutation({
     mutationFn: ({ formId, questionId, data }: { formId: string, questionId: number, data: Partial<QuestionProps> }) => 
@@ -64,7 +65,7 @@ export const useUpdateQuestion = () => {
  * Хук для удаления вопроса
  */
 export const useDeleteQuestion = () => {
-  const queryClient = useQueryClient()
+  // используем общий queryClient
   
   return useMutation({
     mutationFn: ({ formId, questionId }: { formId: string, questionId: number }) => 
