@@ -62,7 +62,6 @@ export const getSubscription = factory.createHandlers(async (ctx: Context, next:
         return ctx.json({
           item_id: item,
           title: 'Премиум для участников VK Testers',
-          photo_url: 'https://www.uzstore.com/web/image/product.image/4097/image_128/GROHE%20RSH%20AQUA%2075x75%20sideshw%203,3l%20square26802000?unique=0d465b7',
           period: 30,
           price: 10,
           expiration: 0
