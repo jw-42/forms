@@ -36,12 +36,6 @@ class PaymentsRepository {
       where: { user_id, status }
     })
   }
-
-  async getActiveSubscriptionsByUserId(user_id: number) {
-    return await getPrisma().subscription.findMany({
-      where: { user_id, status: 'active' },
-    })
-  }
 }
 
 export default new PaymentsRepository()
