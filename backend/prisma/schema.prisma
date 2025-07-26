@@ -48,6 +48,7 @@ model Form {
 
 enum QuestionType {
   text
+  long_text
   radio
 }
 
