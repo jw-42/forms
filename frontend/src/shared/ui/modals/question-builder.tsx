@@ -92,7 +92,8 @@ export const QuestionBuilder = (props: NavIdProps) => {
         <FormItem top='Формат'>
           <Select
             options={[
-              { value: 'text', label: 'Текстовый' },
+              { value: 'text', label: 'Текст (строка)' },
+              { value: 'long_text', label: 'Текст (абзац)' },
               { value: 'radio', label: 'Один из списка' }
             ]}
             placeholder='Выберите формат вопроса'

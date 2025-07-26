@@ -1,7 +1,7 @@
 import { Icon16Done, Icon24CopyOutline } from "@vkontakte/icons"
 import bridge from "@vkontakte/vk-bridge"
 import { useRouteNavigator } from "@vkontakte/vk-mini-apps-router"
-import { Avatar, Div, IconButton, Input, Snackbar } from "@vkontakte/vkui"
+import { Avatar, Div, IconButton, Snackbar, Textarea } from "@vkontakte/vkui"
 import { TextQuestionProps } from "../../types"
 
 const CopyButton = ({ value }: { value: string }) => {
@@ -33,15 +33,17 @@ const CopyButton = ({ value }: { value: string }) => {
   )
 }
 
-export const TextQuestion = ({ readOnly, value, onChange }: TextQuestionProps) => {
+export const LongTextQuestion = ({ readOnly, value, onChange }: TextQuestionProps) => {
   return (
     <Div style={{ paddingTop: 0 }}>
-      <Input
+      <Textarea
         readOnly={readOnly}
         placeholder='Напишите что-нибудь...'
         onChange={(e) => onChange?.(e.target.value)}
         value={value}
+        rows={3}
         after={(readOnly && value?.length) ? <CopyButton value={value} /> : undefined}
+        afterAlign="start"
       />
     </Div>
   )

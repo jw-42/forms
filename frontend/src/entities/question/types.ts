@@ -1,7 +1,7 @@
 import { AnswerValueType, FormIdType, QuestionIdType } from "@shared/model"
 
 export interface QuestionProps {
-  id: number
+  id: QuestionIdType
   type: QuestionType
   form_id: FormIdType
   text: string
@@ -15,7 +15,7 @@ export interface QuestionProps {
   onChange?: (value: string) => void
 }
 
-export type QuestionType = 'text' | QuestionMultipleType
+export type QuestionType = 'text' | 'long_text' | QuestionMultipleType
 export type QuestionMultipleType = 'radio'
 
 export const QuestionMultipleTypeDict: Record<QuestionMultipleType, string> = {
@@ -24,6 +24,7 @@ export const QuestionMultipleTypeDict: Record<QuestionMultipleType, string> = {
 
 export const QuestionTypeDict: Record<QuestionType, string> = {
   text: 'Текстовый вопрос',
+  long_text: 'Развернутый вопрос',
   ...QuestionMultipleTypeDict
 } as const
 
@@ -43,4 +44,10 @@ export interface QuestionItemProps {
     text: string
     order: number
   }[]
+}
+
+export interface TextQuestionProps {
+  readOnly?: boolean
+  value?: string
+  onChange?: (value: string) => void
 }

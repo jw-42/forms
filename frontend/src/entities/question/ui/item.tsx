@@ -1,7 +1,7 @@
 import { MoreButton, QuestionMoreButton } from "@shared/ui"
 import { QuestionItemProps, QuestionTypeDict } from "../types"
 import { SimpleCell } from "@vkontakte/vkui"
-import { TextQuestion, RadioQuestion } from "./types"
+import { TextQuestion, RadioQuestion, LongTextQuestion } from "./types"
 import React from "react"
 import { useForm } from "@entities/form/hooks"
 
@@ -24,6 +24,7 @@ export const QuestionItem = (props: QuestionItemProps) => {
       </SimpleCell>
 
       {props.type === 'text' && <TextQuestion {...props} />}
+      {props.type === 'long_text' && <LongTextQuestion {...props} />}
       {props.type === 'radio' && <RadioQuestion {...props} />}
     </React.Fragment>
   )
