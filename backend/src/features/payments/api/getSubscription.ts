@@ -48,18 +48,6 @@ export const getSubscription = factory.createHandlers(async (ctx: Context, next:
     }
 
     switch (item) {
-      case 'vk_testers_30':
-        return ctx.json({
-          response: {
-            item_id: item,
-            title: 'Премиум для VK Testers',
-            description: 'Специальный тариф для участников программы бета-тестирования',
-            period: 30,
-            price: 1,
-            expiration: 600
-          }
-        })
-
       case 'standard_30':
         return ctx.json({
           response: {
@@ -68,6 +56,7 @@ export const getSubscription = factory.createHandlers(async (ctx: Context, next:
             description: 'Создавайте анкеты в пару кликов и получите доступ к продвинутым функциям!',
             period: 30,
             price: 20,
+            trial_period: 3,
             expiration: 600
           }
         })
