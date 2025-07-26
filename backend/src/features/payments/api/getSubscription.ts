@@ -66,7 +66,7 @@ export const getSubscription = factory.createHandlers(async (ctx: Context, next:
           response: {
             item_id: item,
             title: 'Премиум',
-            description: 'Для настоящих профессионалов. Создавайте анкеты в пару кликов, получите доступ к продвинутой аналитике и интеграции с CRM.',
+            description: 'Создавайте анкеты в пару кликов, получите доступ к продвинутой аналитике и интеграции с CRM.',
             period: 30,
             price: 30,
             expiration: 600
