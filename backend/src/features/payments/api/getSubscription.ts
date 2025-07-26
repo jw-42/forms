@@ -60,6 +60,30 @@ export const getSubscription = factory.createHandlers(async (ctx: Context, next:
           }
         })
 
+      case 'standard_30':
+        return ctx.json({
+          response: {
+            item_id: item,
+            title: 'Стандарт',
+            description: 'Создавайте анкеты в пару кликов и получите доступ к продвинутым функциям!',
+            period: 30,
+            price: 20,
+            expiration: 600
+          }
+        })
+
+      case 'premium_30':
+        return ctx.json({
+          response: {
+            item_id: item,
+            title: 'Премиум',
+            description: 'Для настоящих профессионалов. Создавайте анкеты в пару кликов, получите доступ к продвинутой аналитике и интеграции с CRM.',
+            period: 30,
+            price: 30,
+            expiration: 600
+          }
+        })
+
       default:
         return ctx.json({
           error: {
