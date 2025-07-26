@@ -30,7 +30,7 @@ class AnswersRepository {
         data: data.answers.map((answer) => ({
           answers_group_id,
           question_id: answer.question_id,
-          value: answer.value
+          value: answer.value ?? ''
         }))
       })
 
@@ -67,6 +67,7 @@ class AnswersRepository {
                 id: true,
                 text: true,
                 type: true,
+                required: true,
                 options: {
                   select: {
                     id: true,

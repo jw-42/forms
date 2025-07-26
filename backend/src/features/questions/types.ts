@@ -10,12 +10,14 @@ export const createQuestionSchema = z.object({
   text: z.string()
     .min(MIN_QUESTION_TEXT_LENGTH)
     .max(MAX_QUESTION_TEXT_LENGTH),
+  required: z.boolean().optional(),
 })
 
 export const updateQuestionSchema = z.object({
   text: z.string()
     .min(MIN_QUESTION_TEXT_LENGTH)
     .max(MAX_QUESTION_TEXT_LENGTH),
+  required: z.boolean().optional(),
 })
 
 export type CreateQuestionProps = z.infer<typeof createQuestionSchema> & { form_id: string }
