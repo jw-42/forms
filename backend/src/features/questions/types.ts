@@ -6,7 +6,7 @@ export const MAX_QUESTION_TEXT_LENGTH = 64
 export const MAX_QUESTIONS_PER_FORM = 5
 
 export const createQuestionSchema = z.object({
-  type: z.enum(['text', 'radio']),
+  type: z.enum(['text', 'long_text', 'radio']),
   text: z.string()
     .min(MIN_QUESTION_TEXT_LENGTH)
     .max(MAX_QUESTION_TEXT_LENGTH),
