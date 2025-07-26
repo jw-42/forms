@@ -7,11 +7,10 @@ export const SUBSCRIPTION_STATUS_LABELS: Record<SubscriptionStatus, string> = {
   cancelled: 'Отменена',
 }
 
-export const SUBSCRIPTION_CANCEL_REASON_LABELS: Record<SubscriptionCancelReason, string> = {
-  user_decision: 'Пользователь',
-  app_decision: 'Приложение',
-  payment_fail: 'Платёж',
-  unknown: 'Неизвестно',
+export const SUBSCRIPTION_TITLE_LABELS: Record<string, string> = {
+  'standard_30': 'Стандарт',
+  'premium_30': 'Премиум',
+  'free': 'Бесплатный',
 }
 
 export interface Subscription {

@@ -1,5 +1,6 @@
 import { apiClient } from '@shared/api'
 import { GetSubscriptionsResponse } from './types'
+import { queryClient } from '@shared/api'
 
 export const subscriptionsKeys = {
   all: ['subscriptions'] as const,
@@ -9,4 +10,10 @@ export const subscriptionsKeys = {
 
 export const getSubscriptions = async (): Promise<GetSubscriptionsResponse> => {
   return await apiClient.get('/payments/active')
+}
+
+export const invalidateSubscriptions = () => {
+  return queryClient.invalidateQueries({
+    queryKey: subscriptionsKeys.all
+  })
 } 

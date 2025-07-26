@@ -10,11 +10,39 @@ export function formatDate(date: string | Date): string {
   const dateObj = typeof date === 'string' ? new Date(date) : date;
   const now = new Date();
   const diff = now.getTime() - dateObj.getTime();
-  const seconds = Math.floor(diff / 1000);
+  const isFuture = diff < 0;
+  const absDiff = Math.abs(diff);
+  const seconds = Math.floor(absDiff / 1000);
   const minutes = Math.floor(seconds / 60);
   const hours = Math.floor(minutes / 60);
   const days = Math.floor(hours / 24);
 
+  // Для будущих дат
+  if (isFuture) {
+    if (days === 0) {
+      if (hours === 0) {
+        if (minutes === 0) return `через ${seconds} ${declOfNum(seconds, ['секунду', 'секунды', 'секунд'])}`;
+        return `через ${minutes} ${declOfNum(minutes, ['минуту', 'минуты', 'минут'])}`;
+      }
+      return `через ${hours} ${declOfNum(hours, ['час', 'часа', 'часов'])}`;
+    }
+    
+    if (days === 1) {
+      return `завтра в ${dateObj.getHours()}:${String(dateObj.getMinutes()).padStart(2, '0')}`;
+    }
+    
+    const months = ['янв', 'фев', 'мар', 'апр', 'мая', 'июня', 'июля', 'авг', 'сен', 'окт', 'нояб', 'дек'];
+    const month = months[dateObj.getMonth()];
+    const time = `${dateObj.getHours()}:${String(dateObj.getMinutes()).padStart(2, '0')}`;
+
+    if (dateObj.getFullYear() === now.getFullYear()) {
+      return `${dateObj.getDate()} ${month} в ${time}`;
+    }
+
+    return `${dateObj.getDate()} ${month} ${dateObj.getFullYear()} в ${time}`;
+  }
+
+  // Для прошедших дат (существующая логика)
   if (days === 0) {
     if (hours === 0) {
       if (minutes === 0) return `${seconds} ${declOfNum(seconds, ['секунду', 'секунды', 'секунд'])} назад`;
