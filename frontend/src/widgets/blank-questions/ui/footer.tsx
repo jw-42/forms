@@ -2,6 +2,7 @@ import { Button, Div, Footnote, Link, Spacing } from "@vkontakte/vkui"
 import { useParams } from "@vkontakte/vk-mini-apps-router"
 import { useSubmitAnswers } from "@entities/answer"
 import { useForm } from "@entities/form/hooks"
+import { useQuestions } from "@entities/question/hooks"
 import React from "react"
 
 interface QuestionFooterProps {
@@ -13,19 +14,34 @@ export const QuestionFooter = ({ currentAnswers }: QuestionFooterProps) => {
   const params = useParams<'id'>()
 
   const { data: form } = useForm(params?.id)
+  const { data: questions } = useQuestions(params?.id)
   const { mutate: submitAnswers, isPending } = useSubmitAnswers()
 
   const [safeLink, setSafeLink] = React.useState<string>('')
 
   const handleSubmitAnswers = () => {
-    if (Object.keys(currentAnswers).length === 0) return
+    if (!questions || Object.keys(currentAnswers).length === 0) return
 
+    // Проверяем, что все обязательные вопросы имеют ответы
+    const requiredQuestions = questions.filter(q => q.required)
+    const missingRequiredAnswers = requiredQuestions.filter(q => {
+      const answer = currentAnswers[q.id.toString()]
+      return !answer || answer.trim() === ''
+    })
+
+    if (missingRequiredAnswers.length > 0) {
+      // Здесь можно добавить уведомление пользователю о незаполненных обязательных вопросах
+      console.error('Missing required answers:', missingRequiredAnswers)
+      return
+    }
+
+    // Отправляем все ответы (включая пустые для необязательных вопросов)
     submitAnswers({
       formId: params?.id as string,
       data: {
         answers: Object.entries(currentAnswers).map(([questionId, value]) => ({
           question_id: Number(questionId),
-          value
+          value: value || undefined // Отправляем undefined для пустых ответов
         }))
       }
     })

@@ -1,7 +1,7 @@
 import { QuestionMultipleType, QuestionProps, useQuestion, QuestionMultipleTypeDict, useCreateQuestion, useUpdateQuestion } from "@entities/question"
 import { Icon20Cancel, Icon20ListBulletOutline } from "@vkontakte/icons"
 import { useParams, useRouteNavigator } from "@vkontakte/vk-mini-apps-router"
-import { Div, FormItem, FormLayoutGroup, ModalPage, ModalPageHeader, NavIdProps, Select, Input, IconButton, Button, ButtonGroup } from "@vkontakte/vkui"
+import { Div, FormItem, FormLayoutGroup, ModalPage, ModalPageHeader, NavIdProps, Select, Input, IconButton, Button, ButtonGroup, Switch, Cell, Checkbox } from "@vkontakte/vkui"
 import { routes } from "@shared/model"
 import React from "react"
 
@@ -17,6 +17,7 @@ export const QuestionBuilder = (props: NavIdProps) => {
 
   const [text, setText] = React.useState<string>('')
   const [type, setType] = React.useState<QuestionProps['type']>(params?.type as QuestionProps['type'] || 'text')
+  const [required, setRequired] = React.useState<boolean>(true)
 
   const { data: question } = useQuestion(params?.id, Number(params?.qid))
 
@@ -54,14 +55,14 @@ export const QuestionBuilder = (props: NavIdProps) => {
       updateQuestion({
         formId: params.id,
         questionId: Number(params.qid),
-        data: { text }
+        data: { text, required }
       }, {
         onSuccess: handleSuccess
       })
     } else if (params?.id) {
       createQuestion({
         formId: params.id,
-        data: { text, type }
+        data: { text, type, required }
       }, {
         onSuccess: handleSuccess
       })
@@ -72,6 +73,7 @@ export const QuestionBuilder = (props: NavIdProps) => {
     if (question) {
       setText(question.text)
       setType(question.type)
+      setRequired(question.required ?? true)
     }
   }, [question])
 
@@ -85,6 +87,7 @@ export const QuestionBuilder = (props: NavIdProps) => {
       onOpen={() => {
         setText(question?.text || '')
         setType(question?.type || (params?.type as QuestionProps['type']) || 'text')
+        setRequired(question?.required ?? true)
       }}
       {...props}
     >
@@ -128,6 +131,13 @@ export const QuestionBuilder = (props: NavIdProps) => {
             }
           />
         </FormItem>
+
+        <Checkbox
+          checked={required}
+          onChange={(e) => setRequired(e.target.checked)}
+        >
+          Обязательный вопрос
+        </Checkbox>
 
         <Div>
           <ButtonGroup stretched mode='vertical' gap='s'>

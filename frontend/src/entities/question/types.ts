@@ -5,6 +5,7 @@ export interface QuestionProps {
   type: QuestionType
   form_id: FormIdType
   text: string
+  required?: boolean
   disabled?: boolean
   options?: {
     id: number

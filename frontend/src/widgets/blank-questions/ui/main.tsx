@@ -40,6 +40,21 @@ export const BlankQuestions = () => {
     console.log(`new user answers`, userAnswers)
   }, [ userAnswers ])
 
+  // Создаем полный объект ответов, включая все вопросы
+  const allAnswers = React.useMemo(() => {
+    if (!questions) return {}
+    
+    const result: Record<string, string> = {}
+    
+    questions.forEach(question => {
+      const questionId = question.id.toString()
+      // Используем ответ пользователя, если есть, иначе пустую строку
+      result[questionId] = answers[questionId] || ''
+    })
+    
+    return result
+  }, [questions, answers])
+
   return (
     <React.Fragment>
       <List
@@ -64,7 +79,7 @@ export const BlankQuestions = () => {
         <Separator/>
       </Spacing>
 
-      <QuestionFooter currentAnswers={answers} />
+      <QuestionFooter currentAnswers={allAnswers} />
     </React.Fragment>
   )
 }
