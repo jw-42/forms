@@ -35,6 +35,7 @@ export interface QuestionItemProps {
   text: string
   type: QuestionType
   readOnly?: boolean
+  required?: boolean
 
   value?: string
   onChange?: (value: string) => void

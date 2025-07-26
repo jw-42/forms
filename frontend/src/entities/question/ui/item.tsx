@@ -20,7 +20,7 @@ export const QuestionItem = (props: QuestionItemProps) => {
           } />
         )}
       >
-        {props.text}
+        {props.text} {props.required && <span style={{ color: 'var(--vkui--color_text_negative)' }}>*</span>}
       </SimpleCell>
 
       {props.type === 'text' && <TextQuestion {...props} />}

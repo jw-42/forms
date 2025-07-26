@@ -2,7 +2,7 @@ import { useCreateForm, useForm, useUpdateForm } from '@entities/form'
 import { Privacy } from './index'
 import { isValidPrivacyUrl } from '@shared/lib/privacy-url-validator'
 import { routes } from '@shared/model/routes'
-import { Icon20FlashOutline } from '@vkontakte/icons'
+import { Icon20Stars } from '@vkontakte/icons'
 import { useParams, useRouteNavigator } from '@vkontakte/vk-mini-apps-router'
 import { Button, Div, Footnote, FormItem, FormLayoutGroup, IconButton, Input, Link, PanelSpinner, Separator, Spacing, Textarea, Tooltip } from '@vkontakte/vkui'
 import React from 'react'
@@ -127,8 +127,8 @@ export const BaseInfo = () => {
               description='Сгенерировать описание'
               placement='top-end'
             >
-              <IconButton disabled>
-                <Icon20FlashOutline/>
+              <IconButton>
+                <Icon20Stars/>
               </IconButton>
             </Tooltip>
           }
