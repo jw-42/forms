@@ -2,6 +2,7 @@ import { Hono } from 'hono'
 import { getSubscription, subscriptionStatusChange } from './api'
 import { AuthorizationMiddleware } from '@shared/middleware/authorization'
 import { getActiveSubscriptions } from './api/getActiveSubscriptions'
+import { checkSubscription } from './api'
 
 const router = new Hono()
 
@@ -28,5 +29,8 @@ router.post('/', async (ctx, next) => {
 
 router.use('/active', AuthorizationMiddleware)
 router.get('/active', ...getActiveSubscriptions)
+
+router.use('/check', AuthorizationMiddleware)
+router.post('/check', ...checkSubscription)
 
 export default router

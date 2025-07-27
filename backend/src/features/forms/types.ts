@@ -5,8 +5,6 @@ export const MAX_FORM_TITLE_LENGTH = 64
 export const MIN_FORM_DESCRIPTION_LENGTH = 10
 export const MAX_FORM_DESCRIPTION_LENGTH = 256
 
-export const MAX_FORMS_PER_USER = 3
-
 export const createFormSchema = z.object({
   title: z.string()
     .min(MIN_FORM_TITLE_LENGTH)

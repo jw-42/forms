@@ -2,6 +2,8 @@ import { createFactory } from 'hono/factory'
 import { GetSubscriptionParams } from '../types'
 import type { Context, Next } from 'hono'
 import { verifySignature } from '@shared/utils'
+import paymentsService from '../service'
+import { SubscriptionNotFoundError } from '@shared/utils/subscription-errors'
 
 const factory = createFactory()
 
@@ -47,33 +49,16 @@ export const getSubscription = factory.createHandlers(async (ctx: Context, next:
       })
     }
 
-    switch (item) {
-      case 'standard_30':
-        return ctx.json({
-          response: {
-            item_id: item,
-            title: 'Стандарт',
-            description: 'Создавайте анкеты в пару кликов и получите доступ к продвинутым функциям!',
-            period: 30,
-            price: 20,
-            trial_period: 3,
-            expiration: 600
-          }
-        })
-
-      case 'premium_30':
-        return ctx.json({
-          response: {
-            item_id: item,
-            title: 'Премиум',
-            description: 'Создавайте анкеты в пару кликов, получите доступ к продвинутой аналитике и интеграции с CRM.',
-            period: 30,
-            price: 30,
-            expiration: 600
-          }
-        })
-
-      default:
+    try {
+      // Получаем информацию о подписке через service
+      const subscriptionInfo = await paymentsService.getSubscriptionInfo(item)
+      
+      return ctx.json({
+        response: subscriptionInfo
+      })
+    } catch (error) {
+      // Если товар не найден, возвращаем ошибку с кодом 20
+      if (error instanceof SubscriptionNotFoundError) {
         return ctx.json({
           error: {
             error_code: 20, 
@@ -81,6 +66,8 @@ export const getSubscription = factory.createHandlers(async (ctx: Context, next:
             critical: true
           }
         })
+      }
+      throw error
     }
   } catch (error) {
     console.error(error)

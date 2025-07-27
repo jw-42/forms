@@ -1,3 +1,4 @@
 export { getSubscription } from './getSubscription'
-export { subscriptionStatusChange } from './subscriptionStatusChange' 
-export { getActiveSubscriptions } from './getActiveSubscriptions' 
+export { subscriptionStatusChange } from './subscriptionStatusChange'
+export { getActiveSubscriptions } from './getActiveSubscriptions'
+export { checkSubscription } from './checkSubscription' 

@@ -2,8 +2,7 @@ import { createFactory } from 'hono/factory'
 import { ChangeSubscriptionStatus } from '../types'
 import type { Context, Next } from 'hono'
 import { verifySignature } from '@shared/utils'
-import paymentsRepository from '../repository'
-import usersRepository from '@features/users/repository'
+import paymentsService from '../service'
 
 const factory = createFactory()
 
@@ -59,72 +58,24 @@ export const subscriptionStatusChange = factory.createHandlers(async (ctx: Conte
       })
     }
 
-    // Сохраняем или обновляем подписку
-    let subscription = await paymentsRepository.getSubscriptionById(subscription_id)
-    if (!subscription) {
-      subscription = await paymentsRepository.createSubscription({
+    // Создаем или обновляем подписку через service
+    await paymentsService.createOrUpdateSubscription({
+      subscription_id,
+      user_id,
+      status,
+      cancel_reason,
+      item_id,
+      item_price,
+      next_bill_time: next_bill_time ? new Date(next_bill_time * 1000) : new Date(),
+      pending_cancel
+    })
+
+    return ctx.json({
+      response: {
         subscription_id,
-        user_id,
-        status,
-        cancel_reason,
-        item_id,
-        item_price,
-        next_bill_time: next_bill_time ? new Date(next_bill_time * 1000) : new Date(),
-        pending_cancel
-      })
-    } else {
-      await paymentsRepository.updateSubscription(subscription_id, {
-        status,
-        cancel_reason,
-        item_id,
-        item_price,
-        next_bill_time: next_bill_time ? new Date(next_bill_time * 1000) : new Date(),
-        pending_cancel
-      })
-    }
-
-    switch (status) {
-      case 'chargeable':
-        await usersRepository.updateHasSubscription(user_id, true)
-
-        return ctx.json({
-          response: {
-            subscription_id,
-            app_order_id: subscription_id
-          }
-        })
-
-      case 'cancelled':
-        await usersRepository.updateHasSubscription(user_id, false)
-
-        return ctx.json({
-          response: {
-            subscription_id,
-            app_order_id: subscription_id
-          }
-        })
-
-      case 'active':
-        if (cancel_reason === 'user_decision') {
-          // TODO: handle user decision
-        }
-
-        return ctx.json({
-          response: {
-            subscription_id,
-            app_order_id: subscription_id
-          }
-        })
-
-      default:
-        return ctx.json({
-          error: {
-            error_code: 1,
-            error_msg: 'Ошибка обновления информации на сервере. Попробуйте ещё раз позже.',
-            critical: true
-          }
-        })
-    }
+        app_order_id: subscription_id
+      }
+    })
   } catch (error) {
     console.error(error)
     return ctx.json({

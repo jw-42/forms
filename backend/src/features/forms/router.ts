@@ -1,4 +1,5 @@
 import { Hono } from 'hono'
+import { SubscriptionLimitMiddleware } from '@shared/middleware/subscription-check'
 
 import { create } from './api/create'
 import { get } from './api/get'
@@ -10,7 +11,7 @@ import { getPersonalDataAgreement } from './api/getPersonalDataAgreement'
 
 const router = new Hono()
 
-router.post('/', ...create)
+router.post('/', SubscriptionLimitMiddleware('create_form'), ...create)
 router.get('/', ...get)
 router.get('/:form_id', ...getById)
 router.get('/:form_id/data-proccessing', ...getDataProccessingAgreement)

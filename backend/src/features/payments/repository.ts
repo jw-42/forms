@@ -12,6 +12,7 @@ interface CreateSubscriptionParams {
 }
 
 class PaymentsRepository {
+  // Методы для работы с подписками
   async createSubscription (data: CreateSubscriptionParams) {
     return await getPrisma().subscription.create({
       data
@@ -35,6 +36,20 @@ class PaymentsRepository {
     return await getPrisma().subscription.findMany({
       where: { user_id, status: { in: status } },
       orderBy: { subscription_id: 'desc' }
+    })
+  }
+
+  // Методы для работы с формами (для проверки лимитов)
+  async getUserFormsCount (user_id: number): Promise<number> {
+    return await getPrisma().form.count({
+      where: { owner_id: user_id }
+    })
+  }
+
+  // Методы для работы с вопросами (для проверки лимитов)
+  async getFormQuestionsCount (form_id: string): Promise<number> {
+    return await getPrisma().question.count({
+      where: { form_id }
     })
   }
 }

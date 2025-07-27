@@ -3,8 +3,6 @@ import { z } from 'zod'
 export const MIN_QUESTION_TEXT_LENGTH = 3
 export const MAX_QUESTION_TEXT_LENGTH = 64
 
-export const MAX_QUESTIONS_PER_FORM = 5
-
 export const createQuestionSchema = z.object({
   type: z.enum(['text', 'long_text', 'radio']),
   text: z.string()

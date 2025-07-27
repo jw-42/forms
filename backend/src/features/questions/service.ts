@@ -1,7 +1,8 @@
 import type { CreateQuestionProps, UpdateQuestionProps } from './types'
-import { MAX_QUESTIONS_PER_FORM, questionsRepository } from './index'
+import { questionsRepository } from './index'
 import { formsService } from '@features/forms'
 import { ApiError } from '@shared/utils'
+import paymentsService from '@features/payments/service'
 
 class QuestionsService {
   async create(user_id: number, data: CreateQuestionProps) {
@@ -13,10 +14,11 @@ class QuestionsService {
       throw ApiError.Forbidden()
     }
 
-    const questions = await questionsRepository.getByFormId(data.form_id)
-
-    if (questions.length >= MAX_QUESTIONS_PER_FORM) {
-      throw ApiError.BadRequest('Maximum questions limit reached')
+    // Проверяем лимиты через подписки
+    const { canAdd, currentCount, maxCount } = await paymentsService.canAddQuestion(user_id, data.form_id)
+    
+    if (!canAdd) {
+      throw ApiError.Conflict(`Maximum questions limit reached (${currentCount}/${maxCount})`)
     }
 
     return await questionsRepository.create(data)

@@ -1,4 +1,4 @@
-import type { ContentfulStatusCode } from "hono/utils/http-status";
+import type { ContentfulStatusCode } from 'hono/utils/http-status'
 
 export class ApiError extends Error {
   status: ContentfulStatusCode

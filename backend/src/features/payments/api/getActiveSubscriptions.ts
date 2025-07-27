@@ -11,7 +11,8 @@ export const getActiveSubscriptions = factory.createHandlers(async (ctx: Context
     if (!user_id) {
       throw ApiError.Unauthorized('User not authorized')
     }
-    // Явно фильтруем по статусу active и chargeable
+    
+    // Получаем активные подписки через service
     const subscriptions = await paymentsService.getActiveSubscriptions(user_id, ['active', 'chargeable'])
     return ctx.json(Array.isArray(subscriptions) ? subscriptions : [])
   } catch (error) {

@@ -1,15 +1,17 @@
 import { answersRepository } from '@features/responses'
-import { formsRepository, MAX_FORMS_PER_USER, type CreateFormInput, type DataProcessingAgreementInput, type UpdateFormInput } from './index'
+import { formsRepository, type CreateFormInput, type DataProcessingAgreementInput, type UpdateFormInput } from './index'
 import { ApiError } from '@shared/utils'
 import { getAgreementHash } from '@shared/utils/get-agreement-hash'
 import { ADMINS } from '@shared/config'
+import paymentsService from '@features/payments/service'
 
 class FormsService {
   async create(owner_id: number, data: CreateFormInput, legal_info?: Partial<DataProcessingAgreementInput>) {
-    const formsCount = await formsRepository.count(owner_id)
-
-    if (formsCount >= MAX_FORMS_PER_USER) {
-      throw ApiError.Conflict('You have reached the maximum number of forms')
+    // Проверяем лимиты через подписки
+    const { canCreate, currentCount, maxCount } = await paymentsService.canCreateForm(owner_id)
+    
+    if (!canCreate) {
+      throw ApiError.Conflict(`You have reached the maximum number of forms (${currentCount}/${maxCount})`)
     }
 
     const {

@@ -11,7 +11,6 @@ datasource db {
 model User {
   id               Int            @id
   is_banned        Boolean        @default(false)
-  has_subscription Boolean        @default(false)
   created_at       DateTime       @default(now())
   updated_at       DateTime       @updatedAt
   sessions         Session[]
@@ -129,6 +128,11 @@ enum SubscriptionCancelReason {
   app_decision
   payment_fail
   unknown
+}
+
+enum SubscriptionType {
+  standard_30
+  premium_30
 }
 
 model Subscription {

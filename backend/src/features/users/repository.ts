@@ -25,16 +25,21 @@ class UsersRepository {
     })
   }
 
-  async updateHasSubscription(id: number, hasSubscription: boolean) {
+  async getUserWithSubscriptions(id: number) {
     const prisma = getPrisma()
-    return await prisma.user.update({
+    return await prisma.user.findUnique({
       where: { id },
-      data: { has_subscription: hasSubscription },
-      select: {
-        id: true,
-        is_banned: true,
-        has_subscription: true,
-        created_at: true,
+      include: {
+        subscription: {
+          where: {
+            status: {
+              in: ['active', 'chargeable']
+            }
+          },
+          orderBy: {
+            subscription_id: 'desc'
+          }
+        }
       }
     })
   }
