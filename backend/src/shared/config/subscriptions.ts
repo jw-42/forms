@@ -22,7 +22,7 @@ export const SUBSCRIPTION_PLANS: Record<SubscriptionType, SubscriptionPlan> = {
     period: 30,
     trial_period: 3,
     limits: {
-      maxForms: 10,
+      maxForms: 5,
       maxQuestionsPerForm: 20
     }
   },
@@ -33,7 +33,7 @@ export const SUBSCRIPTION_PLANS: Record<SubscriptionType, SubscriptionPlan> = {
     price: 30,
     period: 30,
     limits: {
-      maxForms: 100,
+      maxForms: 1000,
       maxQuestionsPerForm: 50
     }
   }
