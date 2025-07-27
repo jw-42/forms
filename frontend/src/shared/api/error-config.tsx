@@ -1,7 +1,30 @@
+import { Icon48StarsCircleFillViolet } from '@vkontakte/icons'
 import { errorService } from './error-handler'
+import React from 'react'
+import { Button } from '@vkontakte/vkui'
+import { useRouteNavigator } from '@vkontakte/vk-mini-apps-router'
+import { routes } from '@shared/index'
 
 // Configure error handling for different endpoints and status codes
 export function configureErrorHandling() {
+
+  // Кастомная иконка с размерами
+  const CustomLimitIcon = () => <Icon48StarsCircleFillViolet width={56} height={56} />
+
+  // Компонент кнопки с переходом на подписку
+  const SubscriptionButton = () => {
+    const router = useRouteNavigator()
+    
+    const handleSubscriptionClick = () => {
+      router.push(routes.subscription.overview.path)
+    }
+    
+    return (
+      <Button size="l" mode="primary" onClick={handleSubscriptionClick}>
+        Оформить подписку
+      </Button>
+    )
+  }
 
   errorService.configureErrorForMethod('/forms', 400, 'POST', {
     showModal: true,
@@ -12,13 +35,25 @@ export function configureErrorHandling() {
   errorService.configureErrorForMethod('/forms', 409, 'POST', {
     showModal: true,
     customTitle: 'Достигнут лимит',
-    customMessage: 'Вы достигли лимита на количество активных форм. Отредактируйте уже имеющиеся или удалите одну из них, чтобы создать новую.'
+    customIcon: CustomLimitIcon,
+    customPlaceholderTitle: 'Создавай больше с подпиской',
+    customMessage: 'Генерируй описание анкет и новые вопросы в один клик, а также получи доступ к детальной статистике и другим возможностям.',
+    customPlaceholderAction: <SubscriptionButton />
   })
 
   errorService.configureErrorForPatternAndMethod('/forms/:form_id', 404, 'GET', {
     showModal: true,
     customTitle: 'Форма не найдена',
     customMessage: 'Возможно, она была удалена или автор органичил доступ к ней.'
+  })
+
+  errorService.configureErrorForPatternAndMethod('/forms/:form_id/questions', 409, 'POST', {
+    showModal: true,
+    customTitle: 'Достигнут лимит',
+    customIcon: CustomLimitIcon,
+    customPlaceholderTitle: 'Создавай больше с подпиской',
+    customMessage: 'Генерируй описание анкет и новые вопросы в один клик, а также получи доступ к детальной статистике и другим возможностям.',
+    customPlaceholderAction: <SubscriptionButton />
   })
   
   errorService.configureErrorForStatus(401, { showModal: false })

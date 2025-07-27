@@ -59,7 +59,7 @@ export const BlankQuestions = () => {
     <React.Fragment>
       <List
         after={form?.can_edit && <QuestionBuilder/>}
-        afterCondition={questions && questions.length < 5}
+        afterCondition={true}
       >
         {questions?.map((question) => (
           <QuestionItem

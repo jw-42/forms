@@ -9,11 +9,15 @@ export const ErrorModalWrapper = () => {
   const [errorTitle, setErrorTitle] = React.useState('Неизвестная ошибка')
   const [errorMessage, setErrorMessage] = React.useState('Произошла неизвестная ошибка. Попробуйте позже.')
   const [errorIcon, setErrorIcon] = React.useState<React.ReactNode>(undefined)
+  const [errorPlaceholderTitle, setErrorPlaceholderTitle] = React.useState<string | undefined>(undefined)
+  const [errorPlaceholderAction, setErrorPlaceholderAction] = React.useState<React.ReactNode>(undefined)
 
   React.useEffect(() => {
-    const showErrorModal = (title: string, message: string, icon?: any) => {
+    const showErrorModal = (title: string, message: string, icon?: any, placeholderTitle?: string, placeholderAction?: React.ReactNode) => {
       setErrorTitle(title)
       setErrorMessage(message)
+      setErrorPlaceholderTitle(placeholderTitle)
+      setErrorPlaceholderAction(placeholderAction)
       // Если icon - это компонент (функция), создаем JSX элемент
       const iconElement = icon && typeof icon === 'function' ? React.createElement(icon) : icon
       setErrorIcon(iconElement)
@@ -33,6 +37,8 @@ export const ErrorModalWrapper = () => {
       title={errorTitle}
       message={errorMessage}
       icon={errorIcon}
+      placeholderTitle={errorPlaceholderTitle}
+      placeholderAction={errorPlaceholderAction}
     />
   )
 } 

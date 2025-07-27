@@ -4,9 +4,11 @@ interface ErrorModalProps extends NavIdProps {
   title?: string
   message?: string
   icon?: React.ReactNode
+  placeholderTitle?: string
+  placeholderAction?: React.ReactNode
 }
 
-export const ErrorModal = ({ title, message, icon, ...props }: ErrorModalProps) => {
+export const ErrorModal = ({ title, message, icon, placeholderTitle, placeholderAction, ...props }: ErrorModalProps) => {
   return(
     <ModalPage
       header={
@@ -17,7 +19,7 @@ export const ErrorModal = ({ title, message, icon, ...props }: ErrorModalProps) 
       {...props}
     >
       <ModalPageContent>
-        <Placeholder icon={icon || undefined}>
+        <Placeholder icon={icon || undefined} title={placeholderTitle} action={placeholderAction}>
           {message}
         </Placeholder>
       </ModalPageContent>

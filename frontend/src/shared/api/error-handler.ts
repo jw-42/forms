@@ -6,6 +6,8 @@ export interface ErrorConfig {
   showModal: boolean
   customMessage?: string
   customTitle?: string
+  customPlaceholderTitle?: string
+  customPlaceholderAction?: React.ReactNode
   customIcon?: React.ComponentType
   method?: string // HTTP method (GET, POST, PUT, DELETE, etc.)
 }
@@ -13,7 +15,7 @@ export interface ErrorConfig {
 // Global error handler
 export class ErrorService {
   private static instance: ErrorService
-  private showErrorModal?: ((title: string, message: string, icon?: React.ComponentType) => void) | undefined
+  private showErrorModal?: ((title: string, message: string, icon?: React.ComponentType, placeholderTitle?: string, placeholderAction?: React.ReactNode) => void) | undefined
   private errorConfigs: Map<string, ErrorConfig> = new Map()
   private patternConfigs: Array<{ pattern: RegExp, status: number, config: ErrorConfig, method?: string }> = []
 
@@ -24,7 +26,7 @@ export class ErrorService {
     return ErrorService.instance
   }
 
-  setErrorModal(showErrorModal: ((title: string, message: string, icon?: React.ComponentType) => void) | undefined) {
+  setErrorModal(showErrorModal: ((title: string, message: string, icon?: React.ComponentType, placeholderTitle?: string, placeholderAction?: React.ReactNode) => void) | undefined) {
     this.showErrorModal = showErrorModal
   }
 
@@ -162,13 +164,13 @@ export class ErrorService {
     return null
   }
 
-  showError(title: string, message: string, _icon?: React.ComponentType) {
+  showError(title: string, message: string, _icon?: React.ComponentType, placeholderTitle?: string, placeholderAction?: React.ReactNode) {
     console.log('ErrorService: showError called', { title, message, hasModal: !!this.showErrorModal })
     
     if (this.showErrorModal) {
       console.log('ErrorService: calling showErrorModal')
       try {
-        this.showErrorModal(title, message, _icon)
+        this.showErrorModal(title, message, _icon, placeholderTitle, placeholderAction)
       } catch (error) {
         console.error('ErrorService: Error showing modal:', error)
         // Fallback: log error instead of showing alert
@@ -224,8 +226,10 @@ export class HttpErrorHandler {
       const title = errorConfig.customTitle || this.getDefaultTitle(status)
       const message = errorConfig.customMessage || error.response?.data?.error_message || error.message || 'Произошла неизвестная ошибка'
       const icon = errorConfig.customIcon || this.getDefaultIcon(status)
+      const placeholderTitle = errorConfig.customPlaceholderTitle
+      const placeholderAction = errorConfig.customPlaceholderAction
 
-      errorService.showError(title, message, icon)
+      errorService.showError(title, message, icon, placeholderTitle, placeholderAction)
       return Promise.reject(error)
     } catch (handlerError) {
       console.error('HttpErrorHandler: Error in handleOtherErrors:', handlerError)
