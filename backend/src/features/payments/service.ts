@@ -107,7 +107,14 @@ class PaymentsService {
   }
 
   // Методы для получения информации о подписке
-  async getSubscriptionInfo(item: string): Promise<SubscriptionPlan & { expiration: number }> {
+  async getSubscriptionInfo(item: string): Promise<{
+    item_id: string
+    title: string
+    description: string
+    period: number
+    price: number
+    expiration: number
+  }> {
     const plan = SUBSCRIPTION_PLANS[item as SubscriptionType]
     
     if (!plan) {
@@ -115,7 +122,11 @@ class PaymentsService {
     }
     
     return {
-      ...plan,
+      item_id: plan.id,
+      title: plan.name,
+      description: plan.description,
+      period: plan.period,
+      price: plan.price,
       expiration: 600 // 10 минут в секундах
     }
   }
