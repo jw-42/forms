@@ -23,7 +23,7 @@ export const SUBSCRIPTION_PLANS: Record<SubscriptionType, SubscriptionPlan> = {
     trial_period: 3,
     limits: {
       maxForms: 5,
-      maxQuestionsPerForm: 20
+      maxQuestionsPerForm: 10
     }
   },
   premium_30: {
