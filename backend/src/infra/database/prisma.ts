@@ -19,6 +19,7 @@ process.on("SIGTERM", async () => {
 
 process.on("uncaughtException", async (err) => {
   console.log("Disconnect to Prisma by uncaughtException");
+  console.error("Uncaught Exception:", err);
   if (prisma) {
     await prisma.$disconnect();
   }

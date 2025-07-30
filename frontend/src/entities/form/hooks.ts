@@ -1,6 +1,6 @@
 import { useMutation, useQuery } from '@tanstack/react-query'
 import { queryClient } from '@shared/api/query-client'
-import { formKeys, getForms, getFormById, createForm, updateForm, deleteForm } from './api'
+import { formKeys, getForms, getFormById, createForm, updateForm, deleteForm, generateFormDescription } from './api'
 import { UpdateFormProps } from './types'
 
 export const useForms = () => {
@@ -51,5 +51,11 @@ export const useDeleteForm = () => {
       queryClient.invalidateQueries({ queryKey: formKeys.lists() })
       queryClient.removeQueries({ queryKey: formKeys.detail(id) })
     }
+  })
+}
+
+export const useGenerateFormDescription = () => {
+  return useMutation({
+    mutationFn: (data: { formTitle: string }) => generateFormDescription(data)
   })
 } 

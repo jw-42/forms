@@ -28,3 +28,7 @@ export const updateForm = async (id: string, data: UpdateFormProps): Promise<For
 export const deleteForm = async (id: string): Promise<{ id: string }> => {
   return await apiClient.delete(`/forms/${id}`)
 }
+
+export const generateFormDescription = async (data: { formTitle: string }): Promise<{ description: string, generated: boolean }> => {
+  return await apiClient.post(`/forms/generate-description`, { form_title: data.formTitle })
+}

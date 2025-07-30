@@ -77,15 +77,4 @@ export const useDeleteQuestion = () => {
   })
 }
 
-/**
- * Хук для генерации описания вопроса
- */
-export const useGenerateQuestionDescription = () => {
-  return useMutation({
-    mutationFn: ({ formId, questionId, data }: { 
-      formId: string, 
-      questionId: number, 
-      data: { questionText: string, questionType: string } 
-    }) => questionApi.generateDescription(formId, questionId, data)
-  })
-} 
+ 

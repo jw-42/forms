@@ -1,4 +1,4 @@
-import { useCreateForm, useForm, useUpdateForm } from '@entities/form'
+import { useCreateForm, useForm, useUpdateForm, useGenerateFormDescription } from '@entities/form'
 import { Privacy } from './index'
 import { isValidPrivacyUrl } from '@shared/lib/privacy-url-validator'
 import { routes } from '@shared/model/routes'
@@ -39,7 +39,30 @@ export const BaseInfo = () => {
     data: updatedForm,
   } = useUpdateForm()
 
-  const isPending = isCreating || isUpdating
+  const {
+    mutate: generateDescription,
+    isPending: isGenerating,
+  } = useGenerateFormDescription()
+
+  const isPending = isCreating || isUpdating || isGenerating
+  
+  const handleGenerateDescription = () => {
+    if (!title) return
+    generateDescription(
+      { formTitle: title },
+      {
+        onSuccess: (data) => {
+          if (data.description) {
+            setDescription(data.description)
+          }
+        },
+        onError: (error) => {
+          console.error('Failed to generate description:', error)
+        }
+      }
+    )
+  }
+
   const handleSubmit = () => {
     if (!title || !description) return
 
@@ -127,7 +150,11 @@ export const BaseInfo = () => {
               description='Сгенерировать описание'
               placement='top-end'
             >
-              <IconButton>
+              <IconButton
+                onClick={handleGenerateDescription}
+                disabled={!title || title.length < 10 || isGenerating}
+                aria-label="Сгенерировать описание"
+              >
                 <Icon20Stars/>
               </IconButton>
             </Tooltip>

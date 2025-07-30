@@ -1,7 +1,7 @@
-import { QuestionMultipleType, QuestionProps, useQuestion, QuestionMultipleTypeDict, useCreateQuestion, useUpdateQuestion, useGenerateQuestionDescription } from "@entities/question"
-import { Icon20Cancel, Icon20ListBulletOutline, Icon20Stars } from "@vkontakte/icons"
+import { QuestionMultipleType, QuestionProps, useQuestion, QuestionMultipleTypeDict, useCreateQuestion, useUpdateQuestion } from "@entities/question"
+import { Icon20Cancel, Icon20ListBulletOutline } from "@vkontakte/icons"
 import { useParams, useRouteNavigator } from "@vkontakte/vk-mini-apps-router"
-import { Div, FormItem, FormLayoutGroup, ModalPage, ModalPageHeader, NavIdProps, Select, Input, IconButton, Button, ButtonGroup, Switch, Cell, Checkbox } from "@vkontakte/vkui"
+import { Div, FormItem, FormLayoutGroup, ModalPage, ModalPageHeader, NavIdProps, Select, Input, IconButton, Button, ButtonGroup, Checkbox } from "@vkontakte/vkui"
 import { routes } from "@shared/model"
 import React from "react"
 
@@ -31,10 +31,7 @@ export const QuestionBuilder = (props: NavIdProps) => {
     isPending: isUpdateQuestionPending,
   } = useUpdateQuestion()
 
-  const {
-    mutate: generateDescription,
-    isPending: isGeneratingDescription,
-  } = useGenerateQuestionDescription()
+
 
   const handleSuccess = () => {
     router.hideModal()
@@ -72,25 +69,6 @@ export const QuestionBuilder = (props: NavIdProps) => {
         onSuccess: handleSuccess
       })
     }
-  }
-
-  const handleGenerateDescription = () => {
-    if (!params?.id || text.length < 3) return
-
-    generateDescription({
-      formId: params.id,
-      questionId: params?.qid ? Number(params.qid) : 0,
-      data: {
-        questionText: text,
-        questionType: type
-      }
-    }, {
-      onSuccess: (data) => {
-        if (data.description) {
-          setText(data.description)
-        }
-      }
-    })
   }
 
   React.useEffect(() => {
@@ -136,21 +114,7 @@ export const QuestionBuilder = (props: NavIdProps) => {
             <FormItem.TopLabel>Текст</FormItem.TopLabel>
 
             <FormItem.TopAside>
-              <ButtonGroup gap="s" mode="horizontal">
-                {text.length >= 3 && (
-                  <Button
-                    size="s"
-                    mode="tertiary"
-                    before={<Icon20Stars />}
-                    onClick={handleGenerateDescription}
-                    loading={isGeneratingDescription}
-                    disabled={isGeneratingDescription}
-                  >
-                    Сгенерировать
-                  </Button>
-                )}
-                <span>{text.length || 0} / 64</span>
-              </ButtonGroup>
+              {text.length || 0} / 64
             </FormItem.TopAside>
           </FormItem.Top>
         }>
