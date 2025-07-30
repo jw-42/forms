@@ -1,7 +1,7 @@
 import { QuestionMultipleType, QuestionProps, useQuestion, QuestionMultipleTypeDict, useCreateQuestion, useUpdateQuestion } from "@entities/question"
 import { Icon20Cancel, Icon20ListBulletOutline } from "@vkontakte/icons"
 import { useParams, useRouteNavigator } from "@vkontakte/vk-mini-apps-router"
-import { Div, FormItem, FormLayoutGroup, ModalPage, ModalPageHeader, NavIdProps, Select, Input, IconButton, Button, ButtonGroup, Switch, Cell, Checkbox } from "@vkontakte/vkui"
+import { Div, FormItem, FormLayoutGroup, ModalPage, ModalPageHeader, NavIdProps, Select, Input, IconButton, Button, ButtonGroup, Checkbox } from "@vkontakte/vkui"
 import { routes } from "@shared/model"
 import React from "react"
 
@@ -30,6 +30,8 @@ export const QuestionBuilder = (props: NavIdProps) => {
     mutate: updateQuestion,
     isPending: isUpdateQuestionPending,
   } = useUpdateQuestion()
+
+
 
   const handleSuccess = () => {
     router.hideModal()

@@ -8,6 +8,7 @@ import { update } from './api/update'
 import { deleteById } from './api/delete'
 import { getDataProccessingAgreement } from './api/getDataProccessingAgreement'
 import { getPersonalDataAgreement } from './api/getPersonalDataAgreement'
+import { generateDescription } from './api/generate-description'
 
 const router = new Hono()
 
@@ -18,5 +19,7 @@ router.get('/:form_id/data-proccessing', ...getDataProccessingAgreement)
 router.get('/:form_id/personal-data', ...getPersonalDataAgreement)
 router.put('/:form_id', ...update)
 router.delete('/:form_id', ...deleteById)
+
+router.post('/generate-description', ...generateDescription)
 
 export default router

@@ -75,4 +75,6 @@ export const useDeleteQuestion = () => {
       queryClient.removeQueries({ queryKey: questionKeys.detail(questionId) })
     }
   })
-} 
+}
+
+ 
