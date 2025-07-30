@@ -15,5 +15,8 @@ export const questionApi = {
     apiClient.put<QuestionProps>(`/forms/${formId}/questions/${questionId}`, data),
     
   delete: (formId: string, questionId: number) =>
-    apiClient.delete(`/forms/${formId}/questions/${questionId}`)
+    apiClient.delete(`/forms/${formId}/questions/${questionId}`),
+
+  generateDescription: (formId: string, questionId: number, data: { questionText: string, questionType: string }) =>
+    apiClient.post<{ description: string, generated: boolean }>(`/forms/${formId}/questions/${questionId}/generate-description`, data)
 }
