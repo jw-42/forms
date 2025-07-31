@@ -1,18 +1,17 @@
 import { useGetSubscriptions } from "@entities/subscriptions";
-import { routes } from "@shared/index";
+import { routes, useGetBalance } from "@shared/index";
 import { VIEW } from "@shared/index";
-import { Icon20FlashOutline, Icon24FlashOutline, Icon24GearOutline, Icon32StarsCircleFillViolet } from "@vkontakte/icons";
+import { Icon20FlashOutline, Icon32StarsCircleFillViolet } from "@vkontakte/icons";
 import { useActiveVkuiLocation, useRouteNavigator } from "@vkontakte/vk-mini-apps-router";
 import { Button, ButtonGroup, Cell, Div, Group, Panel, Separator, Spacing } from "@vkontakte/vkui";
 import React from "react";
-import { useAppearance } from '@vkontakte/vk-bridge-react';
 
 export const Sidebar = () => {
 
   const router = useRouteNavigator()
-  const appearance = useAppearance();
 
   const { data: subscriptions } = useGetSubscriptions()
+  const { data: balanceData } = useGetBalance()
 
   const { view: activeStory = VIEW.FORMS } = useActiveVkuiLocation()
 
@@ -35,7 +34,7 @@ export const Sidebar = () => {
               before={<Icon20FlashOutline/>}
               onClick={() => router.push(routes.settings.overview.path)}
             >
-              100
+              {balanceData?.balance || 0}
             </Button>
           </ButtonGroup>
         </Div>

@@ -1,70 +1,37 @@
 import { getPrisma } from '@infra/database'
 
-interface CreateSubscriptionParams {
-  subscription_id: number
+interface CreateTransactionParams {
+  external_id: string
   user_id: number
-  status: 'chargeable'|'active'|'cancelled'
-  cancel_reason?: 'user_decision'|'app_decision'|'payment_fail'|'unknown'
-  item_id: string
-  item_price: number
-  next_bill_time: Date
-  pending_cancel?: number
-}
-
-interface CreateOrderParams {
-  order_id: number
-  user_id: number
-  status: 'chargeable'|'refunded'
-  item_id: string
-  item_price: number
+  type: 'purchase'|'gift'|'refund'|'bonus'|'subscription'|'adjustment'
+  status: 'pending'|'completed'|'failed'|'cancelled'
+  boosts_amount: number
+  votes_amount: number
+  description?: string
+  metadata?: Record<string, any>
 }
 
 class PaymentsRepository {
-  // Методы для работы с подписками
-  async createSubscription (data: CreateSubscriptionParams) {
-    return await getPrisma().subscription.create({
-      data
-    })
-  }
-
-  async updateSubscription (subscription_id: number, data: Omit<CreateSubscriptionParams, 'subscription_id'|'user_id'>) {
-    return await getPrisma().subscription.update({
-      where: { subscription_id },
-      data
-    })
-  }
-
-  async getSubscriptionById (subscription_id: number) {
-    return await getPrisma().subscription.findUnique({
-      where: { subscription_id },
-    })
-  }
-
-  async getSubscriptionsByUserId (user_id: number, status?: ('active'|'chargeable'|'cancelled')[]) {
-    return await getPrisma().subscription.findMany({
-      where: { user_id, status: { in: status } },
-      orderBy: { subscription_id: 'desc' }
-    })
-  }
-
-  // Методы для работы с заказами
-  async createOrder (data: CreateOrderParams) {
-    return await getPrisma().order.create({
+  async createTransaction(data: CreateTransactionParams) {
+    return await getPrisma().transaction.create({
       data: {
-        order_id: data.order_id,
+        external_id: data.external_id,
         user_id: data.user_id,
+        type: data.type,
         status: data.status,
-        item_id: data.item_id,
-        item_price: data.item_price,
+        boosts_amount: data.boosts_amount,
+        votes_amount: data.votes_amount,
+        description: data.description,
+        metadata: data.metadata,
         created_at: new Date(),
         updated_at: new Date()
       }
     })
   }
 
-  async updateOrder (order_id: number, data: Omit<CreateOrderParams, 'order_id'|'user_id'>) {
-    return await getPrisma().order.update({
-      where: { order_id },
+  async updateTransaction(transaction_id: string, data: Omit<CreateTransactionParams, 'external_id'|'user_id'|'type'>) {
+    return await getPrisma().transaction.update({
+      where: { id: transaction_id },
       data: {
         ...data,
         updated_at: new Date()
@@ -72,21 +39,29 @@ class PaymentsRepository {
     })
   }
 
-  async getOrderById (order_id: number) {
-    return await getPrisma().order.findUnique({
-      where: { order_id },
+  async getTransactionByExternalId(external_id: string) {
+    return await getPrisma().transaction.findUnique({
+      where: { external_id },
     })
   }
 
-  async getOrdersByUserId (user_id: number, status?: ('chargeable'|'refunded')[]) {
-    return await getPrisma().order.findMany({
+  async getTransactionsByUserId(user_id: number, status?: ('pending'|'completed'|'failed'|'cancelled')[]) {
+    return await getPrisma().transaction.findMany({
       where: { user_id, status: { in: status } },
-      orderBy: { order_id: 'desc' }
+      select: {
+        external_id: true,
+        type: true,
+        status: true,
+        boosts_amount: true,
+        votes_amount: true,
+        created_at: true
+      },
+      take: 10,
+      orderBy: { created_at: 'desc' }
     })
   }
 
-  // Методы для работы с балансом пользователей
-  async addUserBalance (user_id: number, amount: number) {
+  async addUserBalance(user_id: number, amount: number) {
     return await getPrisma().user.update({
       where: { id: user_id },
       data: {
@@ -97,26 +72,12 @@ class PaymentsRepository {
     })
   }
 
-  async getUserBalance (user_id: number) {
+  async getUserBalance(user_id: number) {
     const user = await getPrisma().user.findUnique({
       where: { id: user_id },
       select: { balance: true }
     })
     return user?.balance || 0
-  }
-
-  // Методы для работы с формами (для проверки лимитов)
-  async getUserFormsCount (user_id: number): Promise<number> {
-    return await getPrisma().form.count({
-      where: { owner_id: user_id }
-    })
-  }
-
-  // Методы для работы с вопросами (для проверки лимитов)
-  async getFormQuestionsCount (form_id: string): Promise<number> {
-    return await getPrisma().question.count({
-      where: { form_id }
-    })
   }
 }
 

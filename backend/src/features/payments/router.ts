@@ -1,9 +1,8 @@
 import { Hono } from 'hono'
-import { getSubscription, subscriptionStatusChange, getItem, orderStatusChange } from './api'
+import { getItem, orderStatusChange } from './api'
 import { AuthorizationMiddleware } from '@shared/middleware/authorization'
-import { getActiveSubscriptions } from './api/getActiveSubscriptions'
-import { checkSubscription } from './api'
 import { getBalance } from './api/getBalance'
+import { getTransactions } from './api/getTransactions'
 
 const router = new Hono()
 
@@ -11,14 +10,6 @@ router.post('/', async (ctx, next) => {
   const body = await ctx.req.parseBody()
   const notification_type = body.notification_type
 
-  if (notification_type === 'get_subscription' || notification_type === 'get_subscription_test') {
-    // @ts-ignore
-    return getSubscription[0](ctx, next)
-  }
-  if (notification_type === 'subscription_status_change' || notification_type === 'subscription_status_change_test') {
-    // @ts-ignore
-    return subscriptionStatusChange[0](ctx, next)
-  }
   if (notification_type === 'get_item' || notification_type === 'get_item_test') {
     // @ts-ignore
     return getItem[0](ctx, next)
@@ -36,13 +27,10 @@ router.post('/', async (ctx, next) => {
   })
 })
 
-router.use('/active', AuthorizationMiddleware)
-router.get('/active', ...getActiveSubscriptions)
-
-router.use('/check', AuthorizationMiddleware)
-router.post('/check', ...checkSubscription)
-
 router.use('/balance', AuthorizationMiddleware)
 router.get('/balance', ...getBalance)
+
+router.use('/transactions', AuthorizationMiddleware)
+router.get('/transactions', ...getTransactions)
 
 export default router

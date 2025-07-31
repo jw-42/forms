@@ -4,6 +4,7 @@ import { TopUpBalanceCard } from './card'
 import { useGetBalance } from '@entities/balance'
 import bridge from '@vkontakte/vk-bridge'
 import { useState } from 'react'
+import { queryClient } from '@shared/api'
 
 export const Balance = () => {
   const { data: balanceData } = useGetBalance()
@@ -23,9 +24,9 @@ export const Balance = () => {
         type: 'item',
       })
       
-      if (result && 'result' in result && result.result) {
+      if (result && 'success' in result && result.success) {
         console.log('Purchase successful:', result)
-        // Здесь можно добавить обновление баланса
+        queryClient.invalidateQueries({ queryKey: ['balance'] })
       } else {
         console.log('Purchase failed:', result)
       }

@@ -18,7 +18,7 @@ model User {
   forms            Form[]
   answers          AnswersGroup[]
   subscription     Subscription[]
-  orders           Order[]
+  transactions     Transaction[]
 }
 
 model Session {
@@ -149,18 +149,44 @@ model Subscription {
   user            User                      @relation(fields: [user_id], references: [id], onDelete: Cascade)
 }
 
-enum OrderStatus {
-  chargeable
-  refunded
+enum TransactionType {
+  purchase      // Покупка бустов/голосов
+  gift          // Подарок от администрации
+  refund        // Возврат средств
+  bonus         // Бонус за активность
+  subscription  // Оплата подписки
+  adjustment    // Корректировка баланса администратором
 }
 
-model Order {
-  order_id   Int         @id @unique
-  user_id    Int
-  status     OrderStatus
-  item_id    String
-  item_price Int
-  created_at DateTime    @default(now())
-  updated_at DateTime    @updatedAt
-  user       User        @relation(fields: [user_id], references: [id], onDelete: Cascade)
+enum TransactionStatus {
+  pending       // Ожидает обработки
+  completed     // Успешно завершена
+  failed        // Ошибка
+  cancelled     // Отменена
+}
+
+model Transaction {
+  id              String            @id @default(uuid())
+  user_id         Int
+  type            TransactionType
+  status          TransactionStatus @default(pending)
+  
+  boosts_amount   Int
+  votes_amount    Int
+  
+  description     String?
+  external_id     String?
+  metadata        Json?
+  
+  created_at      DateTime          @default(now())
+  updated_at      DateTime          @updatedAt
+  completed_at    DateTime?
+  
+  user            User              @relation(fields: [user_id], references: [id], onDelete: Cascade)
+  
+  @@index([user_id])
+  @@index([type])
+  @@index([status])
+  @@index([created_at])
+  @@unique([external_id])
 }
