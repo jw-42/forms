@@ -2,7 +2,7 @@ import { useRouteNavigator } from '@vkontakte/vk-mini-apps-router'
 import { NavIdProps, PanelHeaderBack } from '@vkontakte/vkui'
 import { ResizePanel, routes } from '@shared/index'
 
-import { SubscriptionBenefits, SubscriptionCTA, SubscriptionFeedback, SubscriptionHero, SubscriptionPlans } from '@widgets/index'
+import { SubscriptionBenefits, SubscriptionCTA, SubscriptionFeedback, Balance, BalanceHistory, SubscriptionPlans } from '@widgets/index'
 import { useGetSubscriptions } from '@entities/subscriptions'
 
 export const Subscription = (props: NavIdProps) => {
@@ -20,11 +20,12 @@ export const Subscription = (props: NavIdProps) => {
       before={<PanelHeaderBack onClick={handleBack} />}
       {...props}
     >
-      <SubscriptionHero />
+      <Balance />
+      {/* <BalanceHistory />
       <SubscriptionBenefits />
       <SubscriptionPlans />
       <SubscriptionFeedback />
-      {subscriptions?.length === 0 && <SubscriptionCTA />}      
+      {subscriptions?.length === 0 && <SubscriptionCTA />}       */}
     </ResizePanel>
   )
 }

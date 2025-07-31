@@ -11,12 +11,14 @@ datasource db {
 model User {
   id               Int            @id
   is_banned        Boolean        @default(false)
+  balance          Int            @default(5)
   created_at       DateTime       @default(now())
   updated_at       DateTime       @updatedAt
   sessions         Session[]
   forms            Form[]
   answers          AnswersGroup[]
   subscription     Subscription[]
+  orders           Order[]
 }
 
 model Session {
@@ -145,4 +147,21 @@ model Subscription {
   next_bill_time  DateTime
   pending_cancel  Int?
   user            User                      @relation(fields: [user_id], references: [id], onDelete: Cascade)
+}
+
+enum OrderStatus {
+  chargeable
+  paid
+  cancelled
+}
+
+model Order {
+  order_id   Int         @id @unique
+  user_id    Int
+  status     OrderStatus
+  item_id    String
+  item_price Int
+  created_at DateTime    @default(now())
+  updated_at DateTime    @updatedAt
+  user       User        @relation(fields: [user_id], references: [id], onDelete: Cascade)
 }
