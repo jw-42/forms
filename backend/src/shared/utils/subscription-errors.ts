@@ -5,6 +5,13 @@ export class SubscriptionNotFoundError extends Error {
   }
 }
 
+export class ItemNotFoundError extends Error {
+  constructor(item: string) {
+    super(`Товар "${item}" не найден`)
+    this.name = 'ItemNotFoundError'
+  }
+}
+
 export class SubscriptionLimitExceededError extends Error {
   constructor(action: string, current: number, max: number) {
     super(`Лимит превышен для действия "${action}": ${current}/${max}`)

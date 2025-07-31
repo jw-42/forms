@@ -1,19 +1,7 @@
-import { useGetSubscriptions } from '@entities/subscriptions'
 import { Button, Card, Group, Placeholder, Separator, Spacing, Headline, CardGrid, Subhead, Header, FormLayoutGroup, FormItem, Input } from '@vkontakte/vkui'
 import { Icon28Flash, Icon56CoinsStackHighOutline, Icon56CoinsStacks3Outline, Icon56DiamondOutline } from '@vkontakte/icons'
-import React from 'react'
 
 export const SubscriptionHero = () => {
-
-  const { data: subscriptions } = useGetSubscriptions()
-  const [isSubscribed, setIsSubscribed] = React.useState(false)
-  
-  React.useEffect(() => {
-    if (subscriptions) {
-      setIsSubscribed(subscriptions.length > 0)
-    }
-  }, [subscriptions])
-
   return(
     <Group
       header={

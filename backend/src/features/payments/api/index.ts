@@ -1,4 +1,6 @@
 export { getSubscription } from './getSubscription'
 export { subscriptionStatusChange } from './subscriptionStatusChange'
 export { getActiveSubscriptions } from './getActiveSubscriptions'
-export { checkSubscription } from './checkSubscription' 
+export { checkSubscription } from './checkSubscription'
+export { getItem } from './getItem'
+export { orderStatusChange } from './orderStatusChange' 
