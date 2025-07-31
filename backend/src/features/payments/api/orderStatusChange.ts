@@ -7,16 +7,11 @@ import paymentsService from '../service'
 const factory = createFactory()
 
 export const orderStatusChange = factory.createHandlers(async (ctx: Context, next: Next) => {
-  const requestId = Math.random().toString(36).substring(7)
-  
   try {
     const body = await ctx.req.parseBody()
-    console.log(`[PAYMENT-${requestId}] Входящие данные:`, JSON.stringify(body, null, 2))
-    
     const result = OrderStatusChange.safeParse({ ...body })
 
     if (!result.success) {
-      console.error(`[PAYMENT-${requestId}] Ошибка валидации:`, result.error)
       return ctx.json({
         error: {
           error_code: 101,
@@ -26,15 +21,12 @@ export const orderStatusChange = factory.createHandlers(async (ctx: Context, nex
       })
     }
 
-    console.log(`[PAYMENT-${requestId}] Данные валидированы успешно:`, JSON.stringify(result.data, null, 2))
-
     const secret = Bun.env.APP_SECRET
     if (!secret) {
       throw new Error('APP_SECRET is not set in environment')
     }
 
     if (!verifySignature(result.data, 'sig', secret)) {
-      console.error(`[PAYMENT-${requestId}] Подпись неверная`)
       return ctx.json({
         error: {
           error_code: 10,
@@ -43,8 +35,6 @@ export const orderStatusChange = factory.createHandlers(async (ctx: Context, nex
         }
       })
     }
-
-    console.log(`[PAYMENT-${requestId}] Подпись проверена успешно`)
 
     const {
       app_id,
@@ -75,7 +65,7 @@ export const orderStatusChange = factory.createHandlers(async (ctx: Context, nex
     })
 
     // Если заказ оплачен, обрабатываем покупку бустов
-    if (status === 'paid') {
+    if (status === 'paid' || status === 'chargeable') {
       await paymentsService.processBoostPurchase(order_id, user_id, item_id)
     }
 
@@ -86,7 +76,7 @@ export const orderStatusChange = factory.createHandlers(async (ctx: Context, nex
       }
     })
   } catch (error) {
-    console.error(`[PAYMENT-${requestId}] Ошибка:`, error)
+    console.error(error)
     return ctx.json({
       error: {
         error_code: 1,

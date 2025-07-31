@@ -7,16 +7,11 @@ import paymentsService from '../service'
 const factory = createFactory()
 
 export const subscriptionStatusChange = factory.createHandlers(async (ctx: Context, next: Next) => {
-  const requestId = Math.random().toString(36).substring(7)
-  
   try {
     const body = await ctx.req.parseBody()
-    console.log(`[SUBSCRIPTION-${requestId}] Входящие данные:`, JSON.stringify(body, null, 2))
-    
     const result = ChangeSubscriptionStatus.safeParse({ ...body })
 
     if (!result.success) {
-      console.error(`[SUBSCRIPTION-${requestId}] Ошибка валидации:`, result.error)
       return ctx.json({
         error: {
           error_code: 101,
@@ -26,15 +21,12 @@ export const subscriptionStatusChange = factory.createHandlers(async (ctx: Conte
       })
     }
 
-    console.log(`[SUBSCRIPTION-${requestId}] Данные валидированы успешно:`, JSON.stringify(result.data, null, 2))
-
     const secret = Bun.env.APP_SECRET
     if (!secret) {
       throw new Error('APP_SECRET is not set in environment')
     }
 
     if (!verifySignature(result.data, 'sig', secret)) {
-      console.error(`[SUBSCRIPTION-${requestId}] Подпись неверная`)
       return ctx.json({
         error: {
           error_code: 10,
@@ -43,8 +35,6 @@ export const subscriptionStatusChange = factory.createHandlers(async (ctx: Conte
         }
       })
     }
-
-    console.log(`[SUBSCRIPTION-${requestId}] Подпись проверена успешно`)
 
     const {
       app_id,
@@ -59,7 +49,6 @@ export const subscriptionStatusChange = factory.createHandlers(async (ctx: Conte
     } = result.data
 
     if (app_id !== 53866259) {
-      console.error(`[SUBSCRIPTION-${requestId}] Неподдерживаемое приложение: ${app_id}`)
       return ctx.json({
         error: {
           error_code: 100,
@@ -69,7 +58,6 @@ export const subscriptionStatusChange = factory.createHandlers(async (ctx: Conte
       })
     }
 
-    console.log(`[SUBSCRIPTION-${requestId}] Создание/обновление подписки...`)
     // Создаем или обновляем подписку через service
     await paymentsService.createOrUpdateSubscription({
       subscription_id,
@@ -82,8 +70,6 @@ export const subscriptionStatusChange = factory.createHandlers(async (ctx: Conte
       pending_cancel
     })
 
-    console.log(`[SUBSCRIPTION-${requestId}] Подписка успешно обновлена`)
-
     return ctx.json({
       response: {
         subscription_id,
@@ -91,7 +77,7 @@ export const subscriptionStatusChange = factory.createHandlers(async (ctx: Conte
       }
     })
   } catch (error) {
-    console.error(`[SUBSCRIPTION-${requestId}] Ошибка:`, error)
+    console.error(error)
     return ctx.json({
       error: {
         error_code: 1,
