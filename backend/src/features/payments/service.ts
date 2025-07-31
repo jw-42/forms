@@ -221,7 +221,7 @@ class PaymentsService {
   async createOrUpdateOrder(data: {
     order_id: number
     user_id: number
-    status: 'chargeable'|'paid'|'cancelled'
+    status: 'chargeable'|'refunded'
     item_id: string
     item_price: number
   }) {
@@ -240,7 +240,7 @@ class PaymentsService {
     return order
   }
 
-  // Метод для обработки успешной оплаты бустов
+  // Метод для обработки покупки бустов (вызывается при статусе chargeable)
   async processBoostPurchase(order_id: number, user_id: number, item_id: string) {
     // Проверяем, является ли товар бустом
     if (!isBoostItem(item_id)) {
@@ -260,7 +260,7 @@ class PaymentsService {
     
     // Обновляем статус заказа
     await paymentsRepository.updateOrder(order_id, {
-      status: 'paid',
+      status: 'chargeable',
       item_id,
       item_price: price
     })

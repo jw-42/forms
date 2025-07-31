@@ -14,7 +14,7 @@ interface CreateSubscriptionParams {
 interface CreateOrderParams {
   order_id: number
   user_id: number
-  status: 'chargeable'|'paid'|'cancelled'
+  status: 'chargeable'|'refunded'
   item_id: string
   item_price: number
 }
@@ -78,7 +78,7 @@ class PaymentsRepository {
     })
   }
 
-  async getOrdersByUserId (user_id: number, status?: ('chargeable'|'paid'|'cancelled')[]) {
+  async getOrdersByUserId (user_id: number, status?: ('chargeable'|'refunded')[]) {
     return await getPrisma().order.findMany({
       where: { user_id, status: { in: status } },
       orderBy: { order_id: 'desc' }

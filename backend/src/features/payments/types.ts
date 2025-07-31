@@ -70,8 +70,7 @@ export const OrderStatusChange = z.object({
   ]),
   status: z.enum([
     'chargeable',
-    'paid',
-    'cancelled'
+    'refunded'
   ]),
   order_id: z.coerce.number(),
   user_id: z.coerce.number(),

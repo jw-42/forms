@@ -151,8 +151,7 @@ model Subscription {
 
 enum OrderStatus {
   chargeable
-  paid
-  cancelled
+  refunded
 }
 
 model Order {
