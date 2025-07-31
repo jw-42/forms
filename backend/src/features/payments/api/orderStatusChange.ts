@@ -55,16 +55,46 @@ export const orderStatusChange = factory.createHandlers(async (ctx: Context, nex
       })
     }
 
-    await paymentsService.createOrUpdateOrder({
-      order_id,
-      user_id,
-      status,
-      item_id,
-      item_price
-    })
-
     if (status === 'chargeable') {
-      await paymentsService.processBoostPurchase(order_id, user_id, item_id)
+      // Получаем конфигурацию товара для правильного количества бустов
+      const itemConfig = await paymentsService.getItemInfo(item_id)
+      
+      // Создаем транзакцию с правильными данными
+      await paymentsService.upsertTransaction({
+        external_id: order_id.toString(),
+        user_id,
+        type: 'purchase',
+        status: 'completed',
+        boosts_amount: itemConfig.boostAmount,
+        votes_amount: 0,
+        description: `Покупка ${itemConfig.boostAmount} бустов`,
+        metadata: {
+          vk_order_id: order_id,
+          vk_item_id: item_id,
+          vk_item_price: item_price,
+          vk_status: status
+        }
+      })
+      
+      // Обрабатываем покупку (только обновление баланса)
+      await paymentsService.processBoostPurchase(user_id, item_id)
+    } else {
+      // Создаем транзакцию для неуспешной операции
+      await paymentsService.upsertTransaction({
+        external_id: order_id.toString(),
+        user_id,
+        type: 'purchase',
+        status: 'failed',
+        boosts_amount: 0,
+        votes_amount: 0,
+        description: `Неуспешная покупка товара ${item_id}`,
+        metadata: {
+          vk_order_id: order_id,
+          vk_item_id: item_id,
+          vk_item_price: item_price,
+          vk_status: status
+        }
+      })
     }
 
     return ctx.json({
