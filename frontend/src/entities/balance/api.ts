@@ -5,6 +5,7 @@ export interface BalanceInfo {
 }
 
 export const balanceApi = {
-  getBalance: () => 
-    apiClient.get<BalanceInfo>('/payments/balance').then(res => res.data),
+  getBalance: async (): Promise<BalanceInfo> => {
+    return await apiClient.get<BalanceInfo>('/payments/balance')
+  }
 } 
