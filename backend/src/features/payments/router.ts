@@ -1,5 +1,5 @@
 import { Hono } from 'hono'
-import { getSubscription, subscriptionStatusChange } from './api'
+import { getSubscription, subscriptionStatusChange, getItem, orderStatusChange } from './api'
 import { AuthorizationMiddleware } from '@shared/middleware/authorization'
 import { getActiveSubscriptions } from './api/getActiveSubscriptions'
 import { checkSubscription } from './api'
@@ -17,6 +17,14 @@ router.post('/', async (ctx, next) => {
   if (notification_type === 'subscription_status_change' || notification_type === 'subscription_status_change_test') {
     // @ts-ignore
     return subscriptionStatusChange[0](ctx, next)
+  }
+  if (notification_type === 'get_item' || notification_type === 'get_item_test') {
+    // @ts-ignore
+    return getItem[0](ctx, next)
+  }
+  if (notification_type === 'order_status_change' || notification_type === 'order_status_change_test') {
+    // @ts-ignore
+    return orderStatusChange[0](ctx, next)
   }
   return ctx.json({
     error: {

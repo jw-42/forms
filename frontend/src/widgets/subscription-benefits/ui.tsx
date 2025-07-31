@@ -19,7 +19,7 @@ export const SubscriptionBenefits = () => {
     <Group
       header={
         <Header size='l'>
-          Преимущества
+          Преимущества подписки
         </Header>
       }
     >

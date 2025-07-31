@@ -10,11 +10,65 @@ import {
   canAddQuestion,
   type SubscriptionType
 } from '@shared/utils/subscription-helpers'
-import { SUBSCRIPTION_PLANS, type SubscriptionPlan } from '@shared/config/subscriptions'
-import { SubscriptionNotFoundError } from '@shared/utils/subscription-errors'
+import { SUBSCRIPTION_PLANS } from '@shared/config/subscriptions'
+import { SubscriptionNotFoundError, ItemNotFoundError } from '@shared/utils/subscription-errors'
+import { declOfNum } from '@shared/utils'
+
+const SPECIAL_OFFERS: Record<string, { boostAmount: number; price: number; title?: string; description?: string }> = {
+  'buy_bust_100': {
+    boostAmount: 100,
+    price: 75,
+    title: 'Купить 100 бустов',
+    description: 'Ещё больше бустов для твоих форм: генерируй описания, вопросы и подбирай формулировки.'
+  }
+}
+
+function parseBoostAmount(itemId: string): number | null {
+  const match = itemId.match(/^buy_bust_(\d+)$/)
+  if (match && match[1]) {
+    const amount = parseInt(match[1], 10)
+    return amount > 0 ? amount : null
+  }
+  return null
+}
+
+function isBoostItem(itemId: string): boolean {
+  return itemId.startsWith('buy_bust_')
+}
+
+function getItemConfig(itemId: string): { boostAmount: number; price: number; title?: string; description?: string } | null {
+  if (SPECIAL_OFFERS[itemId]) {
+    return SPECIAL_OFFERS[itemId]
+  }
+
+  const boostAmount = parseBoostAmount(itemId)
+  if (!boostAmount) {
+    return null
+  }
+
+  return {
+    boostAmount,
+    price: boostAmount
+  }
+}
+
+function formatBoostTitle(boostAmount: number, customTitle?: string): string {
+  if (customTitle) {
+    return customTitle
+  }
+
+  return `${boostAmount} ${declOfNum(boostAmount, ['буст', 'буста', 'бустов'])}`
+}
+
+function formatBoostDescription(customDescription?: string): string {
+  if (customDescription) {
+    return customDescription
+  }
+
+  return 'Ещё больше бустов для твоих форм: генерируй описания, вопросы и подбирай формулировки.'
+}
 
 class PaymentsService {
-  // Методы для работы с подписками
   async getActiveSubscriptions(user_id: number, status?: ('active'|'chargeable'|'cancelled')[]) {
     return await paymentsRepository.getSubscriptionsByUserId(user_id, status)
   }
@@ -129,6 +183,87 @@ class PaymentsService {
       price: plan.price,
       expiration: 600 // 10 минут в секундах
     }
+  }
+
+  // Методы для работы с товарами (бустами)
+  async getItemInfo(item: string): Promise<{
+    item_id: string
+    title: string
+    description: string
+    price: number
+    boostAmount: number
+    expiration: number
+  }> {
+    // Проверяем, является ли товар бустом
+    if (!isBoostItem(item)) {
+      throw new ItemNotFoundError(item)
+    }
+
+    // Получаем конфигурацию товара
+    const config = getItemConfig(item)
+    if (!config) {
+      throw new ItemNotFoundError(item)
+    }
+
+    const { boostAmount, price, title, description } = config
+    
+    return {
+      item_id: item,
+      title: formatBoostTitle(boostAmount, title),
+      description: formatBoostDescription(description),
+      price,
+      boostAmount,
+      expiration: 600 // 10 минут в секундах
+    }
+  }
+
+  // Методы для обработки заказов бустов
+  async createOrUpdateOrder(data: {
+    order_id: number
+    user_id: number
+    status: 'chargeable'|'paid'|'cancelled'
+    item_id: string
+    item_price: number
+  }) {
+    let order = await paymentsRepository.getOrderById(data.order_id)
+    
+    if (!order) {
+      order = await paymentsRepository.createOrder(data)
+    } else {
+      await paymentsRepository.updateOrder(data.order_id, {
+        status: data.status,
+        item_id: data.item_id,
+        item_price: data.item_price
+      })
+    }
+    
+    return order
+  }
+
+  // Метод для обработки успешной оплаты бустов
+  async processBoostPurchase(order_id: number, user_id: number, item_id: string) {
+    // Проверяем, является ли товар бустом
+    if (!isBoostItem(item_id)) {
+      throw new ItemNotFoundError(item_id)
+    }
+
+    // Получаем конфигурацию товара
+    const config = getItemConfig(item_id)
+    if (!config) {
+      throw new ItemNotFoundError(item_id)
+    }
+
+    const { boostAmount, price } = config
+
+    // Обновляем баланс пользователя
+    await paymentsRepository.addUserBalance(user_id, boostAmount)
+    
+    // Обновляем статус заказа
+    await paymentsRepository.updateOrder(order_id, {
+      status: 'paid',
+      item_id,
+      item_price: price
+    })
   }
 }
 
