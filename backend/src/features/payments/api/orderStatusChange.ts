@@ -55,7 +55,6 @@ export const orderStatusChange = factory.createHandlers(async (ctx: Context, nex
       })
     }
 
-    // Создаем или обновляем заказ через service
     await paymentsService.createOrUpdateOrder({
       order_id,
       user_id,
@@ -64,8 +63,7 @@ export const orderStatusChange = factory.createHandlers(async (ctx: Context, nex
       item_price
     })
 
-    // Если заказ оплачен, обрабатываем покупку бустов
-    if (status === 'paid' || status === 'chargeable') {
+    if (status === 'chargeable') {
       await paymentsService.processBoostPurchase(order_id, user_id, item_id)
     }
 
