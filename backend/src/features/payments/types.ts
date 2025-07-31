@@ -15,7 +15,7 @@ export const GetSubscriptionParams = z.object({
   user_id: z.coerce.number(),
   version: z.string().optional(),
   sig: z.string()
-})
+}).passthrough() // Разрешаем дополнительные поля
 
 export const ChangeSubscriptionStatus = z.object({
   app_id: z.coerce.number(),
@@ -42,7 +42,7 @@ export const ChangeSubscriptionStatus = z.object({
   user_id: z.coerce.number(),
   version: z.string().optional(),
   sig: z.string()
-})
+}).passthrough() // Разрешаем дополнительные поля
 
 // Новые типы для покупки бустов
 export const GetItemParams = z.object({
@@ -58,7 +58,7 @@ export const GetItemParams = z.object({
   user_id: z.coerce.number(),
   version: z.string().optional(),
   sig: z.string()
-})
+}).passthrough() // Разрешаем дополнительные поля
 
 export const OrderStatusChange = z.object({
   app_id: z.coerce.number(),
@@ -77,7 +77,7 @@ export const OrderStatusChange = z.object({
   user_id: z.coerce.number(),
   version: z.string().optional(),
   sig: z.string()
-})
+}).passthrough() // Разрешаем дополнительные поля
 
 export type GetSubscriptionParams = z.infer<typeof GetSubscriptionParams>
 export type ChangeSubscriptionStatus = z.infer<typeof ChangeSubscriptionStatus>
