@@ -8,16 +8,11 @@ import { ItemNotFoundError } from '@shared/utils/subscription-errors'
 const factory = createFactory()
 
 export const getItem = factory.createHandlers(async (ctx: Context, next: Next) => {
-  const requestId = Math.random().toString(36).substring(7)
-  
   try {
     const body = await ctx.req.parseBody()
-    console.log(`[GET-ITEM-${requestId}] Входящие данные:`, JSON.stringify(body, null, 2))
-    
     const result = GetItemParams.safeParse({...body})
 
     if (!result.success) {
-      console.error(`[GET-ITEM-${requestId}] Ошибка валидации:`, result.error)
       return ctx.json({
         error: {
           error_code: 101, 
@@ -27,15 +22,12 @@ export const getItem = factory.createHandlers(async (ctx: Context, next: Next) =
       })
     }
 
-    console.log(`[GET-ITEM-${requestId}] Данные валидированы успешно:`, JSON.stringify(result.data, null, 2))
-
     const secret = Bun.env.APP_SECRET
     if (!secret) {
       throw new Error('APP_SECRET is not set in environment')
     }
 
     if (!verifySignature(result.data, 'sig', secret)) {
-      console.error(`[GET-ITEM-${requestId}] Подпись неверная`)
       return ctx.json({
         error: {
           error_code: 10, 
@@ -45,12 +37,9 @@ export const getItem = factory.createHandlers(async (ctx: Context, next: Next) =
       })
     }
 
-    console.log(`[GET-ITEM-${requestId}] Подпись проверена успешно`)
-
     const { app_id, item } = result.data
 
     if (app_id !== 53866259) {
-      console.error(`[GET-ITEM-${requestId}] Неподдерживаемое приложение: ${app_id}`)
       return ctx.json({
         error: {
           error_code: 100, 
@@ -63,7 +52,6 @@ export const getItem = factory.createHandlers(async (ctx: Context, next: Next) =
     try {
       // Получаем информацию о товаре через service
       const itemInfo = await paymentsService.getItemInfo(item)
-      console.log(`[GET-ITEM-${requestId}] Информация о товаре получена:`, JSON.stringify(itemInfo, null, 2))
       
       return ctx.json({
         response: itemInfo
@@ -71,7 +59,6 @@ export const getItem = factory.createHandlers(async (ctx: Context, next: Next) =
     } catch (error) {
       // Если товар не найден, возвращаем ошибку с кодом 20
       if (error instanceof ItemNotFoundError) {
-        console.error(`[GET-ITEM-${requestId}] Товар не найден: ${item}`)
         return ctx.json({
           error: {
             error_code: 20, 
@@ -83,7 +70,7 @@ export const getItem = factory.createHandlers(async (ctx: Context, next: Next) =
       throw error
     }
   } catch (error) {
-    console.error(`[GET-ITEM-${requestId}] Ошибка:`, error)
+    console.error(error)
     return ctx.json({
       error: {
         error_code: 1, 

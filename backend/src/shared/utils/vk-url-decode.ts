@@ -3,9 +3,7 @@
  * @param str Encoded string
  */
 export function VKUrlDecode(str: string): string {
-  const decoded = decodeURIComponent(
+  return decodeURIComponent(
     str.replace(/\+/g, '%20')
   );
-  console.log(`[VK-URL-DECODE] "${str}" -> "${decoded}"`);
-  return decoded;
 } 
