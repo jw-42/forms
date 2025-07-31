@@ -265,6 +265,11 @@ class PaymentsService {
       item_price: price
     })
   }
+
+  // Метод для получения баланса пользователя
+  async getUserBalance(user_id: number): Promise<number> {
+    return await paymentsRepository.getUserBalance(user_id)
+  }
 }
 
 export default new PaymentsService() 

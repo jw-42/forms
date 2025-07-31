@@ -4,12 +4,17 @@ export interface TopUpBalanceCardProps {
   amount: number
   price: number
   discount: number
+  onTopUp?: () => void
 }
 
-export const TopUpBalanceCard = ({ amount, price, discount }: TopUpBalanceCardProps) => {
+export const TopUpBalanceCard = ({ amount, price, discount, onTopUp }: TopUpBalanceCardProps) => {
 
   const handleTopUp = () => {
-    console.log(`Пополнить баланс на ${amount} бустов за ${price} голосов (-${discount}%)`)
+    if (onTopUp) {
+      onTopUp()
+    } else {
+      console.log(`Пополнить баланс на ${amount} бустов за ${price} голосов (-${discount}%)`)
+    }
   }
 
   return(
