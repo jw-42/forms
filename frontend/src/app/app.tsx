@@ -6,10 +6,8 @@ import { useAuth } from '@shared/api/auth'
 import bridge from '@vkontakte/vk-bridge'
 import { RootState } from './store'
 import React from 'react'
-import { VIEW, FORMS_PAGES, EpicTabbar, MODALS, FormDetails, BlankBuilderModal, QuestionBuilder, ANSWERS_PAGES, OptionsBuilder, ErrorModalWrapper, SETTINGS_PAGES, HELP_PAGES, SUBSCRIPTION_PAGES } from '@shared/index'
-import { Blank, BlankBuilder, Forms, Sidebar, Settings, Help } from '@pages/index'
-import { Answers } from '@pages/answers'
-import { Subscription } from '@pages/subscription'
+import { VIEW, FORMS_PAGES, EpicTabbar, MODALS, FormDetails, BlankBuilderModal, QuestionBuilder, ANSWERS_PAGES, OptionsBuilder, ErrorModalWrapper, SETTINGS_PAGES, HELP_PAGES, PAYMENTS_PAGES } from '@shared/index'
+import { Blank, BlankBuilder, Forms, Sidebar, Settings, Help, Payments, Answers } from '@pages/index'
 
 export const App = () => {
   const popout = usePopout()
@@ -83,8 +81,8 @@ export const App = () => {
             <Help id={HELP_PAGES.OVERVIEW} />
           </View>
 
-          <View id={VIEW.SUBSCRIPTION} activePanel={activePanel}>
-            <Subscription id={SUBSCRIPTION_PAGES.OVERVIEW} />
+          <View id={VIEW.PAYMENTS} activePanel={activePanel}>
+            <Payments id={PAYMENTS_PAGES.OVERVIEW} />
           </View>
         </Epic>
       </SplitCol>

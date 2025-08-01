@@ -3,11 +3,8 @@ import { Subscription, SUBSCRIPTION_STATUS_LABELS, SUBSCRIPTION_TITLE_LABELS } f
 import { useAutoUpdateTime } from '@shared/lib'
 import { Icon24CancelOutline } from '@vkontakte/icons'
 import bridge from '@vkontakte/vk-bridge'
-import { useRefreshSubscriptions } from './hooks'
 
 export const SubscriptionItem = (s: Subscription) => {
-
-  const refreshSubscriptions = useRefreshSubscriptions()
   
   const nextBillTime = useAutoUpdateTime(s.next_bill_time)
 
@@ -17,9 +14,7 @@ export const SubscriptionItem = (s: Subscription) => {
       subscription_id: s.subscription_id.toString(),
     })
       .then((data) => {
-        if (data.success) {
-          refreshSubscriptions()
-        } else {
+        if (!data.success) {
           console.log('Subscription cancellation failed')
         }
       })
