@@ -28,8 +28,6 @@ export const useOption = (formId?: string, questionId?: number, optionId?: numbe
 }
 
 export const useUpdateOption = () => {
-  // используем общий queryClient
-  
   return useMutation({
     mutationFn: (data: { formId: string; questionId: number; optionId: number; data: UpdateOptionProps }) => 
       updateOption(data.formId, data.questionId, data.optionId, data.data),
@@ -41,8 +39,6 @@ export const useUpdateOption = () => {
 }
 
 export const useDeleteOption = () => {
-  // используем общий queryClient
-  
   return useMutation({
     mutationFn: (data: { formId: string; questionId: number; optionId: number }) => 
       deleteOption(data.formId, data.questionId, data.optionId),
@@ -54,8 +50,6 @@ export const useDeleteOption = () => {
 }
 
 export const useCreateMultipleOptions = () => {
-  // используем общий queryClient
-  
   return useMutation({
     mutationFn: (data: { formId: string; questionId: number; data: CreateMultipleOptionsProps }) => 
       createMultipleOptions(data.formId, data.questionId, data.data),

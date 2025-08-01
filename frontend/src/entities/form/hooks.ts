@@ -2,6 +2,7 @@ import { useMutation, useQuery } from '@tanstack/react-query'
 import { queryClient } from '@shared/api/query-client'
 import { formKeys, getForms, getFormById, createForm, updateForm, deleteForm, generateFormDescription } from './api'
 import { UpdateFormProps } from './types'
+import { paymentKeys } from '@entities/payments/api'
 
 export const useForms = () => {
   return useQuery({
@@ -19,8 +20,6 @@ export const useForm = (id?: string) => {
 }
 
 export const useCreateForm = () => {
-  // используем общий queryClient
-  
   return useMutation({
     mutationFn: createForm,
     onSuccess: () => {
@@ -30,8 +29,6 @@ export const useCreateForm = () => {
 }
 
 export const useUpdateForm = () => {
-  // используем общий queryClient
-  
   return useMutation({
     mutationFn: (data: { id: string; data: UpdateFormProps }) => 
       updateForm(data.id, data.data),
@@ -43,8 +40,6 @@ export const useUpdateForm = () => {
 }
 
 export const useDeleteForm = () => {
-  // используем общий queryClient
-  
   return useMutation({
     mutationFn: (id: string) => deleteForm(id),
     onSuccess: (_, id) => {
@@ -56,6 +51,9 @@ export const useDeleteForm = () => {
 
 export const useGenerateFormDescription = () => {
   return useMutation({
-    mutationFn: (data: { formTitle: string }) => generateFormDescription(data)
+    mutationFn: (data: { formTitle: string }) => generateFormDescription(data),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: paymentKeys.balance() })
+    }
   })
 } 

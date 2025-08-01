@@ -88,6 +88,7 @@ export class OpenRouterClient {
       
       // Ensure description is within length limits
       if (description.length < 10 || description.length > 256) {
+        console.error('Description length is not within limits', description)
         return this.fallbackFormDescription()
       }
 

@@ -34,8 +34,6 @@ export const useQuestion = (formId?: string, questionId?: number) => {
  * Хук для создания вопроса
  */
 export const useCreateQuestion = () => {
-  // используем общий queryClient
-  
   return useMutation({
     mutationFn: ({ formId, data }: { formId: string, data: Omit<QuestionProps, 'id'|'form_id'> }) => 
       questionApi.create(formId, data),
@@ -49,8 +47,6 @@ export const useCreateQuestion = () => {
  * Хук для обновления вопроса
  */
 export const useUpdateQuestion = () => {
-  // используем общий queryClient
-  
   return useMutation({
     mutationFn: ({ formId, questionId, data }: { formId: string, questionId: number, data: Partial<QuestionProps> }) => 
       questionApi.update(formId, questionId, data),
@@ -65,8 +61,6 @@ export const useUpdateQuestion = () => {
  * Хук для удаления вопроса
  */
 export const useDeleteQuestion = () => {
-  // используем общий queryClient
-  
   return useMutation({
     mutationFn: ({ formId, questionId }: { formId: string, questionId: number }) => 
       questionApi.delete(formId, questionId),
