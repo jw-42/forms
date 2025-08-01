@@ -1,16 +1,13 @@
-import { useGetSubscriptions } from "@entities/subscriptions";
-import { routes, useGetBalance } from "@shared/index";
-import { VIEW } from "@shared/index";
+import { useGetBalance } from "@entities/payments";
+import { VIEW, routes } from "@shared/index";
 import { Icon20FlashOutline, Icon32StarsCircleFillViolet } from "@vkontakte/icons";
 import { useActiveVkuiLocation, useRouteNavigator } from "@vkontakte/vk-mini-apps-router";
 import { Button, ButtonGroup, Cell, Div, Group, Panel, Separator, Spacing } from "@vkontakte/vkui";
-import React from "react";
 
 export const Sidebar = () => {
 
   const router = useRouteNavigator()
 
-  const { data: subscriptions } = useGetSubscriptions()
   const { data: balanceData } = useGetBalance()
 
   const { view: activeStory = VIEW.FORMS } = useActiveVkuiLocation()
@@ -32,7 +29,7 @@ export const Sidebar = () => {
               size='l'
               appearance='positive'
               before={<Icon20FlashOutline/>}
-              onClick={() => router.push(routes.settings.overview.path)}
+              onClick={() => router.push(routes.payments.overview.path)}
             >
               {balanceData?.balance || 0}
             </Button>
@@ -53,15 +50,13 @@ export const Sidebar = () => {
         <Spacing size={2} />
 
         <Cell
-          activated={activeStory === VIEW.ANSWERS}
-          onClick={() => router.push(routes.answers.overview.path)}
+          activated={activeStory === VIEW.SETTINGS}
+          onClick={() => router.push(routes.settings.overview.path)}
         >
-          История ответов
+          Настройки
         </Cell>
 
-        <Spacing>
-          <Separator/>
-        </Spacing>
+        <Spacing size={2} />
 
         <Cell
           activated={activeStory === VIEW.HELP}
@@ -70,21 +65,17 @@ export const Sidebar = () => {
           Помощь
         </Cell>
 
-        {(subscriptions && subscriptions.length === 0) && (
-          <React.Fragment>
-            <Spacing>
-              <Separator/>
-            </Spacing>
+        <Spacing>
+          <Separator/>
+        </Spacing>
 
-            <Cell
-              before={<Icon32StarsCircleFillViolet/>}
-              extraSubtitle='Меньше кликов — больше смысла'
-              onClick={() => router.push(routes.subscription.overview.path)}
-            >
-              Подписка, которая думает за тебя
-            </Cell>
-          </React.Fragment>
-        )}
+        <Cell
+          before={<Icon32StarsCircleFillViolet/>}
+          extraSubtitle='Меньше кликов — больше смысла'
+          onClick={() => router.push(routes.payments.overview.path)}
+        >
+          Подписка, которая думает за тебя
+        </Cell>
       </Group>
     </Panel>
   )

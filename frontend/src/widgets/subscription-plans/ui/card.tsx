@@ -3,33 +3,9 @@ import { Card, Div, SimpleCell, Spacing, Text } from '@vkontakte/vkui'
 import { Icon28CheckCircleFill } from '@vkontakte/icons'
 import { Icon28CancelCircleOutline } from '@vkontakte/icons'
 import { MiniInfoCell } from '@vkontakte/vkui'
-import { useGetSubscriptions } from '@entities/subscriptions'
 import { SubscriptionButton } from '@features/subscription-button'
 
 export const SubscriptionCard = ({ plan }: { plan: Plan }) => {
-
-  const { data: subscriptions } = useGetSubscriptions()
-
-  // Найти подписку по itemId
-  const currentSubscription = subscriptions?.find(
-    subscription => subscription.item_id === plan.itemId
-  )
-
-  let buttonText = 'Выбрать'
-  let isActiveSubscription = false
-
-  if (currentSubscription) {
-    if (currentSubscription.status === 'chargeable') {
-      buttonText = 'Ожидание оплаты'
-      isActiveSubscription = true
-    } else if (currentSubscription.status === 'active') {
-      buttonText = 'Текущий план'
-      isActiveSubscription = true
-    }
-  } else if (subscriptions?.length === 0 && plan.price === 0) {
-    buttonText = 'Текущий план'
-    isActiveSubscription = true
-  }
 
   return(
     <Card
@@ -84,8 +60,7 @@ export const SubscriptionCard = ({ plan }: { plan: Plan }) => {
       <Div>
         <SubscriptionButton
           stretched
-          title={buttonText}
-          disabled={isActiveSubscription}
+          title='Выбрать'
           itemId={plan.itemId}
           appearance={plan.itemId === 'premium_30' ? 'positive' : 'accent'}
         />
