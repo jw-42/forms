@@ -79,6 +79,17 @@ class PaymentsRepository {
     })
     return user?.balance || 0
   }
+
+  async subtractUserBalance(user_id: number, amount: number) {
+    return await getPrisma().user.update({
+      where: { id: user_id },
+      data: {
+        balance: {
+          decrement: amount
+        }
+      }
+    })
+  }
 }
 
 export default new PaymentsRepository()

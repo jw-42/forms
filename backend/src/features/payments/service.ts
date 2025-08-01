@@ -128,6 +128,14 @@ class PaymentsService {
   async getUserTransactions(user_id: number) {
     return await paymentsRepository.getTransactionsByUserId(user_id)
   }
+
+  async subtractUserBalance(user_id: number, amount: number) {
+    return await paymentsRepository.subtractUserBalance(user_id, amount)
+  }
+
+  async addUserBalance(user_id: number, amount: number) {
+    return await paymentsRepository.addUserBalance(user_id, amount)
+  }
 }
 
 export default new PaymentsService() 
