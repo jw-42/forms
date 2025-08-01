@@ -11,8 +11,6 @@ import { formKeys } from '@entities/form/api'
 
 // Hook for submitting answers
 export const useSubmitAnswers = () => {
-  // используем общий queryClient
-  
   return useMutation({
     mutationFn: submit,
     onSuccess: (_data, variables) => {
@@ -44,8 +42,6 @@ export const useGetAnswersByUserId = (formId: string, userId: number | undefined
 
 // Hook for resetting answers
 export const useResetAnswers = () => {
-  // используем общий queryClient
-  
   return useMutation({
     mutationFn: reset,
     onSuccess: (_data, variables) => {
