@@ -1,1 +1,0 @@
-export { BlankOptions } from './ui'

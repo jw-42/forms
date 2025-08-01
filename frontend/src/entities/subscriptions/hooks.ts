@@ -1,1 +1,0 @@
-// API hooks removed - subscriptions API is no longer available 

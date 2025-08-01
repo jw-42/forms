@@ -1,1 +1,0 @@
-export { declOfNum } from './declOfNum' 
