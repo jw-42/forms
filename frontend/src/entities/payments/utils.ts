@@ -56,7 +56,7 @@ export const getTransactionAmountColor = (amount: number): string => {
 }
 
 export const formatTransactionAmount = (amount: number): string => {
-  return `${amount > 0 ? '+' : ''}${amount} ${declOfNum(amount, ['буст', 'буста', 'бустов'])}`
+  return `${amount > 0 ? '+' : ''}${amount} ${declOfNum(Math.abs(amount), ['буст', 'буста', 'бустов'])}`
 }
 
 export const filterTransactionsByType = (
